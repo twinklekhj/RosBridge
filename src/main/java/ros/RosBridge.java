@@ -10,7 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ros.op.*;
 import ros.topic.RosListenDelegate;
-import ros.topic.RosSubscriber;
+import ros.topic.RosListeners;
+import ros.topic.RosServiceDelegate;
+import ros.type.MessageType;
 
 import java.io.IOException;
 import java.net.URI;
@@ -31,11 +33,14 @@ public class RosBridge {
     protected final CountDownLatch closeLatch;
     protected Session session;
     protected Set<String> publishedTopics = new HashSet<>();
-    protected Map<String, FragmentManager> fragementManagers = new HashMap<>();
-    protected Map<String, RosSubscriber> listeners;
+    protected Map<String, FragmentManager> fragmentManagers = new HashMap<>();
+    protected Map<String, RosListeners> topicListeners = new HashMap<>();
+    protected Map<String, RosServiceDelegate> serviceListeners = new HashMap<>();
+
     protected boolean hasConnected = false;
-    protected boolean printMsgSend = false;
-    protected boolean printMsgReceived = false;
+    protected boolean printSendMsg = false;
+    protected boolean printReceivedMsg = false;
+    protected long maxIdleTimeout = 300000;
 
     private RosBridge(String url) {
         this.closeLatch = new CountDownLatch(1);
@@ -44,12 +49,14 @@ public class RosBridge {
 
     /**
      * RosBridge 객체 생성후 WebSocket 연결
+     *
      * @param rosBridgeURI      ROS 브릿지 주소
      * @param waitForConnection 연결 기다림 여부
      */
     public static RosBridge createConnection(String rosBridgeURI, boolean waitForConnection) {
         RosBridge bridge = new RosBridge(rosBridgeURI);
         bridge.connect(rosBridgeURI, waitForConnection);
+
         return bridge;
     }
 
@@ -59,7 +66,7 @@ public class RosBridge {
      * @param flag 로깅 활성 여부
      */
     public void enableMsgSend(boolean flag) {
-        this.printMsgSend = flag;
+        this.printSendMsg = flag;
     }
 
     /**
@@ -68,11 +75,21 @@ public class RosBridge {
      * @param flag 로깅 활성여부
      */
     public void enableMsgReceived(boolean flag) {
-        this.printMsgReceived = flag;
+        this.printReceivedMsg = flag;
+    }
+
+    /**
+     * 최대 유휴시간 지정
+     *
+     * @param maxIdleTimeout 유휴 시간
+     */
+    public void setMaxIdleTimeout(long maxIdleTimeout) {
+        this.maxIdleTimeout = maxIdleTimeout;
     }
 
     /**
      * WebSocket 연결
+     *
      * @param rosBridgeURI      ROS 브릿지 주소
      * @param waitForConnection 연결 기다림 여부
      */
@@ -81,11 +98,11 @@ public class RosBridge {
 
         try {
             client.start();
+            client.setMaxIdleTimeout(this.maxIdleTimeout);
             URI echoUri = new URI(rosBridgeURI);
 
             ClientUpgradeRequest request = new ClientUpgradeRequest();
             client.connect(this, echoUri, request);
-
             logger.info("Connecting to: {}", echoUri);
             if (waitForConnection) {
                 waitForConnection();
@@ -117,6 +134,7 @@ public class RosBridge {
 
     /**
      * 연결상태 여부
+     *
      * @return 연결상태
      */
     public boolean hasConnected() {
@@ -129,6 +147,7 @@ public class RosBridge {
 
     /**
      * WebSocket 연결 Event
+     *
      * @param session - 연결 세션
      */
     @OnWebSocketConnect
@@ -144,6 +163,7 @@ public class RosBridge {
 
     /**
      * WebSocket 연결 종료 Event
+     *
      * @param statusCode 상태코드
      * @param reason     종료 이유
      */
@@ -153,32 +173,36 @@ public class RosBridge {
         this.session = null;
         this.closeLatch.countDown();
     }
+
     @OnWebSocketError
-    public void onError(Session session, Throwable e){
-        logger.error("Error! session: [address: {}, opened ? {}], msg: {}", session.getRemoteAddress(), session.isOpen(), e.getMessage());
+    public void onError(Session session, Throwable e) {
+        logger.error("Error! msg: {}", e.getMessage());
     }
+
     /**
      * WebSocket 연결 해제
      */
-    public void close(){
+    public void close() {
         this.session.close();
     }
 
     /**
      * WebSocket 재연결
+     *
      * @param waitForConnection 연결 기다림 여부
      */
-    public void reconnect(boolean waitForConnection){
+    public void reconnect(boolean waitForConnection) {
         this.connect(this.url, waitForConnection);
     }
 
     /**
      * WebSocket 메세지 수신 Event
+     *
      * @param msg 수신받은 메세지
      */
     @OnWebSocketMessage
     public void onMessage(String msg) {
-        if (this.printMsgReceived) {
+        if (this.printReceivedMsg) {
             logger.info("[RESPONSE] msg: {}", msg);
         }
 
@@ -192,7 +216,7 @@ public class RosBridge {
                 switch (op) {
                     case "publish":
                         String topic = node.get("topic").asText();
-                        RosSubscriber subscriber = this.listeners.get(topic);
+                        RosListeners subscriber = this.topicListeners.get(topic);
                         if (subscriber != null) {
                             subscriber.receive(node, msg);
                         }
@@ -203,11 +227,12 @@ public class RosBridge {
                         boolean result = node.get("result").asBoolean();
                         String service = node.get("service").asText();
 
-                        RosOpServiceRes res = RosOpServiceRes.Builder.builder(service, result).id(id).values(values).build();
-
-                        logger.info("service response: {}", res);
+                        RosResponse res = RosResponse.builder(service, result).id(id).values(values).build();
+                        RosServiceDelegate delegate = serviceListeners.remove(res.getId());
+                        if (delegate != null) {
+                            delegate.receive(res);
+                        }
                         break;
-                    // fragment
                     case "fragment":
                         processFragment(node);
                         break;
@@ -219,22 +244,20 @@ public class RosBridge {
         }
     }
 
-    private boolean send(RosOpRoot support) {
+    private boolean send(RosOperation support) {
         String sendMsg = support.toString();
-        if (printMsgSend){
-            logger.info("[REQUEST] msg: {}", sendMsg);
-        }
-        try {
-            Future<Void> fut = this.session.getRemote().sendStringByFuture(sendMsg);
-            fut.get(2L, TimeUnit.SECONDS);
-            return true;
-        } catch (Exception e) {
-            logger.error("op: {}", support.getOperation());
-        }
-        return false;
+        return send(sendMsg);
     }
 
+    /**
+     * [Ros] Ros 메세지 전송
+     * @param message - 보낼 메세지
+     * @return 메세지 전송 성공 여부
+     */
     private boolean send(String message) {
+        if (printSendMsg) {
+            logger.info("[REQUEST] msg: {}", message);
+        }
         try {
             Future<Void> fut = this.session.getRemote().sendStringByFuture(message);
             fut.get(2L, TimeUnit.SECONDS);
@@ -251,16 +274,45 @@ public class RosBridge {
      * @param topic 토픽명
      * @param type  메세지 유형
      */
-    public void advertise(String topic, String type) {
-        if (!this.publishedTopics.contains(topic)) {
+    public RosAdvertise advertise(String topic, String type) {
+        RosAdvertise op = RosAdvertise.builder(topic, type).build();
 
-            RosOpAdvertise op = new RosOpAdvertise(topic, type);
+        if (!this.publishedTopics.contains(topic)) {
             if (send(op)) {
                 this.publishedTopics.add(topic);
             }
         }
+        return op;
     }
 
+    /**
+     * [Topic] 토픽 발행 상태 알림
+     *
+     * @param topic 토픽명
+     * @param type  메세지 유형
+     */
+    public void advertise(String topic, MessageType type) {
+        advertise(topic, type.getName());
+    }
+
+    /**
+     * [Topic] 토픽 발행 취소
+     *
+     * @param topic 토픽명
+     */
+    public RosUnadvertise unadvertise(String topic){
+        RosUnadvertise op = RosUnadvertise.builder(topic).build();
+        if (this.publishedTopics.contains(topic)) {
+            if (send(op)) {
+                this.publishedTopics.remove(topic);
+            }
+        }
+        return op;
+    }
+    public RosUnadvertise unadvertise(RosTopic topicOp){
+        String topic = topicOp.getTopic();
+        return unadvertise(topic);
+    }
     /**
      * [Topic] 토픽 발행
      *
@@ -268,8 +320,14 @@ public class RosBridge {
      * @param type  메시지 유형
      * @param msg   보낼 메세지
      */
-    public void publish(String topic, String type, Object msg) {
-        RosOpPublish op = new RosOpPublish(topic, type, msg);
+    public RosTopic publish(String topic, String type, Object msg) {
+        RosTopic op = RosTopic.builder(topic, type).msg(msg).build();
+        publish(op);
+        return op;
+    }
+
+    public void publish(RosTopic op) {
+        advertise(op.getTopic(), op.getType());
         send(op);
     }
 
@@ -279,17 +337,29 @@ public class RosBridge {
      * @param op       - 토픽 구독
      * @param delegate - 토픽 메세지 처리자
      */
-    public void subscribe(RosOpSubscribe op, RosListenDelegate delegate) {
+    public void subscribe(RosSubscription op, RosListenDelegate delegate) {
         String topic = op.getTopic();
-        if (this.listeners.containsKey(topic)) {
-            this.listeners.get(topic).addDelegate(delegate);
+
+        if (this.topicListeners.containsKey(topic)) {
+            this.topicListeners.get(topic).addDelegate(delegate);
 
             return;
         }
 
-        this.listeners.put(topic, new RosSubscriber(delegate));
-
+        this.topicListeners.put(topic, new RosListeners(delegate));
         send(op);
+    }
+
+    public RosSubscription subscribe(String topic, String type, RosListenDelegate delegate){
+        RosSubscription op = RosSubscription.builder(topic, type).build();
+        subscribe(op, delegate);
+        return op;
+    }
+
+    public RosSubscription subscribe(String topic, MessageType type, RosListenDelegate delegate){
+        RosSubscription op = RosSubscription.builder(topic, type).build();
+        subscribe(op, delegate);
+        return op;
     }
 
     /**
@@ -298,27 +368,45 @@ public class RosBridge {
      * @param topic 토픽명
      */
     public void unsubscribe(String topic) {
-        RosOpUnsubscribe op = new RosOpUnsubscribe(topic);
+        RosUnsubscribe op = RosUnsubscribe.builder(topic).build();
         if (send(op)) {
-            this.publishedTopics.add(topic);
+            this.topicListeners.remove(topic);
         }
-
-        this.listeners.remove(topic);
     }
 
     public void removeListener(String topic, RosListenDelegate delegate) {
-        RosSubscriber subscriber = this.listeners.get(delegate);
-        if (subscriber != null) {
-            subscriber.removeDelegate(delegate);
+        RosListeners listeners = this.topicListeners.get(topic);
+        if (listeners != null) {
+            listeners.removeDelegate(delegate);
 
-            if (subscriber.numDelegates() == 0) {
+            if (listeners.numDelegates() == 0) {
                 unsubscribe(topic);
             }
         }
     }
 
-    public void callService(String service, List<Object> args) {
-        RosOpServiceReq op = RosOpServiceReq.Builder.builder(service).args(args).build();
+    /**
+     * [Service] Service 요청
+     *
+     * @param service - 서비스명
+     * @param args - 요청변수
+     * @param delegate - 서비스 응답 처리 함수
+     */
+    public RosService callService(String service, List<Object> args, RosServiceDelegate delegate) {
+        RosService op = RosService.builder(service).args(args).build();
+        callService(op, delegate);
+        return op;
+    }
+
+    /**
+     * [Service] Service 요청
+     *
+     * @param op - 요청할 서비스 정보 객체
+     * @param delegate - 서비스 응답 처리 함수
+     */
+    public void callService(RosService op, RosServiceDelegate delegate) {
+        serviceListeners.put(op.getId(), delegate);
+
         send(op);
     }
 
@@ -330,16 +418,16 @@ public class RosBridge {
     protected void processFragment(JsonNode node) {
         String id = node.get("id").textValue();
 
-        FragmentManager manager = this.fragementManagers.get(id);
+        FragmentManager manager = this.fragmentManagers.get(id);
         if (manager == null) {
             manager = new FragmentManager(node);
-            this.fragementManagers.put(id, manager);
+            this.fragmentManagers.put(id, manager);
         }
         boolean complete = manager.updateFragment(node);
 
         if (complete) {
             String fullMsg = manager.generateFullMessage();
-            this.fragementManagers.remove(id);
+            this.fragmentManagers.remove(id);
             onMessage(fullMsg);
         }
     }
@@ -350,12 +438,12 @@ public class RosBridge {
     public static class FragmentManager {
         protected String id;
         protected String[] fragments;
-        protected Set<Integer> completedFragements;
+        protected Set<Integer> completedFragments;
 
         public FragmentManager(JsonNode fragmentJson) {
             int total = fragmentJson.get("total").intValue();
             this.fragments = new String[total];
-            this.completedFragements = new HashSet<>(total);
+            this.completedFragments = new HashSet<>(total);
             this.id = fragmentJson.get("id").textValue();
         }
 
@@ -363,12 +451,12 @@ public class RosBridge {
             String data = fragmentJson.get("data").asText();
             int num = fragmentJson.get("num").intValue();
             this.fragments[num] = data;
-            this.completedFragements.add(num);
+            this.completedFragments.add(num);
             return complete();
         }
 
         public boolean complete() {
-            return (this.completedFragements.size() == this.fragments.length);
+            return (this.completedFragments.size() == this.fragments.length);
         }
 
         public int numFragments() {
@@ -376,7 +464,7 @@ public class RosBridge {
         }
 
         public int numCompletedFragments() {
-            return this.completedFragements.size();
+            return this.completedFragments.size();
         }
 
         public String generateFullMessage() {
