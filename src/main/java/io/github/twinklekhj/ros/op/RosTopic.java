@@ -17,7 +17,7 @@ import org.json.JSONObject;
 public class RosTopic implements RosOperation {
     private final Type op = Type.PUBLISH;
     @Builder.Default
-    private final String id = String.format("publish_%s", current());
+    private final String id = String.format("publish_%s", RosOperation.current());
     @NonNull
     private final String name;
     @NonNull

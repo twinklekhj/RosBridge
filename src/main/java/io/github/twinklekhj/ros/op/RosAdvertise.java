@@ -14,7 +14,7 @@ import org.json.JSONObject;
 public class RosAdvertise implements RosOperation {
     private final Type op = Type.ADVERTISE_TOPIC;
     @Builder.Default
-    private final String id = String.format("advertise_%s", current());
+    private final String id = String.format("advertise_%s", RosOperation.current());
     @NonNull
     private final String topic;
     @NonNull

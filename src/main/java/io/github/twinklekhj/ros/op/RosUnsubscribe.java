@@ -16,7 +16,7 @@ import org.json.JSONObject;
 public class RosUnsubscribe implements RosOperation {
     private final Type op = Type.UNSUBSCRIBE;
     @Builder.Default
-    private final String id = String.format("unsubscribe_%s", current());
+    private final String id = String.format("unsubscribe_%s", RosOperation.current());
     @NonNull
     private final String topic;
 

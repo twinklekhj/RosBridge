@@ -13,7 +13,7 @@ import org.json.JSONObject;
 public class RosUnadvertise implements RosOperation {
     private final Type op = Type.UNADVERTISE_TOPIC;
     @Builder.Default
-    private final String id = String.format("unadvertised_%s", current());
+    private final String id = String.format("unadvertised_%s", RosOperation.current());
     @NonNull
     private final String topic;
 

@@ -21,7 +21,7 @@ import io.github.twinklekhj.ros.type.MessageType;
 public class RosSubscription implements RosOperation {
     private final Type op = Type.SUBSCRIBE;
     @Builder.Default
-    private final String id = String.format("subscribe_%s", current());
+    private final String id = String.format("subscribe_%s", RosOperation.current());
     @NonNull
     private final String topic;
     @NonNull

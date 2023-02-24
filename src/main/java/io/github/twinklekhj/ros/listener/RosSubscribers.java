@@ -9,9 +9,6 @@ import java.util.List;
 public class RosSubscribers {
     protected List<RosSubscribeDelegate> delegates = new ArrayList<>();
 
-    public RosSubscribers() {
-    }
-
     public RosSubscribers(RosSubscribeDelegate... delegates) {
         Collections.addAll(this.delegates, delegates);
     }
@@ -25,9 +22,7 @@ public class RosSubscribers {
     }
 
     public void receive(JsonNode data, String stringRep) {
-        this.delegates.forEach(delegate -> {
-            delegate.receive(data, stringRep);
-        });
+        this.delegates.forEach(delegate -> delegate.receive(data, stringRep));
     }
 
     public int numDelegates() {

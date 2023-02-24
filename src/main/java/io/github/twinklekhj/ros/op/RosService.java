@@ -12,7 +12,7 @@ public class RosService implements RosOperation {
     private final Type op = Type.CALL_SERVICE;
 
     @Builder.Default
-    private final String id = String.format("call_service_%s", current());
+    private final String id = String.format("call_service_%s", RosOperation.current());
     @NonNull
     private final String service;
 
