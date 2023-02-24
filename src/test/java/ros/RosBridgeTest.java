@@ -1,5 +1,8 @@
 package ros;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ros.op.RosService;
@@ -13,55 +16,32 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 public class RosBridgeTest {
+    public static final String fileName = "config/config.properties";
     private static final Logger logger = LoggerFactory.getLogger(RosBridgeTest.class);
+    public RosBridge bridge = null;
 
-    public static void main(String[] args) {
-        Properties properties = readProperties("config/config.properties");
+    RosBridgeTest() {
+        Properties properties = readProperties(fileName);
 
-        logger.info("===== Welcome To RosBridge Application =====");
         String host = Objects.requireNonNull(properties).getProperty("ros.host");
         String port = Objects.requireNonNull(properties).getProperty("ros.port");
 
-        String url = String.format("ws://%s:%s", host, port);
+        RosBridge.Connection connection = RosBridge.Connection
+                .builder(host, port)
+                .wait(true)
+                .maxIdleTimeout(10000)
+                .printSendMsg(true)
+                .build();
 
-        RosBridge bridge = RosBridge.createConnection(url, true);
-        bridge.enableMsgSend(true);
-
-        if (bridge.hasConnected) {
-            logger.info("===== RosBridge is connected =====");
-
-            // 서비스 생성
-            Object[] serverParams = {"hello"};
-            RosService service = RosService.builder("serverTest", Arrays.asList(serverParams)).build();
-
-            // 서비스 호출
-            bridge.callService(service, response -> {
-                logger.info("HI!!!!!");
-            });
-
-            // 메세지 생성
-            RosMessage message = new Int32(8);
-
-            // 토픽 생성
-            RosTopic topic = RosTopic.builder("/test", message.getType(), message).build();
-
-            // 토픽 구독
-            bridge.subscribe(topic.getTopic(), topic.getType(), (paramJsonNode, paramString) -> {
-                System.err.println("I'm Tester!!!");
-            });
-
-            // 토픽 발행
-            bridge.publish(topic);
-
-            // 토픽 발행 취소
-            bridge.unadvertise(topic);
-        }
+        this.bridge = RosBridge.createConnection(connection);
     }
 
     /**
      * [Properties] 파일을 가져와 Properties 객체 생성
+     *
      * @param fileName 파일명
      * @return Properties 객체 반환
      */
@@ -82,4 +62,70 @@ public class RosBridgeTest {
         }
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+
+        if (this.bridge.hasConnected) {
+            this.bridge.close();
+        }
+    }
+
+    @Test
+    @DisplayName("Ros Bridge 테스트")
+    public void bridgeTest() throws InterruptedException {
+        RosBridgeTest test = new RosBridgeTest();
+        if (test.bridge.hasConnected) {
+            logger.info("===== RosBridge is connected =====");
+        }
+
+        test.bridge.awaitClose(3000, TimeUnit.MILLISECONDS);
+        Assertions.assertTrue(test.bridge.hasConnected, "ROS Bridge 연결 실패");
+    }
+
+    @Test
+    @DisplayName("Ros Topic 테스트")
+    public void testTopic() {
+        if (bridge.hasConnected) {
+            logger.info("===== RosBridge is connected =====");
+
+            RosMessage message = new Int32(8);
+            RosTopic topic = RosTopic.builder("/test", message.getType(), message).build();
+
+            // 토픽 구독
+            bridge.subscribe(topic.getTopic(), topic.getType(), (paramJsonNode, paramString) -> {
+                logger.info("Subscribed Topic: [{}]", paramJsonNode);
+
+                bridge.closeLatch.countDown();
+                Assertions.assertTrue(true);
+            });
+
+            bridge.publish(topic); // 토픽 발행
+            bridge.unadvertise(topic); // 토픽 발행 취소
+        }
+
+        bridge.awaitClose(10000, TimeUnit.MILLISECONDS);
+    }
+
+    @Test
+    @DisplayName("Ros Service 테스트")
+    public void testService() {
+        if (bridge.hasConnected) {
+            logger.info("===== RosBridge is connected =====");
+
+            // 호출할 서비스 생성
+            Object[] serverParams = {"hello"};
+            RosService service = RosService.builder("serverTest", Arrays.asList(serverParams)).build();
+
+            // 서비스 호출
+            boolean result = bridge.callService(service, response -> {
+                logger.info("Service Response [{}]", response);
+
+                Assertions.assertTrue(true);
+                bridge.closeLatch.countDown();
+            });
+        }
+
+        bridge.awaitClose(3000, TimeUnit.MILLISECONDS);
+    }
 }

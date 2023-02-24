@@ -2,16 +2,18 @@ package ros;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ros.listener.RosServiceDelegate;
+import ros.listener.RosSubscribeDelegate;
+import ros.listener.RosSubscribers;
 import ros.op.*;
-import ros.topic.RosListenDelegate;
-import ros.topic.RosListeners;
-import ros.topic.RosServiceDelegate;
 import ros.type.MessageType;
 
 import java.io.IOException;
@@ -29,33 +31,48 @@ import java.util.concurrent.TimeUnit;
 @WebSocket
 public class RosBridge {
     private static final Logger logger = LoggerFactory.getLogger(RosBridge.class);
-    protected final String url;
     protected final CountDownLatch closeLatch;
+    protected String host;
+    protected String port;
     protected Session session;
     protected Set<String> publishedTopics = new HashSet<>();
     protected Map<String, FragmentManager> fragmentManagers = new HashMap<>();
-    protected Map<String, RosListeners> topicListeners = new HashMap<>();
+    protected Map<String, RosSubscribers> topicListeners = new HashMap<>();
     protected Map<String, RosServiceDelegate> serviceListeners = new HashMap<>();
 
     protected boolean hasConnected = false;
+    protected boolean hasConnectError = false;
+
     protected boolean printSendMsg = false;
     protected boolean printReceivedMsg = false;
-    protected long maxIdleTimeout = 300000;
 
-    private RosBridge(String url) {
+    private RosBridge() {
         this.closeLatch = new CountDownLatch(1);
-        this.url = url;
     }
 
     /**
      * RosBridge 객체 생성후 WebSocket 연결
      *
-     * @param rosBridgeURI      ROS 브릿지 주소
-     * @param waitForConnection 연결 기다림 여부
+     * @param host              ROS BRIDGE HOST
+     * @param port              ROS BRIDGE PORT
+     * @param waitForConnection 기다림 여부
+     * @return RosBridge 객체
      */
-    public static RosBridge createConnection(String rosBridgeURI, boolean waitForConnection) {
-        RosBridge bridge = new RosBridge(rosBridgeURI);
-        bridge.connect(rosBridgeURI, waitForConnection);
+    public static RosBridge createConnection(String host, String port, boolean waitForConnection) {
+        RosBridge bridge = new RosBridge();
+        bridge.connect(Connection.builder(host, port, waitForConnection).build());
+
+        return bridge;
+    }
+
+    /**
+     * Connection 객체로 RosBridge 객체 생성후 WebSocket 연결
+     *
+     * @param connection 연결 옵션 객체
+     */
+    public static RosBridge createConnection(Connection connection) {
+        RosBridge bridge = new RosBridge();
+        bridge.connect(connection);
 
         return bridge;
     }
@@ -65,7 +82,7 @@ public class RosBridge {
      *
      * @param flag 로깅 활성 여부
      */
-    public void enableMsgSend(boolean flag) {
+    public void enablePrintMsgSend(boolean flag) {
         this.printSendMsg = flag;
     }
 
@@ -74,41 +91,45 @@ public class RosBridge {
      *
      * @param flag 로깅 활성여부
      */
-    public void enableMsgReceived(boolean flag) {
+    public void enablePrintMsgReceived(boolean flag) {
         this.printReceivedMsg = flag;
-    }
-
-    /**
-     * 최대 유휴시간 지정
-     *
-     * @param maxIdleTimeout 유휴 시간
-     */
-    public void setMaxIdleTimeout(long maxIdleTimeout) {
-        this.maxIdleTimeout = maxIdleTimeout;
     }
 
     /**
      * WebSocket 연결
      *
-     * @param rosBridgeURI      ROS 브릿지 주소
-     * @param waitForConnection 연결 기다림 여부
+     * @param connection - 웹소켓 연결 정보
      */
-    private void connect(String rosBridgeURI, boolean waitForConnection) {
+    private void connect(Connection connection) {
+        this.host = connection.host;
+        this.port = connection.port;
+
         WebSocketClient client = new WebSocketClient();
 
         try {
+            if (connection.maxIdleTimeout != 0) {
+                client.setMaxIdleTimeout(connection.maxIdleTimeout);
+            }
+            if (connection.connectTimeout != 0) {
+                client.setConnectTimeout(connection.connectTimeout);
+            }
+            if (connection.stopTimeout != 0) {
+                client.setStopTimeout(connection.stopTimeout);
+            }
             client.start();
-            client.setMaxIdleTimeout(this.maxIdleTimeout);
-            URI echoUri = new URI(rosBridgeURI);
+
+            String url = String.format("ws://%s:%s", connection.host, connection.port);
+            URI echoUri = new URI(url);
 
             ClientUpgradeRequest request = new ClientUpgradeRequest();
             client.connect(this, echoUri, request);
             logger.info("Connecting to: {}", echoUri);
-            if (waitForConnection) {
+            if (connection.wait) {
                 waitForConnection();
             }
         } catch (Exception e) {
             logger.error("Error! Message: {}", e.getMessage());
+
             e.printStackTrace();
         }
     }
@@ -117,12 +138,12 @@ public class RosBridge {
      * @apiNote 연결될 때까지 기다림
      */
     public void waitForConnection() {
-        if (this.hasConnected) {
+        if (this.hasConnected || this.hasConnectError) {
             return;
         }
 
         synchronized (this) {
-            while (!this.hasConnected) {
+            while (!this.hasConnected && !this.hasConnectError) {
                 try {
                     wait();
                 } catch (InterruptedException e) {
@@ -141,8 +162,12 @@ public class RosBridge {
         return this.hasConnected;
     }
 
-    public boolean awaitClose(int duration, TimeUnit unit) throws InterruptedException {
-        return this.closeLatch.await(duration, unit);
+    public boolean awaitClose(int duration, TimeUnit unit)  {
+        try {
+            return this.closeLatch.await(duration, unit);
+        } catch (InterruptedException e) {
+           return false;
+        }
     }
 
     /**
@@ -176,7 +201,15 @@ public class RosBridge {
 
     @OnWebSocketError
     public void onError(Session session, Throwable e) {
-        logger.error("Error! msg: {}", e.getMessage());
+        logger.error("WebSocket Error! msg: {}", e.getMessage());
+
+        synchronized (this) {
+            this.hasConnectError = true;
+            notifyAll();
+        }
+        if(this.session == null){
+            this.closeLatch.countDown();
+        }
     }
 
     /**
@@ -192,7 +225,8 @@ public class RosBridge {
      * @param waitForConnection 연결 기다림 여부
      */
     public void reconnect(boolean waitForConnection) {
-        this.connect(this.url, waitForConnection);
+        Connection conn = Connection.builder(this.host, this.port, waitForConnection).build();
+        this.connect(conn);
     }
 
     /**
@@ -216,7 +250,7 @@ public class RosBridge {
                 switch (op) {
                     case "publish":
                         String topic = node.get("topic").asText();
-                        RosListeners subscriber = this.topicListeners.get(topic);
+                        RosSubscribers subscriber = this.topicListeners.get(topic);
                         if (subscriber != null) {
                             subscriber.receive(node, msg);
                         }
@@ -251,6 +285,7 @@ public class RosBridge {
 
     /**
      * [Ros] Ros 메세지 전송
+     *
      * @param message - 보낼 메세지
      * @return 메세지 전송 성공 여부
      */
@@ -300,7 +335,7 @@ public class RosBridge {
      *
      * @param topic 토픽명
      */
-    public RosUnadvertise unadvertise(String topic){
+    public RosUnadvertise unadvertise(String topic) {
         RosUnadvertise op = RosUnadvertise.builder(topic).build();
         if (this.publishedTopics.contains(topic)) {
             if (send(op)) {
@@ -309,10 +344,12 @@ public class RosBridge {
         }
         return op;
     }
-    public RosUnadvertise unadvertise(RosTopic topicOp){
+
+    public RosUnadvertise unadvertise(RosTopic topicOp) {
         String topic = topicOp.getTopic();
         return unadvertise(topic);
     }
+
     /**
      * [Topic] 토픽 발행
      *
@@ -326,9 +363,9 @@ public class RosBridge {
         return op;
     }
 
-    public void publish(RosTopic op) {
+    public boolean publish(RosTopic op) {
         advertise(op.getTopic(), op.getType());
-        send(op);
+        return send(op);
     }
 
     /**
@@ -337,7 +374,7 @@ public class RosBridge {
      * @param op       - 토픽 구독
      * @param delegate - 토픽 메세지 처리자
      */
-    public void subscribe(RosSubscription op, RosListenDelegate delegate) {
+    public void subscribe(RosSubscription op, RosSubscribeDelegate delegate) {
         String topic = op.getTopic();
 
         if (this.topicListeners.containsKey(topic)) {
@@ -346,17 +383,17 @@ public class RosBridge {
             return;
         }
 
-        this.topicListeners.put(topic, new RosListeners(delegate));
+        this.topicListeners.put(topic, new RosSubscribers(delegate));
         send(op);
     }
 
-    public RosSubscription subscribe(String topic, String type, RosListenDelegate delegate){
+    public RosSubscription subscribe(String topic, String type, RosSubscribeDelegate delegate) {
         RosSubscription op = RosSubscription.builder(topic, type).build();
         subscribe(op, delegate);
         return op;
     }
 
-    public RosSubscription subscribe(String topic, MessageType type, RosListenDelegate delegate){
+    public RosSubscription subscribe(String topic, MessageType type, RosSubscribeDelegate delegate) {
         RosSubscription op = RosSubscription.builder(topic, type).build();
         subscribe(op, delegate);
         return op;
@@ -374,8 +411,8 @@ public class RosBridge {
         }
     }
 
-    public void removeListener(String topic, RosListenDelegate delegate) {
-        RosListeners listeners = this.topicListeners.get(topic);
+    public void removeListener(String topic, RosSubscribeDelegate delegate) {
+        RosSubscribers listeners = this.topicListeners.get(topic);
         if (listeners != null) {
             listeners.removeDelegate(delegate);
 
@@ -388,8 +425,8 @@ public class RosBridge {
     /**
      * [Service] Service 요청
      *
-     * @param service - 서비스명
-     * @param args - 요청변수
+     * @param service  - 서비스명
+     * @param args     - 요청변수
      * @param delegate - 서비스 응답 처리 함수
      */
     public RosService callService(String service, List<Object> args, RosServiceDelegate delegate) {
@@ -401,13 +438,13 @@ public class RosBridge {
     /**
      * [Service] Service 요청
      *
-     * @param op - 요청할 서비스 정보 객체
+     * @param op       - 요청할 서비스 정보 객체
      * @param delegate - 서비스 응답 처리 함수
      */
-    public void callService(RosService op, RosServiceDelegate delegate) {
+    public boolean callService(RosService op, RosServiceDelegate delegate) {
         serviceListeners.put(op.getId(), delegate);
 
-        send(op);
+        return send(op);
     }
 
     /**
@@ -429,6 +466,34 @@ public class RosBridge {
             String fullMsg = manager.generateFullMessage();
             this.fragmentManagers.remove(id);
             onMessage(fullMsg);
+        }
+    }
+
+    @Builder
+    @AllArgsConstructor
+    public static class Connection {
+        private String host = "127.0.0.1";
+        private String port = "9090";
+        private boolean wait = false;
+        private boolean printSendMsg = false;
+        private boolean printReceivedMsg = false;
+        private long maxIdleTimeout = 0;
+        private long connectTimeout = 0;
+        private long stopTimeout = 0;
+
+        public Connection() {
+        }
+
+        public static ConnectionBuilder builder(String host, String port) {
+            return new ConnectionBuilder().host(host).port(port);
+        }
+
+        public static ConnectionBuilder builder(String host, String port, boolean wait) {
+            return builder(host, port).wait(wait);
+        }
+
+        public Connection build() {
+            return new Connection(this.host, this.port, this.wait, this.printSendMsg, this.printReceivedMsg, this.maxIdleTimeout, this.connectTimeout, this.stopTimeout);
         }
     }
 
