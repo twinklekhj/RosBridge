@@ -25,18 +25,22 @@ public class RosTopic implements RosOperation {
 
     private Object msg;
 
-    private static RosTopicBuilder builder(){
+    private static RosTopicBuilder builder() {
         return new RosTopicBuilder();
     }
+
     public static RosTopicBuilder builder(String topic, String type) {
         return builder().topic(topic).type(type);
     }
+
     public static RosTopicBuilder builder(String topic, MessageType type) {
         return builder(topic, type.getName());
     }
+
     public static RosTopicBuilder builder(String topic, String type, RosMessage msg) {
         return builder(topic, type).msg(msg.toJSONObject());
     }
+
     public static RosTopicBuilder builder(String topic, MessageType type, RosMessage msg) {
         return builder(topic, type.getName()).msg(msg.toJSONObject());
     }

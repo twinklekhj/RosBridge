@@ -32,13 +32,7 @@ public class RosBridgeTest {
         String host = Objects.requireNonNull(properties).getProperty("ros.host");
         String port = Objects.requireNonNull(properties).getProperty("ros.port");
 
-        RosBridge.Connection connection = RosBridge.Connection
-                .builder(host, port)
-                .wait(true)
-                .maxIdleTimeout(10000)
-                .printSendMsg(true)
-                .build();
-
+        RosBridge.Connection connection = RosBridge.Connection.builder(host, port).wait(true).maxIdleTimeout(10000).printSendMsg(true).build();
         this.bridge = RosBridge.createConnection(connection);
     }
 

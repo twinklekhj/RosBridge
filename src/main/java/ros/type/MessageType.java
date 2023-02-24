@@ -48,7 +48,7 @@ public interface MessageType {
         }
     }
 
-    enum Sensor implements MessageType{
+    enum Sensor implements MessageType {
         BatteryState("sensor_msgs/BatteryState"),
         CameraInfo("sensor_msgs/CameraInfo"),
         ChannelFloat32("sensor_msgs/ChannelFloat32"),

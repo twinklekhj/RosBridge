@@ -52,9 +52,11 @@ public class Point extends RosMessage {
     public double getX() {
         return this.x;
     }
+
     public double getY() {
         return this.y;
     }
+
     public double getZ() {
         return this.z;
     }

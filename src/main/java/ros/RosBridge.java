@@ -162,11 +162,11 @@ public class RosBridge {
         return this.hasConnected;
     }
 
-    public boolean awaitClose(int duration, TimeUnit unit)  {
+    public boolean awaitClose(int duration, TimeUnit unit) {
         try {
             return this.closeLatch.await(duration, unit);
         } catch (InterruptedException e) {
-           return false;
+            return false;
         }
     }
 
@@ -207,7 +207,7 @@ public class RosBridge {
             this.hasConnectError = true;
             notifyAll();
         }
-        if(this.session == null){
+        if (this.session == null) {
             this.closeLatch.countDown();
         }
     }
