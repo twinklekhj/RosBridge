@@ -89,7 +89,7 @@ public class RosBridgeTest {
             RosTopic topic = RosTopic.builder("/test", message.getType(), message).build();
 
             // 토픽 구독
-            bridge.subscribe(topic.getTopic(), topic.getType(), (paramJsonNode, paramString) -> {
+            bridge.subscribe(topic.getName(), topic.getType(), (paramJsonNode, paramString) -> {
                 logger.info("Subscribed Topic: [{}]", paramJsonNode);
 
                 Assertions.assertTrue(true);

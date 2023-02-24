@@ -24,8 +24,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * RosBridge 총괄 클래스
+ *
  * @author khj
- * @apiNote RosBridge 총괄
  * @since 2023.02.15
  */
 @WebSocket
@@ -69,6 +70,7 @@ public class RosBridge {
      * Connection 객체로 RosBridge 객체 생성후 WebSocket 연결
      *
      * @param connection 연결 옵션 객체
+     * @return RosBridge 객체
      */
     public static RosBridge createConnection(Connection connection) {
         RosBridge bridge = new RosBridge();
@@ -135,7 +137,7 @@ public class RosBridge {
     }
 
     /**
-     * @apiNote 연결될 때까지 기다림
+     * 연결될 때까지 기다린다
      */
     public void waitForConnection() {
         if (this.hasConnected || this.hasConnectError) {
@@ -308,16 +310,18 @@ public class RosBridge {
      *
      * @param topic 토픽명
      * @param type  메세지 유형
+     * @return 전송 성공 여부
      */
-    public RosAdvertise advertise(String topic, String type) {
+    public boolean advertise(String topic, String type) {
         RosAdvertise op = RosAdvertise.builder(topic, type).build();
 
         if (!this.publishedTopics.contains(topic)) {
             if (send(op)) {
                 this.publishedTopics.add(topic);
+                return true;
             }
         }
-        return op;
+        return false;
     }
 
     /**
@@ -325,29 +329,37 @@ public class RosBridge {
      *
      * @param topic 토픽명
      * @param type  메세지 유형
+     * @return 전송 성공 여부
      */
-    public void advertise(String topic, MessageType type) {
-        advertise(topic, type.getName());
+    public boolean advertise(String topic, MessageType type) {
+        return advertise(topic, type.getName());
     }
 
     /**
      * [Topic] 토픽 발행 취소
      *
      * @param topic 토픽명
+     * @return 전송 성공 여부
      */
-    public RosUnadvertise unadvertise(String topic) {
+    public boolean unadvertise(String topic) {
         RosUnadvertise op = RosUnadvertise.builder(topic).build();
         if (this.publishedTopics.contains(topic)) {
             if (send(op)) {
                 this.publishedTopics.remove(topic);
+                return true;
             }
         }
-        return op;
+        return false;
     }
 
-    public RosUnadvertise unadvertise(RosTopic topicOp) {
-        String topic = topicOp.getTopic();
-        return unadvertise(topic);
+    /**
+     * [Topic] 토픽 발행 취소
+     *
+     * @param topic 토픽명
+     * @return 전송 성공 여부
+     */
+    public boolean unadvertise(RosTopic topic) {
+        return unadvertise(topic.getName());
     }
 
     /**
@@ -356,23 +368,23 @@ public class RosBridge {
      * @param topic 토픽명
      * @param type  메시지 유형
      * @param msg   보낼 메세지
+     * @return 전송 성공 여부
      */
-    public RosTopic publish(String topic, String type, Object msg) {
+    public boolean publish(String topic, String type, Object msg) {
         RosTopic op = RosTopic.builder(topic, type).msg(msg).build();
-        publish(op);
-        return op;
+        return publish(op);
     }
 
-    public boolean publish(RosTopic op) {
-        advertise(op.getTopic(), op.getType());
-        return send(op);
+    public boolean publish(RosTopic topic) {
+        advertise(topic.getName(), topic.getType());
+        return send(topic);
     }
 
     /**
      * [Topic] 토픽 구독
      *
-     * @param op       - 토픽 구독
-     * @param delegate - 토픽 메세지 처리자
+     * @param op 토픽 구독
+     * @param delegate 토픽 메세지 처리자
      */
     public void subscribe(RosSubscription op, RosSubscribeDelegate delegate) {
         String topic = op.getTopic();
@@ -428,11 +440,11 @@ public class RosBridge {
      * @param service  - 서비스명
      * @param args     - 요청변수
      * @param delegate - 서비스 응답 처리 함수
+     * @return 서비스 전송 성공여부
      */
-    public RosService callService(String service, List<Object> args, RosServiceDelegate delegate) {
+    public boolean callService(String service, List<Object> args, RosServiceDelegate delegate) {
         RosService op = RosService.builder(service).args(args).build();
-        callService(op, delegate);
-        return op;
+        return callService(op, delegate);
     }
 
     /**
@@ -440,6 +452,7 @@ public class RosBridge {
      *
      * @param op       - 요청할 서비스 정보 객체
      * @param delegate - 서비스 응답 처리 함수
+     * @return 서비스 전송 성공여부
      */
     public boolean callService(RosService op, RosServiceDelegate delegate) {
         serviceListeners.put(op.getId(), delegate);

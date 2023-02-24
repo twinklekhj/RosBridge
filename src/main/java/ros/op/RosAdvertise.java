@@ -6,10 +6,8 @@ import lombok.NonNull;
 import org.json.JSONObject;
 
 /**
+ * [RosOperation] 토픽 게시
  * @author khj
- * @apiNote topic - 게시를 알릴 토픽명
- * type - 토픽 유형
- * id - 공고할 ID
  */
 
 @Builder

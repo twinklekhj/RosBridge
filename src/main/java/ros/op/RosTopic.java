@@ -19,7 +19,7 @@ public class RosTopic implements RosOperation {
     @Builder.Default
     private final String id = String.format("publish_%s", RosOperation.current());
     @NonNull
-    private final String topic;
+    private final String name;
     @NonNull
     private final String type;
 
@@ -29,8 +29,8 @@ public class RosTopic implements RosOperation {
         return new RosTopicBuilder();
     }
 
-    public static RosTopicBuilder builder(String topic, String type) {
-        return builder().topic(topic).type(type);
+    public static RosTopicBuilder builder(String name, String type) {
+        return builder().name(name).type(type);
     }
 
     public static RosTopicBuilder builder(String topic, MessageType type) {
@@ -53,7 +53,7 @@ public class RosTopic implements RosOperation {
     @Override
     public String toString() {
         JSONObject json = new JSONObject().put("op", this.op.code)
-                .put("topic", this.topic)
+                .put("topic", this.name)
                 .put("type", this.type)
                 .put("id", this.id);
 
@@ -69,8 +69,8 @@ public class RosTopic implements RosOperation {
         return this.op;
     }
 
-    public String getTopic() {
-        return topic;
+    public String getName() {
+        return name;
     }
 
     public String getType() {
