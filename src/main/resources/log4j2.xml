@@ -31,11 +31,7 @@
 	<!-- 실제 Logger -->
 	<Loggers>
 		<Root level="INFO" additivity="false">
-			<!-- springProfile 작동 안함. 구분짓기 위해 작성. -->
-<!-- 			<springProfile name="dev"> -->
-				<AppenderRef ref="Console_Appender" />
-<!-- 			</springProfile> -->
-			<AppenderRef ref="File_Appender" />
+			<AppenderRef ref="Console_Appender" />
 		</Root>
 		<Logger name="org.springframework" level="INFO"
 			additivity="false">
