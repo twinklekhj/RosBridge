@@ -23,6 +23,9 @@ public class RosBridgeTest {
     private static final Logger logger = LoggerFactory.getLogger(RosBridgeTest.class);
     public RosBridge bridge = null;
 
+    /**
+     * Test 객체 생성
+     */
     RosBridgeTest() {
         Properties properties = readProperties(fileName);
 
@@ -74,13 +77,12 @@ public class RosBridgeTest {
     @Test
     @DisplayName("Ros Bridge 테스트")
     public void bridgeTest() throws InterruptedException {
-        RosBridgeTest test = new RosBridgeTest();
-        if (test.bridge.hasConnected) {
+        if (bridge.hasConnected) {
             logger.info("===== RosBridge is connected =====");
         }
 
-        test.bridge.awaitClose(3000, TimeUnit.MILLISECONDS);
-        Assertions.assertTrue(test.bridge.hasConnected, "ROS Bridge 연결 실패");
+        bridge.awaitClose(3000, TimeUnit.MILLISECONDS);
+        Assertions.assertTrue(bridge.hasConnected, "ROS Bridge 연결 실패");
     }
 
     @Test
@@ -96,8 +98,8 @@ public class RosBridgeTest {
             bridge.subscribe(topic.getTopic(), topic.getType(), (paramJsonNode, paramString) -> {
                 logger.info("Subscribed Topic: [{}]", paramJsonNode);
 
-                bridge.closeLatch.countDown();
                 Assertions.assertTrue(true);
+                bridge.closeLatch.countDown();
             });
 
             bridge.publish(topic); // 토픽 발행
@@ -105,6 +107,7 @@ public class RosBridgeTest {
         }
 
         bridge.awaitClose(10000, TimeUnit.MILLISECONDS);
+        Assertions.assertEquals(0, bridge.closeLatch.getCount(), "ROS Topic 테스트 실패");
     }
 
     @Test
@@ -127,5 +130,6 @@ public class RosBridgeTest {
         }
 
         bridge.awaitClose(3000, TimeUnit.MILLISECONDS);
+        Assertions.assertEquals(0, bridge.closeLatch.getCount(), "ROS Service 테스트 실패");
     }
 }
