@@ -1,14 +1,15 @@
 package ros;
 
+import io.github.twinklekhj.ros.RosBridge;
+import io.github.twinklekhj.ros.op.RosService;
+import io.github.twinklekhj.ros.op.RosTopic;
+import io.github.twinklekhj.ros.type.RosMessage;
+import io.github.twinklekhj.ros.type.std.Int32;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ros.op.RosService;
-import ros.op.RosTopic;
-import ros.type.RosMessage;
-import ros.type.std.Int32;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -63,7 +64,7 @@ public class RosBridgeTest {
     protected void finalize() throws Throwable {
         super.finalize();
 
-        if (this.bridge.hasConnected) {
+        if (this.bridge.hasConnected()) {
             this.bridge.close();
         }
     }
@@ -71,18 +72,18 @@ public class RosBridgeTest {
     @Test
     @DisplayName("Ros Bridge 테스트")
     public void bridgeTest() throws InterruptedException {
-        if (bridge.hasConnected) {
+        if (bridge.hasConnected()) {
             logger.info("===== RosBridge is connected =====");
         }
 
         bridge.awaitClose(3000, TimeUnit.MILLISECONDS);
-        Assertions.assertTrue(bridge.hasConnected, "ROS Bridge 연결 실패");
+        Assertions.assertTrue(bridge.hasConnected(), "ROS Bridge 연결 실패");
     }
 
     @Test
     @DisplayName("Ros Topic 테스트")
     public void testTopic() {
-        if (bridge.hasConnected) {
+        if (bridge.hasConnected()) {
             logger.info("===== RosBridge is connected =====");
 
             RosMessage message = new Int32(8);
@@ -93,7 +94,7 @@ public class RosBridgeTest {
                 logger.info("Subscribed Topic: [{}]", paramJsonNode);
 
                 Assertions.assertTrue(true);
-                bridge.closeLatch.countDown();
+                bridge.countDownLatch();
             });
 
             bridge.publish(topic); // 토픽 발행
@@ -101,13 +102,13 @@ public class RosBridgeTest {
         }
 
         bridge.awaitClose(10000, TimeUnit.MILLISECONDS);
-        Assertions.assertEquals(0, bridge.closeLatch.getCount(), "ROS Topic 테스트 실패");
+        Assertions.assertEquals(0, bridge.getLatchCount(), "ROS Topic 테스트 실패");
     }
 
     @Test
     @DisplayName("Ros Service 테스트")
     public void testService() {
-        if (bridge.hasConnected) {
+        if (bridge.hasConnected()) {
             logger.info("===== RosBridge is connected =====");
 
             // 호출할 서비스 생성
@@ -119,11 +120,11 @@ public class RosBridgeTest {
                 logger.info("Service Response [{}]", response);
 
                 Assertions.assertTrue(true);
-                bridge.closeLatch.countDown();
+                bridge.countDownLatch();
             });
         }
 
         bridge.awaitClose(3000, TimeUnit.MILLISECONDS);
-        Assertions.assertEquals(0, bridge.closeLatch.getCount(), "ROS Service 테스트 실패");
+        Assertions.assertEquals(0, bridge.getLatchCount(), "ROS Service 테스트 실패");
     }
 }

@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.khj-dev</groupId>
+    <groupId>io.github.twinklekhj</groupId>
     <artifactId>rosbridge</artifactId>
     <name>RosBridge</name>
     <description>RosBridge library for Java implementing ros bridge protocol</description>
     <version>1.0.0</version>
 
     <packaging>jar</packaging>
-    <url>https://github.com/khj-dev/RosBridge</url>
+    <url>https://github.com/twinklekhj/RosBridge</url>
 
     <licenses>
         <license>
@@ -22,7 +22,7 @@
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/khj-dev/RosBridge/issues</url>
+        <url>https://github.com/twinklekhj/RosBridge/issues</url>
     </issueManagement>
 
     <developers>
@@ -33,9 +33,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/khj-dev/RosBridge.git</connection>
-        <developerConnection>scm:git:git@github.com:khj-dev/RosBridge.git</developerConnection>
-        <url>https://github.com/khj-dev/RosBridge/tree/master</url>
+        <connection>scm:git:git://github.com/twinklekhj/RosBridge.git</connection>
+        <developerConnection>scm:git:git@github.com:twinklekhj/RosBridge.git</developerConnection>
+        <url>https://github.com/twinklekhj/RosBridge/tree/master</url>
     </scm>
 
     <properties>
