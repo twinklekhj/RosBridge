@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class RosBridgeTest {
     public static final String fileName = "config/config.properties";
     private static final Logger logger = LoggerFactory.getLogger(RosBridgeTest.class);
-    public RosBridge bridge = null;
+    public RosBridge bridge;
 
     /**
      * Test 객체 생성
@@ -35,6 +35,10 @@ public class RosBridgeTest {
 
         RosBridge.Connection connection = RosBridge.Connection.builder(host, port).wait(true).maxIdleTimeout(10000).printSendMsg(true).build();
         this.bridge = RosBridge.createConnection(connection);
+    }
+
+    public static void main(String[] args) {
+        logger.info("===== Welcome To RosBridge Test =====");
     }
 
     /**
@@ -71,7 +75,7 @@ public class RosBridgeTest {
 
     @Test
     @DisplayName("Ros Bridge 테스트")
-    public void bridgeTest() throws InterruptedException {
+    public void bridgeTest() {
         if (bridge.hasConnected()) {
             logger.info("===== RosBridge is connected =====");
         }
@@ -116,7 +120,7 @@ public class RosBridgeTest {
             RosService service = RosService.builder("serverTest", Arrays.asList(serverParams)).build();
 
             // 서비스 호출
-            boolean result = bridge.callService(service, response -> {
+            bridge.callService(service, response -> {
                 logger.info("Service Response [{}]", response);
 
                 Assertions.assertTrue(true);

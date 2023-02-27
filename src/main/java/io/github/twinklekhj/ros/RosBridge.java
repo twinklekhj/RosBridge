@@ -251,7 +251,7 @@ public class RosBridge {
         }
 
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode node = null;
+        JsonNode node;
         try {
             node = mapper.readTree(msg);
             if (node.has("op")) {
