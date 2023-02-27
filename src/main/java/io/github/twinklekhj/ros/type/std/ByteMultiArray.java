@@ -28,7 +28,9 @@ public class ByteMultiArray extends RosMessage {
      */
     public ByteMultiArray(MultiArrayLayout layout, byte[] data) {
         // build the JSON object
-        super(builder().put(ByteMultiArray.FIELD_LAYOUT, layout.toJSONObject()).put(ByteMultiArray.FIELD_DATA, builder(Arrays.toString(data))), ByteMultiArray.TYPE);
+        super(jsonBuilder()
+                .put(ByteMultiArray.FIELD_LAYOUT, layout.toJSONObject())
+                .put(ByteMultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data))), ByteMultiArray.TYPE);
         this.layout = layout;
         // copy the array
         this.data = new byte[data.length];

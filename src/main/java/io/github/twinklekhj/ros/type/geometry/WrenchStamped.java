@@ -28,7 +28,7 @@ public class WrenchStamped extends RosMessage {
      */
     public WrenchStamped(Header header, Wrench wrench) {
         // build the JSON object
-        super(builder().put(WrenchStamped.FIELD_HEADER, header.toJSONObject()).put(WrenchStamped.FIELD_WRENCH, wrench.toJSONObject()), WrenchStamped.TYPE);
+        super(jsonBuilder().put(WrenchStamped.FIELD_HEADER, header.toJSONObject()).put(WrenchStamped.FIELD_WRENCH, wrench.toJSONObject()), WrenchStamped.TYPE);
         this.header = header;
         this.wrench = wrench;
     }

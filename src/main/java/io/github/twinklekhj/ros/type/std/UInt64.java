@@ -25,7 +25,7 @@ public class UInt64 extends RosMessage {
      */
     public UInt64(long data) {
         // build the JSON object
-        super(builder().put(UInt64.FIELD_DATA, Primitive.fromUInt64(data)), UInt64.TYPE);
+        super(jsonBuilder().put(UInt64.FIELD_DATA, Primitive.fromUInt64(data)), UInt64.TYPE);
         this.data = data;
     }
 

@@ -14,7 +14,7 @@ public class RosString extends RosMessage {
 
     public RosString(java.lang.String data) {
         // build the JSON object
-        super(builder().put(FIELD_DATA, data), RosString.TYPE);
+        super(jsonBuilder().put(FIELD_DATA, data), RosString.TYPE);
         this.data = data;
     }
 

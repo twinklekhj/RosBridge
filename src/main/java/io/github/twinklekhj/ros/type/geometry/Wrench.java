@@ -27,7 +27,7 @@ public class Wrench extends RosMessage {
      */
     public Wrench(Vector3 force, Vector3 torque) {
         // build the JSON object
-        super(builder().put(Wrench.FIELD_FORCE, force.toJSONObject()).put(Wrench.FIELD_TORQUE, torque.toJSONObject()), Wrench.TYPE);
+        super(jsonBuilder().put(Wrench.FIELD_FORCE, force.toJSONObject()).put(Wrench.FIELD_TORQUE, torque.toJSONObject()), Wrench.TYPE);
         this.force = force;
         this.torque = torque;
     }

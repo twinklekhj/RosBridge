@@ -23,7 +23,7 @@ public class Float32 extends RosMessage {
      * @param data The data value of the float.
      */
     public Float32(float data) {
-        super(builder().put(Float32.FIELD_DATA, data), Float32.TYPE);
+        super(jsonBuilder().put(Float32.FIELD_DATA, data), Float32.TYPE);
         this.data = data;
     }
 

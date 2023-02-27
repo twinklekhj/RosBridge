@@ -37,7 +37,10 @@ public class Header extends RosMessage {
      */
     public Header(int seq, Time stamp, String frameID) {
         // build the JSON object
-        super(builder().put(Header.FIELD_SEQ, Primitive.fromUInt32(seq)).put(Header.FIELD_STAMP, stamp.toJSONObject()).put(Header.FIELD_FRAME_ID, frameID), Header.TYPE);
+        super(jsonBuilder()
+                .put(Header.FIELD_SEQ, Primitive.fromUInt32(seq))
+                .put(Header.FIELD_STAMP, stamp.toJSONObject())
+                .put(Header.FIELD_FRAME_ID, frameID), Header.TYPE);
         this.seq = seq;
         this.stamp = stamp;
         this.frameID = frameID;

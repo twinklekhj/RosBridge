@@ -33,7 +33,7 @@ public class UInt32MultiArray extends RosMessage {
      */
     public UInt32MultiArray(MultiArrayLayout layout, int[] data) {
         // build the JSON object
-        super(builder().put(UInt32MultiArray.FIELD_LAYOUT, layout.toJSONObject()).put(UInt32MultiArray.FIELD_DATA, builder(Arrays.toString(Primitive.fromUInt32(data)))), UInt32MultiArray.TYPE);
+        super(jsonBuilder().put(UInt32MultiArray.FIELD_LAYOUT, layout.toJSONObject()).put(UInt32MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(Primitive.fromUInt32(data)))), UInt32MultiArray.TYPE);
 
         this.layout = layout;
         // copy the array

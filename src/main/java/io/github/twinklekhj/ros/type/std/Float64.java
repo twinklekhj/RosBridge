@@ -24,7 +24,7 @@ public class Float64 extends RosMessage {
      */
     public Float64(double data) {
         // build the JSON object
-        super(builder().put(Float64.FIELD_DATA, data), Float64.TYPE);
+        super(jsonBuilder().put(Float64.FIELD_DATA, data), Float64.TYPE);
         this.data = data;
     }
 

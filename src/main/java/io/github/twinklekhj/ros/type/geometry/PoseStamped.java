@@ -27,7 +27,7 @@ public class PoseStamped extends RosMessage {
      * @param pose   The pose value of the pose.
      */
     public PoseStamped(Header header, Pose pose) {
-        super(builder().put(PoseStamped.FIELD_HEADER, header.toJSONObject()).put(PoseStamped.FIELD_POSE, pose.toJSONObject()), PoseStamped.TYPE);
+        super(jsonBuilder().put(PoseStamped.FIELD_HEADER, header.toJSONObject()).put(PoseStamped.FIELD_POSE, pose.toJSONObject()), PoseStamped.TYPE);
         this.header = header;
         this.pose = pose;
     }

@@ -26,7 +26,7 @@ public class UInt32 extends RosMessage {
      */
     public UInt32(int data) {
         // build the JSON object
-        super(builder().put(UInt32.FIELD_DATA, Primitive.fromUInt32(data)), UInt32.TYPE);
+        super(jsonBuilder().put(UInt32.FIELD_DATA, Primitive.fromUInt32(data)), UInt32.TYPE);
         this.data = data;
     }
 

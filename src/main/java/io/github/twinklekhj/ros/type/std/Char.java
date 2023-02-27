@@ -26,7 +26,7 @@ public class Char extends RosMessage {
      */
     public Char(byte data) {
         // build the JSON object
-        super(builder().put(Char.FIELD_DATA, Primitive.fromUInt8(data)), Char.TYPE);
+        super(jsonBuilder().put(Char.FIELD_DATA, Primitive.fromUInt8(data)), Char.TYPE);
         this.data = data;
     }
 

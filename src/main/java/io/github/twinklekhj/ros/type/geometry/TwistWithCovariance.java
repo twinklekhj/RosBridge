@@ -49,8 +49,8 @@ public class TwistWithCovariance extends RosMessage {
      * @param covariance The covariance matrix as an array.
      */
     public TwistWithCovariance(Twist twist, double[] covariance) {
-        super(builder().put(TwistWithCovariance.FIELD_TWIST, twist.toJSONObject()).put(TwistWithCovariance.FIELD_COVARIANCE,
-                builder(new StringReader((covariance.length == TwistWithCovariance.COVARIANCE_SIZE) ? Arrays.toString(covariance) : Arrays.toString(new double[TwistWithCovariance.COVARIANCE_SIZE])))), TwistWithCovariance.TYPE);
+        super(jsonBuilder().put(TwistWithCovariance.FIELD_TWIST, twist.toJSONObject()).put(TwistWithCovariance.FIELD_COVARIANCE,
+                jsonBuilder(new StringReader((covariance.length == TwistWithCovariance.COVARIANCE_SIZE) ? Arrays.toString(covariance) : Arrays.toString(new double[TwistWithCovariance.COVARIANCE_SIZE])))), TwistWithCovariance.TYPE);
 
         this.twist = twist;
         // create the arrays

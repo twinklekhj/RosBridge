@@ -24,8 +24,7 @@ public class Int8 extends RosMessage {
      */
     public Int8(byte data) {
         // build the JSON object
-        super(builder().put(Int8.FIELD_DATA, data),
-                Int8.TYPE);
+        super(jsonBuilder().put(Int8.FIELD_DATA, data), Int8.TYPE);
         this.data = data;
     }
 
@@ -39,8 +38,7 @@ public class Int8 extends RosMessage {
 
     public static Int8 fromJSONObject(JSONObject jsonObject) {
         // check the fields
-        byte data = jsonObject.has(Int8.FIELD_DATA) ? (byte) jsonObject
-                .getInt(Int8.FIELD_DATA) : 0;
+        byte data = jsonObject.has(Int8.FIELD_DATA) ? (byte) jsonObject.getInt(Int8.FIELD_DATA) : 0;
         return new Int8(data);
     }
 

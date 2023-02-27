@@ -23,7 +23,7 @@ public class Int16 extends RosMessage {
      * @param data The data value of the short.
      */
     public Int16(short data) {
-        super(builder().put(Int16.FIELD_DATA, data), Int16.TYPE);
+        super(jsonBuilder().put(Int16.FIELD_DATA, data), Int16.TYPE);
         this.data = data;
     }
 

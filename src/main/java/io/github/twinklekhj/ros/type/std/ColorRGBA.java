@@ -43,7 +43,7 @@ public class ColorRGBA extends RosMessage {
      */
     public ColorRGBA(float r, float g, float b, float a) {
         // build the JSON object
-        super(builder().put(ColorRGBA.FIELD_R, r).put(ColorRGBA.FIELD_G, g).put(ColorRGBA.FIELD_B, b).put(ColorRGBA.FIELD_A, a), ColorRGBA.TYPE);
+        super(jsonBuilder().put(ColorRGBA.FIELD_R, r).put(ColorRGBA.FIELD_G, g).put(ColorRGBA.FIELD_B, b).put(ColorRGBA.FIELD_A, a), ColorRGBA.TYPE);
         this.r = r;
         this.g = g;
         this.b = b;

@@ -26,7 +26,7 @@ public class Point32 extends RosMessage {
      */
     public Point32(float x, float y, float z) {
         // build the JSON object
-        super(builder().put(Point32.FIELD_X, x).put(Point32.FIELD_Y, y).put(Point32.FIELD_Z, z), Point32.TYPE);
+        super(jsonBuilder().put(Point32.FIELD_X, x).put(Point32.FIELD_Y, y).put(Point32.FIELD_Z, z), Point32.TYPE);
         this.x = x;
         this.y = y;
         this.z = z;

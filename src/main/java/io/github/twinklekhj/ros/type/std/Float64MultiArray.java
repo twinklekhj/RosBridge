@@ -31,7 +31,9 @@ public class Float64MultiArray extends RosMessage {
      */
     public Float64MultiArray(MultiArrayLayout layout, double[] data) {
         // build the JSON object
-        super(builder().put(Float64MultiArray.FIELD_LAYOUT, layout.toJSONObject()).put(Float64MultiArray.FIELD_DATA, builder(Arrays.toString(data))), Float64MultiArray.TYPE);
+        super(jsonBuilder()
+                .put(Float64MultiArray.FIELD_LAYOUT, layout.toJSONObject())
+                .put(Float64MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data))), Float64MultiArray.TYPE);
         this.layout = layout;
         // copy the array
         this.data = new double[data.length];

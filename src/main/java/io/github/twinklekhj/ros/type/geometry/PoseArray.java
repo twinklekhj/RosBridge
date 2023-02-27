@@ -29,7 +29,7 @@ public class PoseArray extends RosMessage {
      * @param poses  The poses of the pose array.
      */
     public PoseArray(Header header, Pose[] poses) {
-        super(builder().put(PoseArray.FIELD_HEADER, header.toJSONObject()).put(PoseArray.FIELD_POSES, builder(Arrays.deepToString(poses))), PoseArray.TYPE);
+        super(jsonBuilder().put(PoseArray.FIELD_HEADER, header.toJSONObject()).put(PoseArray.FIELD_POSES, jsonBuilder(Arrays.deepToString(poses))), PoseArray.TYPE);
 
         this.header = header;
         this.poses = new Pose[poses.length];

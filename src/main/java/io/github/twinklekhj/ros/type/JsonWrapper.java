@@ -2,6 +2,8 @@ package io.github.twinklekhj.ros.type;
 
 import org.json.JSONObject;
 
+import java.util.Map;
+
 public abstract class JsonWrapper {
     public static final String EMPTY_JSON = "{}";
 
@@ -17,16 +19,21 @@ public abstract class JsonWrapper {
         this.jsonObject = new JSONObject(jsonString);
     }
 
+    public JsonWrapper(Map<String, Object> jsonMap) {
+        this.jsonObject = new JSONObject(jsonMap);
+        this.jsonString = this.jsonObject.toString();
+    }
+
     public JsonWrapper(JSONObject jsonObject) {
         this.jsonObject = jsonObject;
         this.jsonString = this.jsonObject.toString();
     }
 
-    protected static JSONObject builder() {
+    protected static JSONObject jsonBuilder() {
         return new JSONObject();
     }
 
-    protected static JSONObject builder(Object obj) {
+    protected static JSONObject jsonBuilder(Object obj) {
         return new JSONObject(obj);
     }
 

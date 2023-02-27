@@ -28,7 +28,7 @@ public class Polygon extends RosMessage {
      * @param points The points of the polygon.
      */
     public Polygon(Point32[] points) {
-        super(builder().put(Polygon.FIELD_POINTS, builder(new StringReader(Arrays.deepToString(points)))), Polygon.TYPE);
+        super(jsonBuilder().put(Polygon.FIELD_POINTS, jsonBuilder(new StringReader(Arrays.deepToString(points)))), Polygon.TYPE);
 
         this.points = new Point32[points.length];
         System.arraycopy(points, 0, this.points, 0, points.length);

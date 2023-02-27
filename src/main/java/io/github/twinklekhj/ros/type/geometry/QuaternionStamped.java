@@ -30,7 +30,7 @@ public class QuaternionStamped extends RosMessage {
      */
     public QuaternionStamped(Header header, Quaternion quaternion) {
         // build the JSON object
-        super(builder().put(QuaternionStamped.FIELD_HEADER, header.toJSONObject()).put(QuaternionStamped.FIELD_QUATERNION, quaternion.toJSONObject()), QuaternionStamped.TYPE);
+        super(jsonBuilder().put(QuaternionStamped.FIELD_HEADER, header.toJSONObject()).put(QuaternionStamped.FIELD_QUATERNION, quaternion.toJSONObject()), QuaternionStamped.TYPE);
         this.header = header;
         this.quaternion = quaternion;
     }

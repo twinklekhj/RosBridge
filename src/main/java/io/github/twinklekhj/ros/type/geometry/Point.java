@@ -26,7 +26,7 @@ public class Point extends RosMessage {
      */
     public Point(double x, double y, double z) {
         // build the JSON object
-        super(builder().put(Point.FIELD_X, x).put(Point.FIELD_Y, y).put(Point.FIELD_Z, z), Point.TYPE);
+        super(jsonBuilder().put(Point.FIELD_X, x).put(Point.FIELD_Y, y).put(Point.FIELD_Z, z), Point.TYPE);
         this.x = x;
         this.y = y;
         this.z = z;

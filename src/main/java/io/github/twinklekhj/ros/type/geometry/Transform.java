@@ -28,7 +28,7 @@ public class Transform extends RosMessage {
      */
     public Transform(Vector3 translation, Quaternion rotation) {
         // build the JSON object
-        super(builder().put(Transform.FIELD_TRANSLATION, translation.toJSONObject()).put(Transform.FIELD_ROTATION, rotation.toJSONObject()), Transform.TYPE);
+        super(jsonBuilder().put(Transform.FIELD_TRANSLATION, translation.toJSONObject()).put(Transform.FIELD_ROTATION, rotation.toJSONObject()), Transform.TYPE);
         this.translation = translation;
         this.rotation = rotation;
     }

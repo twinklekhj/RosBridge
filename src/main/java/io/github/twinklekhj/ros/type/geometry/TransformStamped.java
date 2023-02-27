@@ -32,7 +32,7 @@ public class TransformStamped extends RosMessage {
      */
     public TransformStamped(Header header, String childFrameID, Transform transform) {
         // build the JSON object
-        super(builder().put(TransformStamped.FIELD_HEADER, header.toJSONObject()).put(TransformStamped.FIELD_CHILD_FRAME_ID, childFrameID).put(TransformStamped.FIELD_TRANSFORM, transform.toJSONObject()), TransformStamped.TYPE);
+        super(jsonBuilder().put(TransformStamped.FIELD_HEADER, header.toJSONObject()).put(TransformStamped.FIELD_CHILD_FRAME_ID, childFrameID).put(TransformStamped.FIELD_TRANSFORM, transform.toJSONObject()), TransformStamped.TYPE);
 
         this.header = header;
         this.childFrameID = childFrameID;

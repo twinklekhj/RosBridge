@@ -1,8 +1,8 @@
 package io.github.twinklekhj.ros.type.std;
 
-import org.json.JSONObject;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.primitives.Primitive;
+import org.json.JSONObject;
 
 public class MultiArrayDimension extends RosMessage {
     public static final String FIELD_LABEL = "label";
@@ -32,14 +32,10 @@ public class MultiArrayDimension extends RosMessage {
      */
     public MultiArrayDimension(String label, int size, int stride) {
         // build the JSON object
-        super(
-                builder()
-                        .put(MultiArrayDimension.FIELD_LABEL, label)
-                        .put(MultiArrayDimension.FIELD_SIZE,
-                                Primitive.fromUInt32(size))
-                        .put(MultiArrayDimension.FIELD_STRIDE,
-                                Primitive.fromUInt32(stride)),
-                MultiArrayDimension.TYPE);
+        super(jsonBuilder()
+                .put(MultiArrayDimension.FIELD_LABEL, label)
+                .put(MultiArrayDimension.FIELD_SIZE, Primitive.fromUInt32(size))
+                .put(MultiArrayDimension.FIELD_STRIDE, Primitive.fromUInt32(stride)), MultiArrayDimension.TYPE);
         this.label = label;
         this.size = size;
         this.stride = stride;

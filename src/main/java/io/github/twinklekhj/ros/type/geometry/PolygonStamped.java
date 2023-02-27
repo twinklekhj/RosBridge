@@ -26,7 +26,7 @@ public class PolygonStamped extends RosMessage {
      */
     public PolygonStamped(Header header, Polygon polygon) {
         // build the JSON object
-        super(builder().put(PolygonStamped.FIELD_HEADER, header.toJSONObject()).put(PolygonStamped.FIELD_POLYGON, polygon.toJSONObject()), PolygonStamped.TYPE);
+        super(jsonBuilder().put(PolygonStamped.FIELD_HEADER, header.toJSONObject()).put(PolygonStamped.FIELD_POLYGON, polygon.toJSONObject()), PolygonStamped.TYPE);
         this.header = header;
         this.polygon = polygon;
     }

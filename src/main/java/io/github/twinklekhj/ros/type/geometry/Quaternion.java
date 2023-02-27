@@ -28,7 +28,7 @@ public class Quaternion extends RosMessage {
      */
     public Quaternion(double x, double y, double z, double w) {
         // build the JSON object
-        super(builder().put(Quaternion.FIELD_X, x).put(Quaternion.FIELD_Y, y).put(Quaternion.FIELD_Z, z).put(Quaternion.FIELD_W, w), Quaternion.TYPE);
+        super(jsonBuilder().put(Quaternion.FIELD_X, x).put(Quaternion.FIELD_Y, y).put(Quaternion.FIELD_Z, z).put(Quaternion.FIELD_W, w), Quaternion.TYPE);
         this.x = x;
         this.y = y;
         this.z = z;

@@ -33,9 +33,9 @@ public class UInt16MultiArray extends RosMessage {
      */
     public UInt16MultiArray(MultiArrayLayout layout, short[] data) {
         // build the JSON object
-        super(builder()
+        super(jsonBuilder()
                         .put(UInt16MultiArray.FIELD_LAYOUT, layout.toJSONObject())
-                        .put(UInt16MultiArray.FIELD_DATA, builder(Arrays.toString(Primitive.fromUInt16(data))))
+                        .put(UInt16MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(Primitive.fromUInt16(data))))
                 , UInt16MultiArray.TYPE);
 
         this.layout = layout;

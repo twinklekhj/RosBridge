@@ -23,7 +23,7 @@ public class UInt8 extends RosMessage {
      */
     public UInt8(byte data) {
         // build the JSON object
-        super(builder().put(UInt8.FIELD_DATA, Primitive.fromUInt8(data)), UInt8.TYPE);
+        super(jsonBuilder().put(UInt8.FIELD_DATA, Primitive.fromUInt8(data)), UInt8.TYPE);
         this.data = data;
     }
 

@@ -24,7 +24,7 @@ public class Twist extends RosMessage {
      */
     public Twist(Vector3 linear, Vector3 angular) {
         // build the JSON object
-        super(builder().put(Twist.FIELD_LINEAR, linear.toJSONObject()).put(Twist.FIELD_ANGULAR, angular.toJSONObject()), Twist.TYPE);
+        super(jsonBuilder().put(Twist.FIELD_LINEAR, linear.toJSONObject()).put(Twist.FIELD_ANGULAR, angular.toJSONObject()), Twist.TYPE);
         this.linear = linear;
         this.angular = angular;
     }

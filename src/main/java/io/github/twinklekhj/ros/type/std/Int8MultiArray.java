@@ -31,7 +31,9 @@ public class Int8MultiArray extends RosMessage {
      */
     public Int8MultiArray(MultiArrayLayout layout, byte[] data) {
         // build the JSON object
-        super(builder().put(Int8MultiArray.FIELD_LAYOUT, layout.toJSONObject()).put(Int8MultiArray.FIELD_DATA, builder(Arrays.toString(data))), Int8MultiArray.TYPE);
+        super(jsonBuilder()
+                .put(Int8MultiArray.FIELD_LAYOUT, layout.toJSONObject())
+                .put(Int8MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data))), Int8MultiArray.TYPE);
         this.layout = layout;
         // copy the array
         this.data = new byte[data.length];

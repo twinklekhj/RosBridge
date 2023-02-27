@@ -28,7 +28,7 @@ public class Vector3 extends RosMessage {
      */
     public Vector3(double x, double y, double z) {
         // build the JSON object
-        super(builder().put(Vector3.FIELD_X, x).put(Vector3.FIELD_Y, y).put(Vector3.FIELD_Z, z), Vector3.TYPE);
+        super(jsonBuilder().put(Vector3.FIELD_X, x).put(Vector3.FIELD_Y, y).put(Vector3.FIELD_Z, z), Vector3.TYPE);
         this.x = x;
         this.y = y;
         this.z = z;

@@ -26,7 +26,7 @@ public class Pose2D extends RosMessage {
      */
     public Pose2D(double x, double y, double theta) {
         // build the JSON object
-        super(builder().put(Pose2D.FIELD_X, x).put(Pose2D.FIELD_Y, y).put(Pose2D.FIELD_THETA, theta), Pose2D.TYPE);
+        super(jsonBuilder().put(Pose2D.FIELD_X, x).put(Pose2D.FIELD_Y, y).put(Pose2D.FIELD_THETA, theta), Pose2D.TYPE);
         this.x = x;
         this.y = y;
         this.theta = theta;

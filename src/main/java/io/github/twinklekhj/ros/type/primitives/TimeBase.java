@@ -91,7 +91,7 @@ public abstract class TimeBase<T extends Primitive> extends Primitive implements
      */
     public TimeBase(int secs, int nsecs, String type) {
         // build the JSON object
-        super(builder().put(Duration.FIELD_SECS, secs).put(Duration.FIELD_NSECS, nsecs), type);
+        super(jsonBuilder().put(Duration.FIELD_SECS, secs).put(Duration.FIELD_NSECS, nsecs), type);
         this.secs = secs;
         this.nsecs = nsecs;
     }

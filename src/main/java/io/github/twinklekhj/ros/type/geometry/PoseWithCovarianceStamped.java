@@ -27,7 +27,7 @@ public class PoseWithCovarianceStamped extends RosMessage {
      */
     public PoseWithCovarianceStamped(Header header, PoseWithCovariance pose) {
         // build the JSON object
-        super(builder().put(PoseWithCovarianceStamped.FIELD_HEADER, header.toJSONObject()).put(PoseWithCovarianceStamped.FIELD_POSE, pose.toJSONObject()), PoseWithCovarianceStamped.TYPE);
+        super(jsonBuilder().put(PoseWithCovarianceStamped.FIELD_HEADER, header.toJSONObject()).put(PoseWithCovarianceStamped.FIELD_POSE, pose.toJSONObject()), PoseWithCovarianceStamped.TYPE);
         this.header = header;
         this.pose = pose;
     }

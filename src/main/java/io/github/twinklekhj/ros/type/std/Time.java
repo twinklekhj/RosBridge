@@ -15,7 +15,7 @@ public class Time extends RosMessage {
     }
 
     public Time(Time data) {
-        super(builder().put(Time.FIELD_DATA, data.toJSONObject()), Time.TYPE);
+        super(jsonBuilder().put(Time.FIELD_DATA, data.toJSONObject()), Time.TYPE);
         this.data = data;
     }
 

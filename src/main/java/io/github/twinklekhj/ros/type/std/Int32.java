@@ -24,7 +24,7 @@ public class Int32 extends RosMessage {
      */
     public Int32(int data) {
         // build the JSON object
-        super(builder().put(Int32.FIELD_DATA, data), Int32.TYPE);
+        super(jsonBuilder().put(Int32.FIELD_DATA, data), Int32.TYPE);
         this.data = data;
     }
 

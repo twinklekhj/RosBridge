@@ -21,7 +21,7 @@ public class Duration extends RosMessage {
      */
     public Duration(Duration data) {
         // build the JSON object
-        super(builder().put(Duration.FIELD_DATA, data.toJSONObject()), Duration.TYPE);
+        super(jsonBuilder().put(Duration.FIELD_DATA, data.toJSONObject()), Duration.TYPE);
         this.data = data;
     }
 

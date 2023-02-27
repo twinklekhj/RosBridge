@@ -28,7 +28,7 @@ public class Pose extends RosMessage {
      */
     public Pose(Point position, Quaternion orientation) {
         // build the JSON object
-        super(builder().put(Pose.FIELD_POSITION, position.toJSONObject()).put(Pose.FIELD_ORIENTATION, orientation.toJSONObject()), Pose.TYPE);
+        super(jsonBuilder().put(Pose.FIELD_POSITION, position.toJSONObject()).put(Pose.FIELD_ORIENTATION, orientation.toJSONObject()), Pose.TYPE);
         this.position = position;
         this.orientation = orientation;
     }

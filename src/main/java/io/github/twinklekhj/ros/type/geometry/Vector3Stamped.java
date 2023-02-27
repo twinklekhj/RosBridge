@@ -28,7 +28,7 @@ public class Vector3Stamped extends RosMessage {
      */
     public Vector3Stamped(Header header, Vector3 vector) {
         // build the JSON object
-        super(builder().put(Vector3Stamped.FIELD_HEADER, header.toJSONObject()).put(Vector3Stamped.FIELD_VECTOR, vector.toJSONObject()), Vector3Stamped.TYPE);
+        super(jsonBuilder().put(Vector3Stamped.FIELD_HEADER, header.toJSONObject()).put(Vector3Stamped.FIELD_VECTOR, vector.toJSONObject()), Vector3Stamped.TYPE);
         this.header = header;
         this.vector = vector;
     }

@@ -29,7 +29,7 @@ public class TwistStamped extends RosMessage {
      */
     public TwistStamped(Header header, Twist twist) {
         // build the JSON object
-        super(builder().put(TwistStamped.FIELD_HEADER, header.toJSONObject()).put(TwistStamped.FIELD_TWIST, twist.toJSONObject()), TwistStamped.TYPE);
+        super(jsonBuilder().put(TwistStamped.FIELD_HEADER, header.toJSONObject()).put(TwistStamped.FIELD_TWIST, twist.toJSONObject()), TwistStamped.TYPE);
         this.header = header;
         this.twist = twist;
     }

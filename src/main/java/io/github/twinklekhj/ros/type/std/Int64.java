@@ -22,7 +22,7 @@ public class Int64 extends RosMessage {
      * @param data The data value of the long.
      */
     public Int64(long data) {
-        super(builder().put(Int64.FIELD_DATA, data), Int64.TYPE);
+        super(jsonBuilder().put(Int64.FIELD_DATA, data), Int64.TYPE);
         this.data = data;
     }
 

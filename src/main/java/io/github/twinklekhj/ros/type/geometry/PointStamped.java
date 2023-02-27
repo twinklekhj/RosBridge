@@ -38,7 +38,7 @@ public class PointStamped extends RosMessage {
      */
     public PointStamped(Header header, Point point) {
         // build the JSON object
-        super(builder().put(PointStamped.FIELD_HEADER, header.toJSONObject()).put(PointStamped.FIELD_POINT, point.toJSONObject()), PointStamped.TYPE);
+        super(jsonBuilder().put(PointStamped.FIELD_HEADER, header.toJSONObject()).put(PointStamped.FIELD_POINT, point.toJSONObject()), PointStamped.TYPE);
         this.header = header;
         this.point = point;
     }

@@ -34,7 +34,9 @@ public class MultiArrayLayout extends RosMessage {
      */
     public MultiArrayLayout(MultiArrayDimension[] dim, int dataOffset) {
         // build the JSON object
-        super(builder().put(MultiArrayLayout.FIELD_DIM, builder(Arrays.deepToString(dim))).put(MultiArrayLayout.FIELD_DATA_OFFSET, Primitive.fromUInt32(dataOffset)), MultiArrayLayout.TYPE);
+        super(jsonBuilder()
+                .put(MultiArrayLayout.FIELD_DIM, jsonBuilder(Arrays.deepToString(dim)))
+                .put(MultiArrayLayout.FIELD_DATA_OFFSET, Primitive.fromUInt32(dataOffset)), MultiArrayLayout.TYPE);
 
         // copy the array
         this.dim = new MultiArrayDimension[dim.length];

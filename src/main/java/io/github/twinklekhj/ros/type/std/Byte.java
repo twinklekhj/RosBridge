@@ -26,7 +26,7 @@ public class Byte extends RosMessage {
      * @param data The data value of the byte.
      */
     public Byte(byte data) {
-        super(builder().put(Byte.FIELD_DATA, data), Byte.TYPE);
+        super(jsonBuilder().put(Byte.FIELD_DATA, data), Byte.TYPE);
         this.data = data;
     }
 

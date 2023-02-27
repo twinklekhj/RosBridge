@@ -1,10 +1,10 @@
 package io.github.twinklekhj.ros.type.std;
 
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.primitives.Primitive;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 
@@ -34,9 +34,9 @@ public class UInt8MultiArray extends RosMessage {
      */
     public UInt8MultiArray(MultiArrayLayout layout, byte[] data) {
         // build the JSON object
-        super(builder()
+        super(jsonBuilder()
                         .put(UInt8MultiArray.FIELD_LAYOUT, layout.toJSONObject())
-                        .put(UInt8MultiArray.FIELD_DATA, builder(Arrays.toString(Primitive.fromUInt8(data))))
+                        .put(UInt8MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(Primitive.fromUInt8(data))))
                 , UInt8MultiArray.TYPE);
 
         this.layout = layout;

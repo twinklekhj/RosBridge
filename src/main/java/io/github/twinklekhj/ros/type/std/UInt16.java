@@ -26,7 +26,7 @@ public class UInt16 extends RosMessage {
      */
     public UInt16(short data) {
         // build the JSON object
-        super(builder().put(UInt16.FIELD_DATA, Primitive.fromUInt16(data)), UInt16.TYPE);
+        super(jsonBuilder().put(UInt16.FIELD_DATA, Primitive.fromUInt16(data)), UInt16.TYPE);
         this.data = data;
     }
 

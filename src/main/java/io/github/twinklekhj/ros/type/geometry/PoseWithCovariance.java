@@ -52,7 +52,7 @@ public class PoseWithCovariance extends RosMessage {
      */
     public PoseWithCovariance(Pose pose, double[] covariance) {
         // build the JSON object
-        super(builder().put(PoseWithCovariance.FIELD_POSE, pose.toJSONObject()).put(PoseWithCovariance.FIELD_COVARIANCE, builder(
+        super(jsonBuilder().put(PoseWithCovariance.FIELD_POSE, pose.toJSONObject()).put(PoseWithCovariance.FIELD_COVARIANCE, jsonBuilder(
                 new StringReader((covariance.length == PoseWithCovariance.COVARIANCE_SIZE) ? Arrays.toString(covariance) : Arrays.toString(new double[PoseWithCovariance.COVARIANCE_SIZE])))), PoseWithCovariance.TYPE);
 
         this.pose = pose;

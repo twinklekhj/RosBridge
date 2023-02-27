@@ -31,7 +31,9 @@ public class Int16MultiArray extends RosMessage {
      */
     public Int16MultiArray(MultiArrayLayout layout, short[] data) {
         // build the JSON object
-        super(builder().put(Int16MultiArray.FIELD_LAYOUT, layout.toJSONObject()).put(Int16MultiArray.FIELD_DATA, builder(Arrays.toString(data))), Int16MultiArray.TYPE);
+        super(jsonBuilder()
+                .put(Int16MultiArray.FIELD_LAYOUT, layout.toJSONObject())
+                .put(Int16MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data))), Int16MultiArray.TYPE);
         this.layout = layout;
         // copy the array
         this.data = new short[data.length];

@@ -31,7 +31,9 @@ public class Int64MultiArray extends RosMessage {
      */
     public Int64MultiArray(MultiArrayLayout layout, long[] data) {
         // build the JSON object
-        super(builder().put(Int64MultiArray.FIELD_LAYOUT, layout.toJSONObject()).put(Int64MultiArray.FIELD_DATA, builder(Arrays.toString(data))), Int64MultiArray.TYPE);
+        super(jsonBuilder()
+                .put(Int64MultiArray.FIELD_LAYOUT, layout.toJSONObject())
+                .put(Int64MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data))), Int64MultiArray.TYPE);
         this.layout = layout;
         // copy the array
         this.data = new long[data.length];
