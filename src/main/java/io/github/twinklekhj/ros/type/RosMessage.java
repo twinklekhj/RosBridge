@@ -2,6 +2,8 @@ package io.github.twinklekhj.ros.type;
 
 import org.json.JSONObject;
 
+import java.util.Map;
+
 public class RosMessage extends JsonWrapper {
     public static final String EMPTY_MESSAGE = EMPTY_JSON;
     private String type;
@@ -16,6 +18,11 @@ public class RosMessage extends JsonWrapper {
 
     public RosMessage(String jsonString, String type) {
         super(jsonString);
+        this.type = type;
+    }
+
+    public RosMessage(Map<String, Object> jsonMap, String type) {
+        super(jsonMap);
         this.type = type;
     }
 

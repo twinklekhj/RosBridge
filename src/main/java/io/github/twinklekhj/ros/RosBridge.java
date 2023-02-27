@@ -187,7 +187,7 @@ public class RosBridge {
      */
     @OnWebSocketConnect
     public void onConnect(Session session) {
-        logger.info("Got connect for ros: {}", session);
+        logger.info("WebSocket Connected! Session: {}", session);
 
         this.session = session;
         this.hasConnected = true;
@@ -211,7 +211,7 @@ public class RosBridge {
 
     @OnWebSocketError
     public void onError(Session session, Throwable e) {
-        logger.error("WebSocket Error! msg: {}", e.getMessage());
+        logger.warn("WebSocket Error! msg: {}", e.getMessage());
 
         synchronized (this) {
             this.hasConnectError = true;
@@ -515,6 +515,26 @@ public class RosBridge {
 
         public Connection build() {
             return new Connection(this.host, this.port, this.wait, this.printSendMsg, this.printReceivedMsg, this.maxIdleTimeout, this.connectTimeout, this.stopTimeout);
+        }
+
+        public void setWait(boolean wait) {
+            this.wait = wait;
+        }
+
+        public void setMaxIdleTimeout(long maxIdleTimeout) {
+            this.maxIdleTimeout = maxIdleTimeout;
+        }
+
+        public void setConnectTimeout(long connectTimeout) {
+            this.connectTimeout = connectTimeout;
+        }
+
+        public void setPrintSendMsg(boolean printSendMsg) {
+            this.printSendMsg = printSendMsg;
+        }
+
+        public void setPrintReceivedMsg(boolean printReceivedMsg) {
+            this.printReceivedMsg = printReceivedMsg;
         }
     }
 
