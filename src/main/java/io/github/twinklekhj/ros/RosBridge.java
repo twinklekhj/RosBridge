@@ -399,7 +399,6 @@ public class RosBridge {
 
         if (this.topicListeners.containsKey(topic)) {
             this.topicListeners.get(topic).addDelegate(delegate);
-
             return;
         }
 
@@ -445,12 +444,12 @@ public class RosBridge {
     /**
      * [Service] Service 요청
      *
-     * @param service  - 서비스명
-     * @param args     - 요청변수
-     * @param delegate - 서비스 응답 처리 함수
+     * @param service  서비스명
+     * @param args     요청변수
+     * @param delegate 서비스 응답 처리 함수
      * @return 서비스 전송 성공여부
      */
-    public boolean callService(String service, List<Object> args, RosServiceDelegate delegate) {
+    public boolean callService(String service, List<?> args, RosServiceDelegate delegate) {
         RosService op = RosService.builder(service).args(args).build();
         return callService(op, delegate);
     }
@@ -458,8 +457,8 @@ public class RosBridge {
     /**
      * [Service] Service 요청
      *
-     * @param op       - 요청할 서비스 정보 객체
-     * @param delegate - 서비스 응답 처리 함수
+     * @param op       요청할 서비스 정보 객체
+     * @param delegate 서비스 응답 처리 함수
      * @return 서비스 전송 성공여부
      */
     public boolean callService(RosService op, RosServiceDelegate delegate) {
@@ -488,6 +487,47 @@ public class RosBridge {
             this.fragmentManagers.remove(id);
             onMessage(fullMsg);
         }
+    }
+
+    /**
+     * [RosBridge] ROS Topic 목록 조회
+     *
+     * @param delegate 서비스 응답 처리 함수
+     */
+    public void getTopics(RosServiceDelegate delegate) {
+        RosService service = RosService.builder("/rosapi/topics").build();
+        callService(service, delegate);
+    }
+
+    /**
+     * [RosBridge] ROS Service 목록 조회
+     *
+     * @param delegate 응답 처리 함수
+     */
+    public void getServices(RosServiceDelegate delegate) {
+        RosService service = RosService.builder("/rosapi/services").build();
+        callService(service, delegate);
+    }
+
+    /**
+     * [RosBridge] ROS Node 목록 조회
+     *
+     * @param delegate 응답 처리 함수
+     */
+    public void getNodes(RosServiceDelegate delegate) {
+        RosService service = RosService.builder("/rosapi/nodes").build();
+        callService(service, delegate);
+    }
+
+    /**
+     * [RosBridge] ROS Node 상세 정보 조회
+     *
+     * @param node     찾을 노드명
+     * @param delegate 서비스 응답 처리 함수
+     */
+    public void getNodeDetails(String node, RosServiceDelegate delegate) {
+        RosService service = RosService.builder("/rosapi/node_details").args(node).build();
+        callService(service, delegate);
     }
 
     @Builder

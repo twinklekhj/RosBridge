@@ -132,4 +132,45 @@ public class RosBridgeTest {
         bridge.awaitClose(3000, TimeUnit.MILLISECONDS);
         Assertions.assertEquals(0, bridge.getLatchCount(), "ROS Service 테스트 실패");
     }
+
+    @Test
+    @DisplayName("ROS Topic 목록 조회")
+    public void getTopics(){
+        bridge.getTopics(response -> {
+            logger.info("values: {}", response.getValues());
+        });
+        
+        bridge.awaitClose(3000, TimeUnit.MILLISECONDS);
+    }
+
+    @Test
+    @DisplayName("ROS Service 목록 조회")
+    public void getServices(){
+        bridge.getServices(response -> {
+            logger.info("values: {}", response.getValues());
+        });
+
+        bridge.awaitClose(3000, TimeUnit.MILLISECONDS);
+    }
+
+    @Test
+    @DisplayName("ROS Node 목록 조회")
+    public void getNodes(){
+        bridge.getNodes(response -> {
+            logger.info("values: {}", response.getValues());
+        });
+
+        bridge.awaitClose(3000, TimeUnit.MILLISECONDS);
+    }
+
+    @Test
+    @DisplayName("ROS Node 상세 정보 조회")
+    public void getNodeDetails(){
+        String node = "/rosapi";
+        bridge.getNodeDetails(node, response -> {
+            logger.info("response: {}", response);
+        });
+
+        bridge.awaitClose(3000, TimeUnit.MILLISECONDS);
+    }
 }
