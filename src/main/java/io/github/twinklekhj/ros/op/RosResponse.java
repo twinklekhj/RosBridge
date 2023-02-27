@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.NonNull;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Builder
@@ -25,17 +26,30 @@ public class RosResponse implements RosOperation {
         return builder().service(service).result(result);
     }
 
-    public String getId() {
-        return id;
-    }
-
     public String getService() {
         return service;
     }
 
+    public boolean getResult() {
+        return result;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public List<?> getValues() {
+        return values;
+    }
+
     @Override
     public String toString() {
-        return new JSONObject().put("op", this.op.code).put("service", this.service).put("values", this.values).put("result", this.result).put("id", this.id).toString();
+        return new JSONObject()
+                .put("op", this.op.code)
+                .put("service", this.service)
+                .put("values", Arrays.toString(this.values.toArray()))
+                .put("result", this.result)
+                .put("id", this.id).toString();
     }
 
     @Override

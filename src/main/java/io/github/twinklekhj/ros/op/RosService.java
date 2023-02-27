@@ -5,7 +5,10 @@ import lombok.Builder;
 import lombok.NonNull;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Builder
 public class RosService implements RosOperation {
@@ -31,6 +34,20 @@ public class RosService implements RosOperation {
     public static RosServiceBuilder builder(String service, List<?> args) {
         return builder().service(service).args(args);
     }
+    public static class RosServiceBuilder {
+        public RosServiceBuilder args(List<?> args) {
+            this.args = args;
+            return this;
+        }
+
+        public RosServiceBuilder args(String ...arg) {
+            List<String> args = new ArrayList<>();
+            Collections.addAll(args, arg);
+            this.args(args);
+
+            return this;
+        }
+    }
 
     public String getId() {
         return id;
@@ -44,7 +61,7 @@ public class RosService implements RosOperation {
     public String toString() {
         JSONObject json = new JSONObject().put("op", this.op.code).put("service", this.service).put("id", id);
 
-        if (!this.args.isEmpty()) {
+        if (this.args != null && !this.args.isEmpty()) {
             json.put("args", this.args);
         }
         if (this.compression != CompressionType.NONE) {
