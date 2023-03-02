@@ -46,6 +46,7 @@ public class RosBridge {
 
     protected boolean printSendMsg = false;
     protected boolean printReceivedMsg = false;
+    protected boolean printStackTrace = false;
 
     private RosBridge() {
         this.closeLatch = new CountDownLatch(1);
@@ -60,10 +61,7 @@ public class RosBridge {
      * @return RosBridge 객체
      */
     public static RosBridge createConnection(String host, String port, boolean waitForConnection) {
-        RosBridge bridge = new RosBridge();
-        bridge.connect(Connection.builder(host, port, waitForConnection).build());
-
-        return bridge;
+        return createConnection(Connection.builder(host, port, waitForConnection).build());
     }
 
     /**
@@ -75,6 +73,9 @@ public class RosBridge {
     public static RosBridge createConnection(Connection connection) {
         RosBridge bridge = new RosBridge();
         bridge.connect(connection);
+        bridge.enablePrintMsgSend(connection.printSendMsg);
+        bridge.enablePrintMsgReceived(connection.printReceivedMsg);
+        bridge.enablePrintStackTrace(connection.printStackTrace);
 
         return bridge;
     }
@@ -95,6 +96,15 @@ public class RosBridge {
      */
     public void enablePrintMsgReceived(boolean flag) {
         this.printReceivedMsg = flag;
+    }
+
+    /**
+     * 에러 발생시 Stack Trace 출력여부
+     * 
+     * @param flag 에러 출력여부
+     */
+    public void enablePrintStackTrace(boolean flag) {
+        this.printStackTrace = flag;
     }
 
     /**
@@ -131,8 +141,9 @@ public class RosBridge {
             }
         } catch (Exception e) {
             logger.error("Error! Message: {}", e.getMessage());
-
-            e.printStackTrace();
+            if(connection.printStackTrace){
+                e.printStackTrace();
+            }
         }
     }
 
@@ -149,7 +160,10 @@ public class RosBridge {
                 try {
                     wait();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    logger.error("Error! Message: {}", e.getMessage());
+                    if(this.printStackTrace){
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -168,6 +182,10 @@ public class RosBridge {
         try {
             return this.closeLatch.await(duration, unit);
         } catch (InterruptedException e) {
+            logger.error("Error! message: {}", e.getMessage());
+            if(this.printStackTrace){
+                e.printStackTrace();
+            }
             return false;
         }
     }
@@ -212,6 +230,9 @@ public class RosBridge {
     @OnWebSocketError
     public void onError(Session session, Throwable e) {
         logger.warn("WebSocket Error! msg: {}", e.getMessage());
+        if(this.printStackTrace){
+            e.printStackTrace();
+        }
 
         synchronized (this) {
             this.hasConnectError = true;
@@ -284,8 +305,10 @@ public class RosBridge {
                 }
             }
         } catch (IOException e) {
-            logger.error("Could not parse ROSBridge web socket message into JSON data");
-            e.printStackTrace();
+            logger.error("Error! Message: Could not parse ROSBridge web socket message into JSON data");
+            if(this.printStackTrace){
+                e.printStackTrace();
+            }
         }
     }
 
@@ -310,6 +333,9 @@ public class RosBridge {
             return true;
         } catch (Exception e) {
             logger.error("Error! Message: {}", message);
+            if(this.printStackTrace){
+                e.printStackTrace();
+            }
         }
         return false;
     }
@@ -539,6 +565,7 @@ public class RosBridge {
         private boolean wait = false;
         private boolean printSendMsg = false;
         private boolean printReceivedMsg = false;
+        private boolean printStackTrace = false;
         private long maxIdleTimeout = 0;
         private long connectTimeout = 0;
         private long stopTimeout = 0;
@@ -555,7 +582,7 @@ public class RosBridge {
         }
 
         public Connection build() {
-            return new Connection(this.host, this.port, this.wait, this.printSendMsg, this.printReceivedMsg, this.maxIdleTimeout, this.connectTimeout, this.stopTimeout);
+            return new Connection(this.host, this.port, this.wait, this.printSendMsg, this.printReceivedMsg, this.printStackTrace, this.maxIdleTimeout, this.connectTimeout, this.stopTimeout);
         }
 
         public void setWait(boolean wait) {
@@ -576,6 +603,10 @@ public class RosBridge {
 
         public void setPrintReceivedMsg(boolean printReceivedMsg) {
             this.printReceivedMsg = printReceivedMsg;
+        }
+
+        public void setPrintStackTrace(boolean printStackTrace) {
+            this.printStackTrace = printStackTrace;
         }
     }
 
