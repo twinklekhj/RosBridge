@@ -1,5 +1,6 @@
 package ros;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.github.twinklekhj.ros.RosBridge;
 import io.github.twinklekhj.ros.op.RosService;
 import io.github.twinklekhj.ros.op.RosTopic;
@@ -135,17 +136,17 @@ public class RosBridgeTest {
 
     @Test
     @DisplayName("ROS Topic 목록 조회")
-    public void getTopics(){
+    public void getTopics() {
         bridge.getTopics(response -> {
             logger.info("values: {}", response.getValues());
         });
-        
+
         bridge.awaitClose(3000, TimeUnit.MILLISECONDS);
     }
 
     @Test
     @DisplayName("ROS Service 목록 조회")
-    public void getServices(){
+    public void getServices() {
         bridge.getServices(response -> {
             logger.info("values: {}", response.getValues());
         });
@@ -155,9 +156,10 @@ public class RosBridgeTest {
 
     @Test
     @DisplayName("ROS Node 목록 조회")
-    public void getNodes(){
+    public void getNodes() {
         bridge.getNodes(response -> {
-            logger.info("values: {}", response.getValues());
+            JsonNode values = response.getValues();
+            logger.info("values: {}", values);
         });
 
         bridge.awaitClose(3000, TimeUnit.MILLISECONDS);
@@ -165,7 +167,7 @@ public class RosBridgeTest {
 
     @Test
     @DisplayName("ROS Node 상세 정보 조회")
-    public void getNodeDetails(){
+    public void getNodeDetails() {
         String node = "/rosapi";
         bridge.getNodeDetails(node, response -> {
             logger.info("response: {}", response);

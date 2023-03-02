@@ -1,12 +1,10 @@
 package io.github.twinklekhj.ros.op;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Builder;
 import lombok.NonNull;
 import org.json.JSONObject;
-
-import java.util.Arrays;
-import java.util.List;
 
 @Builder
 public class RosResponse implements RosOperation {
@@ -16,7 +14,7 @@ public class RosResponse implements RosOperation {
     @NonNull
     private final boolean result;
     private String id;
-    private List<?> values;
+    private JsonNode values;
 
     private static RosResponseBuilder builder() {
         return new RosResponseBuilder();
@@ -38,7 +36,7 @@ public class RosResponse implements RosOperation {
         return id;
     }
 
-    public List<?> getValues() {
+    public JsonNode getValues() {
         return values;
     }
 
@@ -47,7 +45,7 @@ public class RosResponse implements RosOperation {
         return new JSONObject()
                 .put("op", this.op.code)
                 .put("service", this.service)
-                .put("values", Arrays.toString(this.values.toArray()))
+                .put("values", this.values)
                 .put("result", this.result)
                 .put("id", this.id).toString();
     }

@@ -267,7 +267,8 @@ public class RosBridge {
                         break;
                     case "service_response":
                         String id = node.get("id").asText();
-                        List<?> values = node.findValues("values");
+
+                        JsonNode values = node.findValue("values");
                         boolean result = node.get("result").asBoolean();
                         String service = node.get("service").asText();
 
