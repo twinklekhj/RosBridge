@@ -8,7 +8,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 @Builder
 public class RosService implements RosOperation {
@@ -17,7 +16,7 @@ public class RosService implements RosOperation {
     @Builder.Default
     private final String id = String.format("call_service_%s", RosOperation.current());
     @NonNull
-    private final String service;
+    private final String name;
 
     private final CompressionType compression = CompressionType.NONE;
     private List<?> args;
@@ -28,38 +27,24 @@ public class RosService implements RosOperation {
     }
 
     public static RosServiceBuilder builder(String service) {
-        return builder().service(service);
+        return builder().name(service);
     }
 
     public static RosServiceBuilder builder(String service, List<?> args) {
-        return builder().service(service).args(args);
-    }
-    public static class RosServiceBuilder {
-        public RosServiceBuilder args(List<?> args) {
-            this.args = args;
-            return this;
-        }
-
-        public RosServiceBuilder args(String ...arg) {
-            List<String> args = new ArrayList<>();
-            Collections.addAll(args, arg);
-            this.args(args);
-
-            return this;
-        }
+        return builder().name(service).args(args);
     }
 
     public String getId() {
         return id;
     }
 
-    public String getService() {
-        return service;
+    public String getName() {
+        return name;
     }
 
     @Override
     public String toString() {
-        JSONObject json = new JSONObject().put("op", this.op.code).put("service", this.service).put("id", id);
+        JSONObject json = new JSONObject().put("op", this.op.code).put("service", this.name).put("id", id);
 
         if (this.args != null && !this.args.isEmpty()) {
             json.put("args", this.args);
@@ -77,5 +62,20 @@ public class RosService implements RosOperation {
     @Override
     public Type getOperation() {
         return this.op;
+    }
+
+    public static class RosServiceBuilder {
+        public RosServiceBuilder args(List<?> args) {
+            this.args = args;
+            return this;
+        }
+
+        public RosServiceBuilder args(String... arg) {
+            List<String> args = new ArrayList<>();
+            Collections.addAll(args, arg);
+            this.args(args);
+
+            return this;
+        }
     }
 }
