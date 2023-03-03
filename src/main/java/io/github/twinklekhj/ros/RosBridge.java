@@ -415,22 +415,30 @@ public class RosBridge {
         return send(topic);
     }
 
+    public Set<String> getPublishedTopics() {
+        return publishedTopics;
+    }
+
+    public Set<String> getSubscribedTopics() {
+        return topicListeners.keySet();
+    }
+
     /**
      * [Topic] 토픽 구독
      *
      * @param op       토픽 구독
      * @param delegate 토픽 메세지 처리자
      */
-    public void subscribe(RosSubscription op, RosSubscribeDelegate delegate) {
+    public boolean subscribe(RosSubscription op, RosSubscribeDelegate delegate) {
         String topic = op.getTopic();
 
         if (this.topicListeners.containsKey(topic)) {
             this.topicListeners.get(topic).addDelegate(delegate);
-            return;
+            return false;
         }
 
         this.topicListeners.put(topic, new RosSubscribers(delegate));
-        send(op);
+        return send(op);
     }
 
     public RosSubscription subscribe(String topic, String type, RosSubscribeDelegate delegate) {
@@ -450,11 +458,13 @@ public class RosBridge {
      *
      * @param topic 토픽명
      */
-    public void unsubscribe(String topic) {
+    public boolean unsubscribe(String topic) {
         RosUnsubscribe op = RosUnsubscribe.builder(topic).build();
-        if (send(op)) {
+        boolean flag = send(op);
+        if (flag) {
             this.topicListeners.remove(topic);
         }
+        return flag;
     }
 
     public void removeListener(String topic, RosSubscribeDelegate delegate) {
