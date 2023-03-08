@@ -1,16 +1,19 @@
 package io.github.twinklekhj.ros.op;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 
 /**
  * Unadvertise Service
- * <p>
- * topic - 게시 알림을 취소할 토픽명
+ * service - ROS MASTER 에서 서비스 삭제
  */
 @Builder
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class RosUnadvertiseService implements RosOperation {
     private final Type op = Type.UNADVERTISE_TOPIC;
     @Builder.Default
@@ -32,7 +35,10 @@ public class RosUnadvertiseService implements RosOperation {
 
     @Override
     public String toString() {
-        return new JSONObject().put("op", this.op.code).put("service", this.service).put("id", this.id).toString();
+        return new JSONObject()
+                .put("op", this.op.code)
+                .put("service", this.service)
+                .put("id", this.id).toString();
     }
 
     @Override

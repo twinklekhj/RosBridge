@@ -1,8 +1,10 @@
 package io.github.twinklekhj.ros.op;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 
 /**
@@ -11,6 +13,8 @@ import org.json.JSONObject;
  */
 
 @Builder
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class RosAdvertise implements RosOperation {
     private final Type op = Type.ADVERTISE_TOPIC;
     @Builder.Default

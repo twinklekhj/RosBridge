@@ -3,8 +3,10 @@ package io.github.twinklekhj.ros.op;
 
 import io.github.twinklekhj.ros.type.MessageType;
 import io.github.twinklekhj.ros.type.RosMessage;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 
 /**
@@ -14,6 +16,8 @@ import org.json.JSONObject;
  * msg - 게시할 메시지
  */
 @Builder
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class RosTopic implements RosOperation {
     private final Type op = Type.PUBLISH;
     @Builder.Default
@@ -49,6 +53,13 @@ public class RosTopic implements RosOperation {
         return id;
     }
 
+    public Object getMsg() {
+        return msg;
+    }
+
+    public void setMsg(Object msg) {
+        this.msg = msg;
+    }
 
     @Override
     public String toString() {

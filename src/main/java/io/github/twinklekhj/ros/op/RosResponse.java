@@ -2,17 +2,22 @@ package io.github.twinklekhj.ros.op;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 
 @Builder
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class RosResponse implements RosOperation {
     private final Type op = Type.CALL_SERVICE;
     @NonNull
     private final String service;
     @NonNull
     private final boolean result;
+
     private String id;
     private JsonNode values;
 
@@ -36,8 +41,16 @@ public class RosResponse implements RosOperation {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public JsonNode getValues() {
         return values;
+    }
+
+    public void setValues(JsonNode values) {
+        this.values = values;
     }
 
     @Override

@@ -1,10 +1,12 @@
 package io.github.twinklekhj.ros.op;
 
 
+import io.github.twinklekhj.ros.type.MessageType;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
-import io.github.twinklekhj.ros.type.MessageType;
 
 /**
  * Subscribe topic
@@ -18,6 +20,8 @@ import io.github.twinklekhj.ros.type.MessageType;
  * compression - 메시지에 사용할 압축 체계를 지정하는 선택적 문자열. 유효한 값은 "none", "png", "cbor", "cbor-raw"
  */
 @Builder
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class RosSubscription implements RosOperation {
     private final Type op = Type.SUBSCRIBE;
     @Builder.Default
@@ -27,9 +31,9 @@ public class RosSubscription implements RosOperation {
     @NonNull
     private final String type;
 
-    private int throttleRate;
-    private int queueLength;
-    private int fragmentSize;
+    private int throttleRate = 0;
+    private int queueLength = 0;
+    private int fragmentSize = 0;
 
     private CompressionType compression;
 
@@ -54,9 +58,37 @@ public class RosSubscription implements RosOperation {
         return topic;
     }
 
+    public int getThrottleRate() {
+        return throttleRate;
+    }
+
+    public void setThrottleRate(int throttleRate) {
+        this.throttleRate = throttleRate;
+    }
+
+    public int getQueueLength() {
+        return queueLength;
+    }
+
+    public void setQueueLength(int queueLength) {
+        this.queueLength = queueLength;
+    }
+
+    public int getFragmentSize() {
+        return fragmentSize;
+    }
+
+    public void setFragmentSize(int fragmentSize) {
+        this.fragmentSize = fragmentSize;
+    }
+
     @Override
     public String toString() {
-        JSONObject json = new JSONObject().put("op", this.op.code).put("topic", this.topic).put("id", this.id).put("type", this.type);
+        JSONObject json = new JSONObject()
+                .put("op", this.op.code)
+                .put("topic", this.topic)
+                .put("id", this.id)
+                .put("type", this.type);
 
         if (this.throttleRate != 0) {
             json.put("throttle_rate", this.throttleRate);
