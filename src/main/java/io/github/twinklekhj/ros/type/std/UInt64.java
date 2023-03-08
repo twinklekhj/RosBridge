@@ -30,11 +30,11 @@ public class UInt64 extends RosMessage {
     }
 
     public static UInt64 fromJsonString(String jsonString) {
-        return UInt64.fromMessage(new RosMessage(jsonString));
+        return UInt64.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static UInt64 fromMessage(RosMessage m) {
-        return UInt64.fromJSONObject(m.toJSONObject());
+        return UInt64.fromJSONObject(m.getJsonObject());
     }
 
     public static UInt64 fromJSONObject(JSONObject jsonObject) {

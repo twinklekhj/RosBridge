@@ -34,7 +34,7 @@ public class UInt16MultiArray extends RosMessage {
     public UInt16MultiArray(MultiArrayLayout layout, short[] data) {
         // build the JSON object
         super(jsonBuilder()
-                        .put(UInt16MultiArray.FIELD_LAYOUT, layout.toJSONObject())
+                        .put(UInt16MultiArray.FIELD_LAYOUT, layout.getJsonObject())
                         .put(UInt16MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(Primitive.fromUInt16(data))))
                 , UInt16MultiArray.TYPE);
 
@@ -45,11 +45,11 @@ public class UInt16MultiArray extends RosMessage {
     }
 
     public static UInt16MultiArray fromJsonString(String jsonString) {
-        return UInt16MultiArray.fromMessage(new RosMessage(jsonString));
+        return UInt16MultiArray.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static UInt16MultiArray fromMessage(RosMessage m) {
-        return UInt16MultiArray.fromJSONObject(m.toJSONObject());
+        return UInt16MultiArray.fromJSONObject(m.getJsonObject());
     }
 
     public static UInt16MultiArray fromJSONObject(JSONObject jsonObject) {

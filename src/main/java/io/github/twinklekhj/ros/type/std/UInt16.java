@@ -31,12 +31,12 @@ public class UInt16 extends RosMessage {
     }
 
     public static UInt16 fromJsonString(java.lang.String jsonString) {
-        return UInt16.fromMessage(new RosMessage(jsonString));
+        return UInt16.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static UInt16 fromMessage(RosMessage m) {
         // get it from the JSON object
-        return UInt16.fromJSONObject(m.toJSONObject());
+        return UInt16.fromJSONObject(m.getJsonObject());
     }
 
     public static UInt16 fromJSONObject(JSONObject jsonObject) {

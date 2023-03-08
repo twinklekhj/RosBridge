@@ -42,11 +42,11 @@ public class RosTopic implements RosOperation {
     }
 
     public static RosTopicBuilder builder(String topic, String type, RosMessage msg) {
-        return builder(topic, type).msg(msg.toJSONObject());
+        return builder(topic, type).msg(msg.getJsonObject());
     }
 
     public static RosTopicBuilder builder(String topic, MessageType type, RosMessage msg) {
-        return builder(topic, type.getName()).msg(msg.toJSONObject());
+        return builder(topic, type.getName()).msg(msg.getJsonObject());
     }
 
     public String getId() {

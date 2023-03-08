@@ -32,7 +32,7 @@ public class Float32MultiArray extends RosMessage {
     public Float32MultiArray(MultiArrayLayout layout, float[] data) {
         // build the JSON object
         super(jsonBuilder()
-                .put(Float32MultiArray.FIELD_LAYOUT, layout.toJSONObject())
+                .put(Float32MultiArray.FIELD_LAYOUT, layout.getJsonObject())
                 .put(Float32MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data))), Float32MultiArray.TYPE);
         this.layout = layout;
         // copy the array
@@ -41,11 +41,11 @@ public class Float32MultiArray extends RosMessage {
     }
 
     public static Float32MultiArray fromJsonString(java.lang.String jsonString) {
-        return Float32MultiArray.fromMessage(new RosMessage(jsonString));
+        return Float32MultiArray.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static Float32MultiArray fromMessage(RosMessage m) {
-        return Float32MultiArray.fromJSONObject(m.toJSONObject());
+        return Float32MultiArray.fromJSONObject(m.getJsonObject());
     }
 
     public static Float32MultiArray fromJSONObject(JSONObject jsonObject) {

@@ -24,17 +24,17 @@ public class Twist extends RosMessage {
      */
     public Twist(Vector3 linear, Vector3 angular) {
         // build the JSON object
-        super(jsonBuilder().put(Twist.FIELD_LINEAR, linear.toJSONObject()).put(Twist.FIELD_ANGULAR, angular.toJSONObject()), Twist.TYPE);
+        super(jsonBuilder().put(Twist.FIELD_LINEAR, linear.getJsonObject()).put(Twist.FIELD_ANGULAR, angular.getJsonObject()), Twist.TYPE);
         this.linear = linear;
         this.angular = angular;
     }
 
     public static Twist fromJsonString(String jsonString) {
-        return Twist.fromMessage(new RosMessage(jsonString));
+        return Twist.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static Twist fromMessage(RosMessage m) {
-        return Twist.fromJSONObject(m.toJSONObject());
+        return Twist.fromJSONObject(m.getJsonObject());
     }
 
     public static Twist fromJSONObject(JSONObject jsonObject) {

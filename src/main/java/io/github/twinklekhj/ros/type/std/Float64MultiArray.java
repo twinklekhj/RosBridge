@@ -32,7 +32,7 @@ public class Float64MultiArray extends RosMessage {
     public Float64MultiArray(MultiArrayLayout layout, double[] data) {
         // build the JSON object
         super(jsonBuilder()
-                .put(Float64MultiArray.FIELD_LAYOUT, layout.toJSONObject())
+                .put(Float64MultiArray.FIELD_LAYOUT, layout.getJsonObject())
                 .put(Float64MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data))), Float64MultiArray.TYPE);
         this.layout = layout;
         // copy the array
@@ -41,11 +41,11 @@ public class Float64MultiArray extends RosMessage {
     }
 
     public static Float64MultiArray fromJsonString(String jsonString) {
-        return Float64MultiArray.fromMessage(new RosMessage(jsonString));
+        return Float64MultiArray.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static Float64MultiArray fromMessage(RosMessage m) {
-        return Float64MultiArray.fromJSONObject(m.toJSONObject());
+        return Float64MultiArray.fromJSONObject(m.getJsonObject());
     }
 
     public static Float64MultiArray fromJSONObject(JSONObject jsonObject) {

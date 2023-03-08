@@ -15,16 +15,16 @@ public class Time extends RosMessage {
     }
 
     public Time(Time data) {
-        super(jsonBuilder().put(Time.FIELD_DATA, data.toJSONObject()), Time.TYPE);
+        super(jsonBuilder().put(Time.FIELD_DATA, data.getJsonObject()), Time.TYPE);
         this.data = data;
     }
 
     public static Time fromJsonString(String jsonString) {
-        return Time.fromMessage(new RosMessage(jsonString));
+        return Time.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static Time fromMessage(RosMessage m) {
-        return Time.fromJSONObject(m.toJSONObject());
+        return Time.fromJSONObject(m.getJsonObject());
     }
 
     public static Time fromJSONObject(JSONObject jsonObject) {

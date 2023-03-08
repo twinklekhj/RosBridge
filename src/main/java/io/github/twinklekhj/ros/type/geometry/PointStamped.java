@@ -3,21 +3,10 @@ package io.github.twinklekhj.ros.type.geometry;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.std.Header;
 
-
-/**
- * The geometry_msgs/PointStamped message. This represents a Point with
- * reference coordinate frame and timestamp.
- *
- * @author Russell Toris -- rctoris@wpi.edu
- * @version April 1, 2014
- */
 public class PointStamped extends RosMessage {
     public static final String FIELD_HEADER = "header";
     public static final String FIELD_POINT = "point";
 
-    /**
-     * The message type.
-     */
     public static final String TYPE = "geometry_msgs/PointStamped";
 
     private final Header header;
@@ -38,17 +27,17 @@ public class PointStamped extends RosMessage {
      */
     public PointStamped(Header header, Point point) {
         // build the JSON object
-        super(jsonBuilder().put(PointStamped.FIELD_HEADER, header.toJSONObject()).put(PointStamped.FIELD_POINT, point.toJSONObject()), PointStamped.TYPE);
+        super(jsonBuilder().put(PointStamped.FIELD_HEADER, header.getJsonObject()).put(PointStamped.FIELD_POINT, point.getJsonObject()), PointStamped.TYPE);
         this.header = header;
         this.point = point;
     }
 
     public static PointStamped fromJsonString(String jsonString) {
-        return PointStamped.fromMessage(new RosMessage(jsonString));
+        return PointStamped.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static PointStamped fromMessage(RosMessage m) {
-        return PointStamped.fromJSONObject(m.toJSONObject());
+        return PointStamped.fromJSONObject(m.getJsonObject());
     }
 
     public static PointStamped fromJSONObject(org.json.JSONObject jsonObject) {

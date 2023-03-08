@@ -39,7 +39,7 @@ public class Header extends RosMessage {
         // build the JSON object
         super(jsonBuilder()
                 .put(Header.FIELD_SEQ, Primitive.fromUInt32(seq))
-                .put(Header.FIELD_STAMP, stamp.toJSONObject())
+                .put(Header.FIELD_STAMP, stamp.getJsonObject())
                 .put(Header.FIELD_FRAME_ID, frameID), Header.TYPE);
         this.seq = seq;
         this.stamp = stamp;
@@ -55,7 +55,7 @@ public class Header extends RosMessage {
      */
     public static Header fromJsonString(String jsonString) {
         // convert to a message
-        return Header.fromMessage(new RosMessage(jsonString));
+        return Header.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     /**
@@ -67,7 +67,7 @@ public class Header extends RosMessage {
      */
     public static Header fromMessage(RosMessage m) {
         // get it from the JSON object
-        return Header.fromJSONObject(m.toJSONObject());
+        return Header.fromJSONObject(m.getJsonObject());
     }
 
     /**

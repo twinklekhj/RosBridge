@@ -44,7 +44,7 @@ public class Quaternion extends RosMessage {
      */
     public static Quaternion fromJsonString(String jsonString) {
         // convert to a message
-        return Quaternion.fromMessage(new RosMessage(jsonString));
+        return Quaternion.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     /**
@@ -56,7 +56,7 @@ public class Quaternion extends RosMessage {
      */
     public static Quaternion fromMessage(RosMessage m) {
         // get it from the JSON object
-        return Quaternion.fromJSONObject(m.toJSONObject());
+        return Quaternion.fromJSONObject(m.getJsonObject());
     }
 
     /**

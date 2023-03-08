@@ -28,11 +28,11 @@ public class Int16 extends RosMessage {
     }
 
     public static Int16 fromJsonString(String jsonString) {
-        return Int16.fromMessage(new RosMessage(jsonString));
+        return Int16.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static Int16 fromMessage(RosMessage m) {
-        return Int16.fromJSONObject(m.toJSONObject());
+        return Int16.fromJSONObject(m.getJsonObject());
     }
 
     public static Int16 fromJSONObject(JSONObject jsonObject) {

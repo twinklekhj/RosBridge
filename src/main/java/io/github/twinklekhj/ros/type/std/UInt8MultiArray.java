@@ -35,7 +35,7 @@ public class UInt8MultiArray extends RosMessage {
     public UInt8MultiArray(MultiArrayLayout layout, byte[] data) {
         // build the JSON object
         super(jsonBuilder()
-                        .put(UInt8MultiArray.FIELD_LAYOUT, layout.toJSONObject())
+                        .put(UInt8MultiArray.FIELD_LAYOUT, layout.getJsonObject())
                         .put(UInt8MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(Primitive.fromUInt8(data))))
                 , UInt8MultiArray.TYPE);
 
@@ -46,11 +46,11 @@ public class UInt8MultiArray extends RosMessage {
     }
 
     public static UInt8MultiArray fromJsonString(String jsonString) {
-        return UInt8MultiArray.fromMessage(new RosMessage(jsonString));
+        return UInt8MultiArray.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static UInt8MultiArray fromMessage(RosMessage m) {
-        return UInt8MultiArray.fromJSONObject(m.toJSONObject());
+        return UInt8MultiArray.fromJSONObject(m.getJsonObject());
     }
 
     public static UInt8MultiArray fromJSONObject(JSONObject jsonObject) {

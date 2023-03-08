@@ -24,7 +24,7 @@ public class UInt64MultiArray extends RosMessage {
     public UInt64MultiArray(MultiArrayLayout layout, long[] data) {
         // build the JSON object
         super(new JSONObject()
-                .put(UInt64MultiArray.FIELD_LAYOUT, layout.toJSONObject())
+                .put(UInt64MultiArray.FIELD_LAYOUT, layout.getJsonObject())
                 .put(UInt64MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(Primitive.fromUInt64(data)))), UInt64MultiArray.TYPE);
 
         this.layout = layout;
@@ -34,12 +34,12 @@ public class UInt64MultiArray extends RosMessage {
     }
 
     public static UInt64MultiArray fromJsonString(java.lang.String jsonString) {
-        return UInt64MultiArray.fromMessage(new RosMessage(jsonString));
+        return UInt64MultiArray.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
 
     public static UInt64MultiArray fromMessage(RosMessage m) {
-        return UInt64MultiArray.fromJSONObject(m.toJSONObject());
+        return UInt64MultiArray.fromJSONObject(m.getJsonObject());
     }
 
     public static UInt64MultiArray fromJSONObject(JSONObject jsonObject) {

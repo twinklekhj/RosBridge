@@ -1,8 +1,8 @@
 package io.github.twinklekhj.ros.type.geometry;
 
 
-import org.json.JSONObject;
 import io.github.twinklekhj.ros.type.RosMessage;
+import org.json.JSONObject;
 
 public class Pose extends RosMessage {
     public static final String FIELD_POSITION = "position";
@@ -28,17 +28,17 @@ public class Pose extends RosMessage {
      */
     public Pose(Point position, Quaternion orientation) {
         // build the JSON object
-        super(jsonBuilder().put(Pose.FIELD_POSITION, position.toJSONObject()).put(Pose.FIELD_ORIENTATION, orientation.toJSONObject()), Pose.TYPE);
+        super(jsonBuilder().put(Pose.FIELD_POSITION, position.getJsonObject()).put(Pose.FIELD_ORIENTATION, orientation.getJsonObject()), Pose.TYPE);
         this.position = position;
         this.orientation = orientation;
     }
 
     public static Pose fromJsonString(String jsonString) {
-        return Pose.fromMessage(new RosMessage(jsonString));
+        return Pose.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static Pose fromMessage(RosMessage m) {
-        return Pose.fromJSONObject(m.toJSONObject());
+        return Pose.fromJSONObject(m.getJsonObject());
     }
 
     public static Pose fromJSONObject(JSONObject jsonObject) {

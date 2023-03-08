@@ -31,11 +31,11 @@ public class Char extends RosMessage {
     }
 
     public static Char fromJsonString(String jsonString) {
-        return Char.fromMessage(new RosMessage(jsonString));
+        return Char.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static Char fromMessage(RosMessage m) {
-        return Char.fromJSONObject(m.toJSONObject());
+        return Char.fromJSONObject(m.getJsonObject());
     }
 
     public static Char fromJSONObject(JSONObject jsonObject) {

@@ -11,11 +11,11 @@ public class Empty extends RosMessage {
     }
 
     public static Empty fromJsonString(String jsonString) {
-        return Empty.fromMessage(new RosMessage(jsonString));
+        return Empty.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static Empty fromMessage(RosMessage m) {
-        return Empty.fromJSONObject(m.toJSONObject());
+        return Empty.fromJSONObject(m.getJsonObject());
     }
 
     public static Empty fromJSONObject(JSONObject jsonObject) {

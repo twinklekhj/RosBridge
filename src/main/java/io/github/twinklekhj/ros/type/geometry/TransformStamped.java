@@ -2,8 +2,8 @@ package io.github.twinklekhj.ros.type.geometry;
 
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONObject;
 import io.github.twinklekhj.ros.type.std.Header;
+import org.json.JSONObject;
 
 public class TransformStamped extends RosMessage {
     public static final String FIELD_HEADER = "header";
@@ -32,7 +32,7 @@ public class TransformStamped extends RosMessage {
      */
     public TransformStamped(Header header, String childFrameID, Transform transform) {
         // build the JSON object
-        super(jsonBuilder().put(TransformStamped.FIELD_HEADER, header.toJSONObject()).put(TransformStamped.FIELD_CHILD_FRAME_ID, childFrameID).put(TransformStamped.FIELD_TRANSFORM, transform.toJSONObject()), TransformStamped.TYPE);
+        super(jsonBuilder().put(TransformStamped.FIELD_HEADER, header.getJsonObject()).put(TransformStamped.FIELD_CHILD_FRAME_ID, childFrameID).put(TransformStamped.FIELD_TRANSFORM, transform.getJsonObject()), TransformStamped.TYPE);
 
         this.header = header;
         this.childFrameID = childFrameID;
@@ -40,11 +40,11 @@ public class TransformStamped extends RosMessage {
     }
 
     public static TransformStamped fromJsonString(String jsonString) {
-        return TransformStamped.fromMessage(new RosMessage(jsonString));
+        return TransformStamped.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static TransformStamped fromMessage(RosMessage m) {
-        return TransformStamped.fromJSONObject(m.toJSONObject());
+        return TransformStamped.fromJSONObject(m.getJsonObject());
     }
 
     public static TransformStamped fromJSONObject(JSONObject jsonObject) {

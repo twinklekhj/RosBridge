@@ -28,17 +28,17 @@ public class Transform extends RosMessage {
      */
     public Transform(Vector3 translation, Quaternion rotation) {
         // build the JSON object
-        super(jsonBuilder().put(Transform.FIELD_TRANSLATION, translation.toJSONObject()).put(Transform.FIELD_ROTATION, rotation.toJSONObject()), Transform.TYPE);
+        super(jsonBuilder().put(Transform.FIELD_TRANSLATION, translation.getJsonObject()).put(Transform.FIELD_ROTATION, rotation.getJsonObject()), Transform.TYPE);
         this.translation = translation;
         this.rotation = rotation;
     }
 
     public static Transform fromJsonString(String jsonString) {
-        return Transform.fromMessage(new RosMessage(jsonString));
+        return Transform.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static Transform fromMessage(RosMessage m) {
-        return Transform.fromJSONObject(m.toJSONObject());
+        return Transform.fromJSONObject(m.getJsonObject());
     }
 
     public static Transform fromJSONObject(JSONObject jsonObject) {

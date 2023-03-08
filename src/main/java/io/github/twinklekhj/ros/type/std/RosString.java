@@ -20,11 +20,11 @@ public class RosString extends RosMessage {
 
     public static RosString fromJsonString(java.lang.String jsonString) {
         // convert to a message
-        return RosString.fromMessage(new RosMessage(jsonString));
+        return RosString.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static RosString fromMessage(RosMessage m) {
-        return RosString.fromJSONObject(m.toJSONObject());
+        return RosString.fromJSONObject(m.getJsonObject());
     }
 
     public static RosString fromJSONObject(JSONObject jsonObject) {

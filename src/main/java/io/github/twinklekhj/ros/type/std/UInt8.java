@@ -1,8 +1,8 @@
 package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONObject;
 import io.github.twinklekhj.ros.type.primitives.Primitive;
+import org.json.JSONObject;
 
 public class UInt8 extends RosMessage {
     public static final String FIELD_DATA = "data";
@@ -28,11 +28,11 @@ public class UInt8 extends RosMessage {
     }
 
     public static UInt8 fromJsonString(String jsonString) {
-        return UInt8.fromMessage(new RosMessage(jsonString));
+        return UInt8.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static UInt8 fromMessage(RosMessage m) {
-        return UInt8.fromJSONObject(m.toJSONObject());
+        return UInt8.fromJSONObject(m.getJsonObject());
     }
 
     public static UInt8 fromJSONObject(JSONObject jsonObject) {

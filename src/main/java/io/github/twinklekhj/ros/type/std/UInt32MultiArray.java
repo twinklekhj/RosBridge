@@ -1,9 +1,9 @@
 package io.github.twinklekhj.ros.type.std;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.primitives.Primitive;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 
@@ -33,7 +33,7 @@ public class UInt32MultiArray extends RosMessage {
      */
     public UInt32MultiArray(MultiArrayLayout layout, int[] data) {
         // build the JSON object
-        super(jsonBuilder().put(UInt32MultiArray.FIELD_LAYOUT, layout.toJSONObject()).put(UInt32MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(Primitive.fromUInt32(data)))), UInt32MultiArray.TYPE);
+        super(jsonBuilder().put(UInt32MultiArray.FIELD_LAYOUT, layout.getJsonObject()).put(UInt32MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(Primitive.fromUInt32(data)))), UInt32MultiArray.TYPE);
 
         this.layout = layout;
         // copy the array
@@ -42,11 +42,11 @@ public class UInt32MultiArray extends RosMessage {
     }
 
     public static UInt32MultiArray fromJsonString(String jsonString) {
-        return UInt32MultiArray.fromMessage(new RosMessage(jsonString));
+        return UInt32MultiArray.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static UInt32MultiArray fromMessage(RosMessage m) {
-        return UInt32MultiArray.fromJSONObject(m.toJSONObject());
+        return UInt32MultiArray.fromJSONObject(m.getJsonObject());
     }
 
     public static UInt32MultiArray fromJSONObject(JSONObject jsonObject) {

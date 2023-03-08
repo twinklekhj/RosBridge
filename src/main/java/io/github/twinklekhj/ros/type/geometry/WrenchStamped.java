@@ -1,8 +1,8 @@
 package io.github.twinklekhj.ros.type.geometry;
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONObject;
 import io.github.twinklekhj.ros.type.std.Header;
+import org.json.JSONObject;
 
 public class WrenchStamped extends RosMessage {
     public static final String FIELD_HEADER = "header";
@@ -28,17 +28,17 @@ public class WrenchStamped extends RosMessage {
      */
     public WrenchStamped(Header header, Wrench wrench) {
         // build the JSON object
-        super(jsonBuilder().put(WrenchStamped.FIELD_HEADER, header.toJSONObject()).put(WrenchStamped.FIELD_WRENCH, wrench.toJSONObject()), WrenchStamped.TYPE);
+        super(jsonBuilder().put(WrenchStamped.FIELD_HEADER, header.getJsonObject()).put(WrenchStamped.FIELD_WRENCH, wrench.getJsonObject()), WrenchStamped.TYPE);
         this.header = header;
         this.wrench = wrench;
     }
 
     public static WrenchStamped fromJsonString(String jsonString) {
-        return WrenchStamped.fromMessage(new RosMessage(jsonString));
+        return WrenchStamped.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static WrenchStamped fromMessage(RosMessage m) {
-        return WrenchStamped.fromJSONObject(m.toJSONObject());
+        return WrenchStamped.fromJSONObject(m.getJsonObject());
     }
 
     public static WrenchStamped fromJSONObject(JSONObject jsonObject) {

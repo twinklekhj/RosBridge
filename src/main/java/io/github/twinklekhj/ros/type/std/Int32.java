@@ -29,11 +29,11 @@ public class Int32 extends RosMessage {
     }
 
     public static Int32 fromJsonString(java.lang.String jsonString) {
-        return Int32.fromMessage(new RosMessage(jsonString));
+        return Int32.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static Int32 fromMessage(RosMessage m) {
-        return Int32.fromJSONObject(m.toJSONObject());
+        return Int32.fromJSONObject(m.getJsonObject());
     }
 
     public static Int32 fromJSONObject(JSONObject jsonObject) {

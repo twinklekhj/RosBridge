@@ -5,7 +5,6 @@ import io.github.twinklekhj.ros.type.RosMessage;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.StringReader;
 import java.util.Arrays;
 
 public class Polygon extends RosMessage {
@@ -28,18 +27,18 @@ public class Polygon extends RosMessage {
      * @param points The points of the polygon.
      */
     public Polygon(Point32[] points) {
-        super(jsonBuilder().put(Polygon.FIELD_POINTS, jsonBuilder(new StringReader(Arrays.deepToString(points)))), Polygon.TYPE);
+        super(jsonBuilder().put(Polygon.FIELD_POINTS, jsonBuilder(Arrays.deepToString(points))), Polygon.TYPE);
 
         this.points = new Point32[points.length];
         System.arraycopy(points, 0, this.points, 0, points.length);
     }
 
     public static Polygon fromJsonString(String jsonString) {
-        return Polygon.fromMessage(new RosMessage(jsonString));
+        return Polygon.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static Polygon fromMessage(RosMessage m) {
-        return Polygon.fromJSONObject(m.toJSONObject());
+        return Polygon.fromJSONObject(m.getJsonObject());
     }
 
     public static Polygon fromJSONObject(JSONObject jsonObject) {

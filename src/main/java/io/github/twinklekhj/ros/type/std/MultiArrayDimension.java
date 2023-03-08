@@ -42,11 +42,11 @@ public class MultiArrayDimension extends RosMessage {
     }
 
     public static MultiArrayDimension fromJsonString(String jsonString) {
-        return MultiArrayDimension.fromMessage(new RosMessage(jsonString));
+        return MultiArrayDimension.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static MultiArrayDimension fromMessage(RosMessage m) {
-        return MultiArrayDimension.fromJSONObject(m.toJSONObject());
+        return MultiArrayDimension.fromJSONObject(m.getJsonObject());
     }
 
     /**

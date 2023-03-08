@@ -21,16 +21,16 @@ public class Duration extends RosMessage {
      */
     public Duration(Duration data) {
         // build the JSON object
-        super(jsonBuilder().put(Duration.FIELD_DATA, data.toJSONObject()), Duration.TYPE);
+        super(jsonBuilder().put(Duration.FIELD_DATA, data.getJsonObject()), Duration.TYPE);
         this.data = data;
     }
 
     public static Duration fromJsonString(String jsonString) {
-        return Duration.fromMessage(new RosMessage(jsonString));
+        return Duration.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static Duration fromMessage(RosMessage m) {
-        return Duration.fromJSONObject(m.toJSONObject());
+        return Duration.fromJSONObject(m.getJsonObject());
     }
 
     public static Duration fromJSONObject(JSONObject jsonObject) {

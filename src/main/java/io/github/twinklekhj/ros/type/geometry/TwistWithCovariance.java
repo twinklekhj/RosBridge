@@ -4,7 +4,6 @@ import io.github.twinklekhj.ros.type.RosMessage;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.StringReader;
 import java.util.Arrays;
 
 public class TwistWithCovariance extends RosMessage {
@@ -49,8 +48,9 @@ public class TwistWithCovariance extends RosMessage {
      * @param covariance The covariance matrix as an array.
      */
     public TwistWithCovariance(Twist twist, double[] covariance) {
-        super(jsonBuilder().put(TwistWithCovariance.FIELD_TWIST, twist.toJSONObject()).put(TwistWithCovariance.FIELD_COVARIANCE,
-                jsonBuilder(new StringReader((covariance.length == TwistWithCovariance.COVARIANCE_SIZE) ? Arrays.toString(covariance) : Arrays.toString(new double[TwistWithCovariance.COVARIANCE_SIZE])))), TwistWithCovariance.TYPE);
+        super(jsonBuilder()
+                .put(TwistWithCovariance.FIELD_TWIST, twist.getJsonObject())
+                .put(TwistWithCovariance.FIELD_COVARIANCE, jsonBuilder(covariance.length == TwistWithCovariance.COVARIANCE_SIZE ? Arrays.toString(covariance) : Arrays.toString(new double[TwistWithCovariance.COVARIANCE_SIZE]))), TwistWithCovariance.TYPE);
 
         this.twist = twist;
         // create the arrays
@@ -67,11 +67,11 @@ public class TwistWithCovariance extends RosMessage {
     }
 
     public static TwistWithCovariance fromJsonString(String jsonString) {
-        return TwistWithCovariance.fromMessage(new RosMessage(jsonString));
+        return TwistWithCovariance.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static TwistWithCovariance fromMessage(RosMessage m) {
-        return TwistWithCovariance.fromJSONObject(m.toJSONObject());
+        return TwistWithCovariance.fromJSONObject(m.getJsonObject());
     }
 
     public static TwistWithCovariance fromJSONObject(JSONObject jsonObject) {

@@ -1,7 +1,7 @@
 package io.github.twinklekhj.ros.type.geometry;
 
-import org.json.JSONObject;
 import io.github.twinklekhj.ros.type.RosMessage;
+import org.json.JSONObject;
 
 public class Wrench extends RosMessage {
     public static final String FIELD_FORCE = "force";
@@ -27,17 +27,17 @@ public class Wrench extends RosMessage {
      */
     public Wrench(Vector3 force, Vector3 torque) {
         // build the JSON object
-        super(jsonBuilder().put(Wrench.FIELD_FORCE, force.toJSONObject()).put(Wrench.FIELD_TORQUE, torque.toJSONObject()), Wrench.TYPE);
+        super(jsonBuilder().put(Wrench.FIELD_FORCE, force.getJsonObject()).put(Wrench.FIELD_TORQUE, torque.getJsonObject()), Wrench.TYPE);
         this.force = force;
         this.torque = torque;
     }
 
     public static Wrench fromJsonString(String jsonString) {
-        return Wrench.fromMessage(new RosMessage(jsonString));
+        return Wrench.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static Wrench fromMessage(RosMessage m) {
-        return Wrench.fromJSONObject(m.toJSONObject());
+        return Wrench.fromJSONObject(m.getJsonObject());
     }
 
     public static Wrench fromJSONObject(JSONObject jsonObject) {

@@ -33,12 +33,12 @@ public class Pose2D extends RosMessage {
     }
 
     public static Pose2D fromJsonString(String jsonString) {
-        return Pose2D.fromMessage(new RosMessage(jsonString));
+        return Pose2D.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
 
     public static Pose2D fromMessage(RosMessage m) {
-        return Pose2D.fromJSONObject(m.toJSONObject());
+        return Pose2D.fromJSONObject(m.getJsonObject());
     }
 
     public static Pose2D fromJSONObject(JSONObject jsonObject) {

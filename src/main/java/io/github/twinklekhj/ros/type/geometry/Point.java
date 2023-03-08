@@ -7,8 +7,6 @@ public class Point extends RosMessage {
     public static final String FIELD_X = "x";
     public static final String FIELD_Y = "y";
     public static final String FIELD_Z = "z";
-
-
     public static final String TYPE = "geometry_msgs/Point";
 
     private final double x, y, z;
@@ -33,12 +31,12 @@ public class Point extends RosMessage {
     }
 
     public static Point fromJsonString(String jsonString) {
-        return Point.fromMessage(new RosMessage(jsonString));
+        return fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static Point fromMessage(RosMessage m) {
         // get it from the JSON object
-        return Point.fromJSONObject(m.toJSONObject());
+        return fromJSONObject(m.getJsonObject());
     }
 
     public static Point fromJSONObject(JSONObject jsonObject) {

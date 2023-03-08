@@ -2,8 +2,8 @@ package io.github.twinklekhj.ros.type.geometry;
 
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONObject;
 import io.github.twinklekhj.ros.type.std.Header;
+import org.json.JSONObject;
 
 public class PolygonStamped extends RosMessage {
     public static final String FIELD_HEADER = "header";
@@ -26,17 +26,17 @@ public class PolygonStamped extends RosMessage {
      */
     public PolygonStamped(Header header, Polygon polygon) {
         // build the JSON object
-        super(jsonBuilder().put(PolygonStamped.FIELD_HEADER, header.toJSONObject()).put(PolygonStamped.FIELD_POLYGON, polygon.toJSONObject()), PolygonStamped.TYPE);
+        super(jsonBuilder().put(PolygonStamped.FIELD_HEADER, header.getJsonObject()).put(PolygonStamped.FIELD_POLYGON, polygon.getJsonObject()), PolygonStamped.TYPE);
         this.header = header;
         this.polygon = polygon;
     }
 
     public static PolygonStamped fromJsonString(String jsonString) {
-        return PolygonStamped.fromMessage(new RosMessage(jsonString));
+        return PolygonStamped.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static PolygonStamped fromMessage(RosMessage m) {
-        return PolygonStamped.fromJSONObject(m.toJSONObject());
+        return PolygonStamped.fromJSONObject(m.getJsonObject());
     }
 
     public static PolygonStamped fromJSONObject(JSONObject jsonObject) {

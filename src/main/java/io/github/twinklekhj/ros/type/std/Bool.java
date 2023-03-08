@@ -1,7 +1,7 @@
 package io.github.twinklekhj.ros.type.std;
 
-import org.json.JSONObject;
 import io.github.twinklekhj.ros.type.RosMessage;
+import org.json.JSONObject;
 
 public class Bool extends RosMessage {
     public static final java.lang.String FIELD_DATA = "data";
@@ -28,11 +28,11 @@ public class Bool extends RosMessage {
     }
 
     public static Bool fromJsonString(String jsonString) {
-        return Bool.fromMessage(new RosMessage(jsonString));
+        return Bool.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static Bool fromMessage(RosMessage m) {
-        return Bool.fromJSONObject(m.toJSONObject());
+        return Bool.fromJSONObject(m.getJsonObject());
     }
 
     public static Bool fromJSONObject(JSONObject jsonObject) {

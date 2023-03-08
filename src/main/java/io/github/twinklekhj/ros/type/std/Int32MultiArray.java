@@ -32,7 +32,7 @@ public class Int32MultiArray extends RosMessage {
     public Int32MultiArray(MultiArrayLayout layout, int[] data) {
         // build the JSON object
         super(jsonBuilder()
-                .put(Int32MultiArray.FIELD_LAYOUT, layout.toJSONObject())
+                .put(Int32MultiArray.FIELD_LAYOUT, layout.getJsonObject())
                 .put(Int32MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data))), Int32MultiArray.TYPE);
         this.layout = layout;
         // copy the array
@@ -41,11 +41,11 @@ public class Int32MultiArray extends RosMessage {
     }
 
     public static Int32MultiArray fromJsonString(String jsonString) {
-        return Int32MultiArray.fromMessage(new RosMessage(jsonString));
+        return Int32MultiArray.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static Int32MultiArray fromMessage(RosMessage m) {
-        return Int32MultiArray.fromJSONObject(m.toJSONObject());
+        return Int32MultiArray.fromJSONObject(m.getJsonObject());
     }
 
     public static Int32MultiArray fromJSONObject(JSONObject jsonObject) {

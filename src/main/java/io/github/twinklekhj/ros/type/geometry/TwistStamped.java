@@ -29,19 +29,19 @@ public class TwistStamped extends RosMessage {
      */
     public TwistStamped(Header header, Twist twist) {
         // build the JSON object
-        super(jsonBuilder().put(TwistStamped.FIELD_HEADER, header.toJSONObject()).put(TwistStamped.FIELD_TWIST, twist.toJSONObject()), TwistStamped.TYPE);
+        super(jsonBuilder().put(TwistStamped.FIELD_HEADER, header.getJsonObject()).put(TwistStamped.FIELD_TWIST, twist.getJsonObject()), TwistStamped.TYPE);
         this.header = header;
         this.twist = twist;
     }
 
     public static TwistStamped fromJsonString(String jsonString) {
-        return TwistStamped.fromMessage(new RosMessage(jsonString));
+        return TwistStamped.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
 
     public static TwistStamped fromMessage(RosMessage m) {
         // get it from the JSON object
-        return TwistStamped.fromJSONObject(m.toJSONObject());
+        return TwistStamped.fromJSONObject(m.getJsonObject());
     }
 
     public static TwistStamped fromJSONObject(JSONObject jsonObject) {

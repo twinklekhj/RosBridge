@@ -5,7 +5,6 @@ import io.github.twinklekhj.ros.type.RosMessage;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.StringReader;
 import java.util.Arrays;
 
 public class PoseWithCovariance extends RosMessage {
@@ -52,8 +51,9 @@ public class PoseWithCovariance extends RosMessage {
      */
     public PoseWithCovariance(Pose pose, double[] covariance) {
         // build the JSON object
-        super(jsonBuilder().put(PoseWithCovariance.FIELD_POSE, pose.toJSONObject()).put(PoseWithCovariance.FIELD_COVARIANCE, jsonBuilder(
-                new StringReader((covariance.length == PoseWithCovariance.COVARIANCE_SIZE) ? Arrays.toString(covariance) : Arrays.toString(new double[PoseWithCovariance.COVARIANCE_SIZE])))), PoseWithCovariance.TYPE);
+        super(jsonBuilder()
+                .put(PoseWithCovariance.FIELD_POSE, pose.getJsonObject())
+                .put(PoseWithCovariance.FIELD_COVARIANCE, jsonBuilder(covariance.length == PoseWithCovariance.COVARIANCE_SIZE ? Arrays.toString(covariance) : Arrays.toString(new double[PoseWithCovariance.COVARIANCE_SIZE]))), PoseWithCovariance.TYPE);
 
         this.pose = pose;
         // create the arrays
@@ -71,11 +71,11 @@ public class PoseWithCovariance extends RosMessage {
 
 
     public static PoseWithCovariance fromJsonString(String jsonString) {
-        return PoseWithCovariance.fromMessage(new RosMessage(jsonString));
+        return PoseWithCovariance.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static PoseWithCovariance fromMessage(RosMessage m) {
-        return PoseWithCovariance.fromJSONObject(m.toJSONObject());
+        return PoseWithCovariance.fromJSONObject(m.getJsonObject());
     }
 
     public static PoseWithCovariance fromJSONObject(JSONObject jsonObject) {

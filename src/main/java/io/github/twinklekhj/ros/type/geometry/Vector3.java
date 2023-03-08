@@ -1,16 +1,25 @@
 package io.github.twinklekhj.ros.type.geometry;
 
 import io.github.twinklekhj.ros.type.RosMessage;
+import lombok.Builder;
 import org.json.JSONObject;
 
+@Builder
 public class Vector3 extends RosMessage {
+    public static final String TYPE = "geometry_msgs/Vector3";
+
     public static final String FIELD_X = "x";
     public static final String FIELD_Y = "y";
     public static final String FIELD_Z = "z";
 
-    public static final String TYPE = "geometry_msgs/Vector3";
+    @Builder.Default
+    private double x = 0;
 
-    private final double x, y, z;
+    @Builder.Default
+    private double y = 0;
+
+    @Builder.Default
+    private double z = 0;
 
     /**
      * Create a new Vector3 with all 0s.
@@ -34,15 +43,6 @@ public class Vector3 extends RosMessage {
         this.z = z;
     }
 
-    public static Vector3 fromJsonString(String jsonString) {
-        // convert to a message
-        return Vector3.fromMessage(new RosMessage(jsonString));
-    }
-
-    public static Vector3 fromMessage(RosMessage m) {
-        // get it from the JSON object
-        return Vector3.fromJSONObject(m.toJSONObject());
-    }
 
     /**
      * Create a new Vector3 based on the given JSON object. Any missing values

@@ -28,17 +28,17 @@ public class Vector3Stamped extends RosMessage {
      */
     public Vector3Stamped(Header header, Vector3 vector) {
         // build the JSON object
-        super(jsonBuilder().put(Vector3Stamped.FIELD_HEADER, header.toJSONObject()).put(Vector3Stamped.FIELD_VECTOR, vector.toJSONObject()), Vector3Stamped.TYPE);
+        super(jsonBuilder().put(Vector3Stamped.FIELD_HEADER, header.getJsonObject()).put(Vector3Stamped.FIELD_VECTOR, vector.getJsonObject()), Vector3Stamped.TYPE);
         this.header = header;
         this.vector = vector;
     }
 
     public static Vector3Stamped fromJsonString(String jsonString) {
-        return Vector3Stamped.fromMessage(new RosMessage(jsonString));
+        return Vector3Stamped.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static Vector3Stamped fromMessage(RosMessage m) {
-        return Vector3Stamped.fromJSONObject(m.toJSONObject());
+        return Vector3Stamped.fromJSONObject(m.getJsonObject());
     }
 
     /**

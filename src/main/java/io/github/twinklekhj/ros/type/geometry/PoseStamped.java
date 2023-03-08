@@ -1,8 +1,8 @@
 package io.github.twinklekhj.ros.type.geometry;
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONObject;
 import io.github.twinklekhj.ros.type.std.Header;
+import org.json.JSONObject;
 
 public class PoseStamped extends RosMessage {
     public static final String FIELD_HEADER = "header";
@@ -27,17 +27,17 @@ public class PoseStamped extends RosMessage {
      * @param pose   The pose value of the pose.
      */
     public PoseStamped(Header header, Pose pose) {
-        super(jsonBuilder().put(PoseStamped.FIELD_HEADER, header.toJSONObject()).put(PoseStamped.FIELD_POSE, pose.toJSONObject()), PoseStamped.TYPE);
+        super(jsonBuilder().put(PoseStamped.FIELD_HEADER, header.getJsonObject()).put(PoseStamped.FIELD_POSE, pose.getJsonObject()), PoseStamped.TYPE);
         this.header = header;
         this.pose = pose;
     }
 
     public static PoseStamped fromJsonString(String jsonString) {
-        return PoseStamped.fromMessage(new RosMessage(jsonString));
+        return PoseStamped.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static PoseStamped fromMessage(RosMessage m) {
-        return PoseStamped.fromJSONObject(m.toJSONObject());
+        return PoseStamped.fromJSONObject(m.getJsonObject());
     }
 
     public static PoseStamped fromJSONObject(JSONObject jsonObject) {

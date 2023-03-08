@@ -1,9 +1,9 @@
 package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
+import io.github.twinklekhj.ros.type.primitives.Primitive;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import io.github.twinklekhj.ros.type.primitives.Primitive;
 
 import java.util.Arrays;
 
@@ -46,11 +46,11 @@ public class MultiArrayLayout extends RosMessage {
 
     public static MultiArrayLayout fromJsonString(String jsonString) {
         // convert to a message
-        return MultiArrayLayout.fromMessage(new RosMessage(jsonString));
+        return MultiArrayLayout.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static MultiArrayLayout fromMessage(RosMessage m) {
-        return MultiArrayLayout.fromJSONObject(m.toJSONObject());
+        return MultiArrayLayout.fromJSONObject(m.getJsonObject());
     }
 
     public static MultiArrayLayout fromJSONObject(JSONObject jsonObject) {

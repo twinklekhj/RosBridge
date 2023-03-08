@@ -29,7 +29,7 @@ public class ByteMultiArray extends RosMessage {
     public ByteMultiArray(MultiArrayLayout layout, byte[] data) {
         // build the JSON object
         super(jsonBuilder()
-                .put(ByteMultiArray.FIELD_LAYOUT, layout.toJSONObject())
+                .put(ByteMultiArray.FIELD_LAYOUT, layout.getJsonObject())
                 .put(ByteMultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data))), ByteMultiArray.TYPE);
         this.layout = layout;
         // copy the array
@@ -38,11 +38,11 @@ public class ByteMultiArray extends RosMessage {
     }
 
     public static ByteMultiArray fromJsonString(java.lang.String jsonString) {
-        return ByteMultiArray.fromMessage(new RosMessage(jsonString));
+        return ByteMultiArray.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static ByteMultiArray fromMessage(RosMessage m) {
-        return ByteMultiArray.fromJSONObject(m.toJSONObject());
+        return ByteMultiArray.fromJSONObject(m.getJsonObject());
     }
 
     public static ByteMultiArray fromJSONObject(JSONObject jsonObject) {

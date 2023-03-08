@@ -29,17 +29,17 @@ public class TwistWithCovarianceStamped extends RosMessage {
      */
     public TwistWithCovarianceStamped(Header header, TwistWithCovariance twist) {
         // build the JSON object
-        super(jsonBuilder().put(TwistWithCovarianceStamped.FIELD_HEADER, header.toJSONObject()).put(TwistWithCovarianceStamped.FIELD_TWIST, twist.toJSONObject()), TwistWithCovarianceStamped.TYPE);
+        super(jsonBuilder().put(TwistWithCovarianceStamped.FIELD_HEADER, header.getJsonObject()).put(TwistWithCovarianceStamped.FIELD_TWIST, twist.getJsonObject()), TwistWithCovarianceStamped.TYPE);
         this.header = header;
         this.twist = twist;
     }
 
     public static TwistWithCovarianceStamped fromJsonString(String jsonString) {
-        return TwistWithCovarianceStamped.fromMessage(new RosMessage(jsonString));
+        return TwistWithCovarianceStamped.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static TwistWithCovarianceStamped fromMessage(RosMessage m) {
-        return TwistWithCovarianceStamped.fromJSONObject(m.toJSONObject());
+        return TwistWithCovarianceStamped.fromJSONObject(m.getJsonObject());
     }
 
     public static TwistWithCovarianceStamped fromJSONObject(JSONObject jsonObject) {

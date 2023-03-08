@@ -2,8 +2,8 @@ package io.github.twinklekhj.ros.type.geometry;
 
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONObject;
 import io.github.twinklekhj.ros.type.std.Header;
+import org.json.JSONObject;
 
 public class PoseWithCovarianceStamped extends RosMessage {
     public static final String FIELD_HEADER = "header";
@@ -27,19 +27,19 @@ public class PoseWithCovarianceStamped extends RosMessage {
      */
     public PoseWithCovarianceStamped(Header header, PoseWithCovariance pose) {
         // build the JSON object
-        super(jsonBuilder().put(PoseWithCovarianceStamped.FIELD_HEADER, header.toJSONObject()).put(PoseWithCovarianceStamped.FIELD_POSE, pose.toJSONObject()), PoseWithCovarianceStamped.TYPE);
+        super(jsonBuilder().put(PoseWithCovarianceStamped.FIELD_HEADER, header.getJsonObject()).put(PoseWithCovarianceStamped.FIELD_POSE, pose.getJsonObject()), PoseWithCovarianceStamped.TYPE);
         this.header = header;
         this.pose = pose;
     }
 
     public static PoseWithCovarianceStamped fromJsonString(String jsonString) {
         // convert to a message
-        return PoseWithCovarianceStamped.fromMessage(new RosMessage(jsonString));
+        return PoseWithCovarianceStamped.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static PoseWithCovarianceStamped fromMessage(RosMessage m) {
         // get it from the JSON object
-        return PoseWithCovarianceStamped.fromJSONObject(m.toJSONObject());
+        return PoseWithCovarianceStamped.fromJSONObject(m.getJsonObject());
     }
 
 

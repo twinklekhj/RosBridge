@@ -31,11 +31,11 @@ public class UInt32 extends RosMessage {
     }
 
     public static UInt32 fromJsonString(String jsonString) {
-        return UInt32.fromMessage(new RosMessage(jsonString));
+        return UInt32.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static UInt32 fromMessage(RosMessage m) {
-        return UInt32.fromJSONObject(m.toJSONObject());
+        return UInt32.fromJSONObject(m.getJsonObject());
     }
 
     public static UInt32 fromJSONObject(JSONObject jsonObject) {

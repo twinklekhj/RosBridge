@@ -66,11 +66,11 @@ public class ColorRGBA extends RosMessage {
     }
 
     public static ColorRGBA fromJsonString(String jsonString) {
-        return ColorRGBA.fromMessage(new RosMessage(jsonString));
+        return ColorRGBA.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static ColorRGBA fromMessage(RosMessage m) {
-        return ColorRGBA.fromJSONObject(m.toJSONObject());
+        return ColorRGBA.fromJSONObject(m.getJsonObject());
     }
 
     public static ColorRGBA fromJSONObject(JSONObject jsonObject) {

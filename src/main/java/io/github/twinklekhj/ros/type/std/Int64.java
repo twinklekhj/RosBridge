@@ -27,11 +27,11 @@ public class Int64 extends RosMessage {
     }
 
     public static Int64 fromJsonString(String jsonString) {
-        return Int64.fromMessage(new RosMessage(jsonString));
+        return Int64.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static Int64 fromMessage(RosMessage m) {
-        return Int64.fromJSONObject(m.toJSONObject());
+        return Int64.fromJSONObject(m.getJsonObject());
     }
 
     public static Int64 fromJSONObject(JSONObject jsonObject) {

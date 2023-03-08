@@ -41,7 +41,7 @@ public class Point32 extends RosMessage {
      */
     public static Point32 fromJsonString(String jsonString) {
         // convert to a message
-        return Point32.fromMessage(new RosMessage(jsonString));
+        return Point32.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     /**
@@ -53,7 +53,7 @@ public class Point32 extends RosMessage {
      */
     public static Point32 fromMessage(RosMessage m) {
         // get it from the JSON object
-        return Point32.fromJSONObject(m.toJSONObject());
+        return Point32.fromJSONObject(m.getJsonObject());
     }
 
     /**

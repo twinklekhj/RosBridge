@@ -31,12 +31,12 @@ public class Byte extends RosMessage {
     }
 
     public static Byte fromJsonString(String jsonString) {
-        return Byte.fromMessage(new RosMessage(jsonString));
+        return Byte.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static Byte fromMessage(RosMessage m) {
         // get it from the JSON object
-        return Byte.fromJSONObject(m.toJSONObject());
+        return Byte.fromJSONObject(m.getJsonObject());
     }
 
     public static Byte fromJSONObject(JSONObject jsonObject) {

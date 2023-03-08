@@ -2,9 +2,9 @@ package io.github.twinklekhj.ros.type.geometry;
 
 
 import io.github.twinklekhj.ros.type.RosMessage;
+import io.github.twinklekhj.ros.type.std.Header;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import io.github.twinklekhj.ros.type.std.Header;
 
 import java.util.Arrays;
 
@@ -29,7 +29,7 @@ public class PoseArray extends RosMessage {
      * @param poses  The poses of the pose array.
      */
     public PoseArray(Header header, Pose[] poses) {
-        super(jsonBuilder().put(PoseArray.FIELD_HEADER, header.toJSONObject()).put(PoseArray.FIELD_POSES, jsonBuilder(Arrays.deepToString(poses))), PoseArray.TYPE);
+        super(jsonBuilder().put(PoseArray.FIELD_HEADER, header.getJsonObject()).put(PoseArray.FIELD_POSES, jsonBuilder(Arrays.deepToString(poses))), PoseArray.TYPE);
 
         this.header = header;
         this.poses = new Pose[poses.length];
@@ -37,11 +37,11 @@ public class PoseArray extends RosMessage {
     }
 
     public static PoseArray fromJsonString(String jsonString) {
-        return PoseArray.fromMessage(new RosMessage(jsonString));
+        return PoseArray.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static PoseArray fromMessage(RosMessage m) {
-        return PoseArray.fromJSONObject(m.toJSONObject());
+        return PoseArray.fromJSONObject(m.getJsonObject());
     }
 
     public static PoseArray fromJSONObject(JSONObject jsonObject) {

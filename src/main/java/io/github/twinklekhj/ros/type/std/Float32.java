@@ -28,11 +28,11 @@ public class Float32 extends RosMessage {
     }
 
     public static Float32 fromJsonString(String jsonString) {
-        return Float32.fromMessage(new RosMessage(jsonString));
+        return Float32.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static Float32 fromMessage(RosMessage m) {
-        return Float32.fromJSONObject(m.toJSONObject());
+        return Float32.fromJSONObject(m.getJsonObject());
     }
 
     public static Float32 fromJSONObject(JSONObject jsonObject) {

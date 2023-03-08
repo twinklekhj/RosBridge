@@ -29,12 +29,12 @@ public class Float64 extends RosMessage {
     }
 
     public static Float64 fromJsonString(String jsonString) {
-        return Float64.fromMessage(new RosMessage(jsonString));
+        return Float64.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
     public static Float64 fromMessage(RosMessage m) {
         // get it from the JSON object
-        return Float64.fromJSONObject(m.toJSONObject());
+        return Float64.fromJSONObject(m.getJsonObject());
     }
 
     public static Float64 fromJSONObject(JSONObject jsonObject) {
