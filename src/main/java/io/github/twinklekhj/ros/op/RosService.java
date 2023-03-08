@@ -23,7 +23,9 @@ public class RosService implements RosOperation {
     private final String name;
     private final String type;
 
+    @Builder.Default
     private CompressionType compression = CompressionType.NONE;
+
     private List<?> args;
     private int fragmentSize;
 

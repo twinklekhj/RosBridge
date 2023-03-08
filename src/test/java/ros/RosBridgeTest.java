@@ -15,9 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class RosBridgeTest {
@@ -123,7 +121,7 @@ public class RosBridgeTest {
 
             // 서비스 호출
             bridge.callService(service, response -> {
-                logger.info("Service Response [{}]", response);
+                logger.info("Response: {}", response.getValues());
 
                 Assertions.assertTrue(true);
                 bridge.countDownLatch();
@@ -171,6 +169,33 @@ public class RosBridgeTest {
         String node = "/rosapi";
         bridge.getNodeDetails(node, response -> {
             logger.info("response: {}", response);
+        });
+
+        bridge.awaitClose(3000, TimeUnit.MILLISECONDS);
+    }
+
+    @Test
+    @DisplayName("TETRA Test")
+    public void tetraTest(){
+        bridge.enablePrintStackTrace(true);
+
+        bridge.getNodes(response -> {
+            List<String> devices = new ArrayList<>();
+
+            logger.info("response: {}", response);
+            JsonNode values = response.getValues();
+            JsonNode nodes = values.get("nodes");
+
+            logger.info("nodes: {}", nodes);
+            nodes.forEach(node -> {
+                String[] names = node.asText().split("/");
+                System.err.println(Arrays.toString(names));
+                if(names.length > 2 && names[2].equals("tetraDS")){
+                    devices.add(names[1]);
+                }
+            });
+
+            logger.info("devices: {}", devices);
         });
 
         bridge.awaitClose(3000, TimeUnit.MILLISECONDS);
