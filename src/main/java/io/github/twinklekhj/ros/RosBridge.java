@@ -459,7 +459,7 @@ public class RosBridge {
      * @param topic 토픽명
      */
     public boolean unsubscribe(String topic) {
-        RosUnsubscribe op = RosUnsubscribe.builder(topic).build();
+        RosUnsubscription op = RosUnsubscription.builder(topic).build();
         boolean flag = send(op);
         if (flag) {
             this.topicListeners.remove(topic);
