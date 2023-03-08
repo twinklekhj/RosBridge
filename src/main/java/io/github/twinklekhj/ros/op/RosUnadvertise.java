@@ -1,7 +1,6 @@
 package io.github.twinklekhj.ros.op;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +11,6 @@ import org.json.JSONObject;
  * topic - ROS MASTER 에서 토픽 삭제
  */
 @Builder
-@AllArgsConstructor
 @RequiredArgsConstructor
 public class RosUnadvertise implements RosOperation {
     private final Type op = Type.UNADVERTISE_TOPIC;

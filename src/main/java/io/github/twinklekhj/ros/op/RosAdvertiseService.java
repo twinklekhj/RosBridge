@@ -1,7 +1,6 @@
 package io.github.twinklekhj.ros.op;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,6 @@ import org.json.JSONObject;
  * id - 공고할 ID
  */
 @Builder
-@AllArgsConstructor
 @RequiredArgsConstructor
 public class RosAdvertiseService implements RosOperation {
     private final Type op = Type.ADVERTISE_SERVICE;
