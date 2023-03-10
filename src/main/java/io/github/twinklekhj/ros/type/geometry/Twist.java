@@ -1,7 +1,8 @@
 package io.github.twinklekhj.ros.type.geometry;
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
+
 
 public class Twist extends RosMessage {
     public static final String FIELD_LINEAR = "linear";
@@ -16,14 +17,7 @@ public class Twist extends RosMessage {
         this(new Vector3(), new Vector3());
     }
 
-    /**
-     * Create a new Twist with the given linear and angular values.
-     *
-     * @param linear  The linear value of the twist.
-     * @param angular The angular value of the twist.
-     */
     public Twist(Vector3 linear, Vector3 angular) {
-        // build the JSON object
         super(jsonBuilder().put(Twist.FIELD_LINEAR, linear.getJsonObject()).put(Twist.FIELD_ANGULAR, angular.getJsonObject()), Twist.TYPE);
         this.linear = linear;
         this.angular = angular;
@@ -34,13 +28,13 @@ public class Twist extends RosMessage {
     }
 
     public static Twist fromMessage(RosMessage m) {
-        return Twist.fromJSONObject(m.getJsonObject());
+        return Twist.fromJsonObject(m.getJsonObject());
     }
 
-    public static Twist fromJSONObject(JSONObject jsonObject) {
+    public static Twist fromJsonObject(JsonObject jsonObject) {
         // check the fields
-        Vector3 linear = jsonObject.has(Twist.FIELD_LINEAR) ? Vector3.fromJSONObject(jsonObject.getJSONObject(Twist.FIELD_LINEAR)) : new Vector3();
-        Vector3 angular = jsonObject.has(Twist.FIELD_ANGULAR) ? Vector3.fromJSONObject(jsonObject.getJSONObject(Twist.FIELD_ANGULAR)) : new Vector3();
+        Vector3 linear = jsonObject.containsKey(Twist.FIELD_LINEAR) ? Vector3.fromJsonObject(jsonObject.getJsonObject(Twist.FIELD_LINEAR)) : new Vector3();
+        Vector3 angular = jsonObject.containsKey(Twist.FIELD_ANGULAR) ? Vector3.fromJsonObject(jsonObject.getJsonObject(Twist.FIELD_ANGULAR)) : new Vector3();
         return new Twist(linear, angular);
     }
 

@@ -3,7 +3,8 @@ package io.github.twinklekhj.ros.type.geometry;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.std.Header;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
+
 
 public class TransformStamped extends RosMessage {
     public static final String FIELD_HEADER = "header";
@@ -16,22 +17,11 @@ public class TransformStamped extends RosMessage {
     private final String childFrameID;
     private final Transform transform;
 
-    /**
-     * Create a new TransformStamped with all 0s.
-     */
     public TransformStamped() {
         this(new Header(), "", new Transform());
     }
 
-    /**
-     * Create a new TransformStamped with the given values.
-     *
-     * @param header       The header value of the transform.
-     * @param childFrameID The child frame ID value of the transform.
-     * @param transform    The transform value of the transform.
-     */
     public TransformStamped(Header header, String childFrameID, Transform transform) {
-        // build the JSON object
         super(jsonBuilder().put(TransformStamped.FIELD_HEADER, header.getJsonObject()).put(TransformStamped.FIELD_CHILD_FRAME_ID, childFrameID).put(TransformStamped.FIELD_TRANSFORM, transform.getJsonObject()), TransformStamped.TYPE);
 
         this.header = header;
@@ -44,14 +34,13 @@ public class TransformStamped extends RosMessage {
     }
 
     public static TransformStamped fromMessage(RosMessage m) {
-        return TransformStamped.fromJSONObject(m.getJsonObject());
+        return TransformStamped.fromJsonObject(m.getJsonObject());
     }
 
-    public static TransformStamped fromJSONObject(JSONObject jsonObject) {
-        // check the fields
-        Header header = jsonObject.has(TransformStamped.FIELD_HEADER) ? Header.fromJSONObject(jsonObject.getJSONObject(TransformStamped.FIELD_HEADER)) : new Header();
-        String childFrameID = jsonObject.has(TransformStamped.FIELD_CHILD_FRAME_ID) ? jsonObject.getString(TransformStamped.FIELD_CHILD_FRAME_ID) : "";
-        Transform transform = jsonObject.has(TransformStamped.FIELD_TRANSFORM) ? Transform.fromJSONObject(jsonObject.getJSONObject(TransformStamped.FIELD_TRANSFORM)) : new Transform();
+    public static TransformStamped fromJsonObject(JsonObject jsonObject) {
+        Header header = jsonObject.containsKey(TransformStamped.FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(TransformStamped.FIELD_HEADER)) : new Header();
+        String childFrameID = jsonObject.containsKey(TransformStamped.FIELD_CHILD_FRAME_ID) ? jsonObject.getString(TransformStamped.FIELD_CHILD_FRAME_ID) : "";
+        Transform transform = jsonObject.containsKey(TransformStamped.FIELD_TRANSFORM) ? Transform.fromJsonObject(jsonObject.getJsonObject(TransformStamped.FIELD_TRANSFORM)) : new Transform();
         return new TransformStamped(header, childFrameID, transform);
     }
 

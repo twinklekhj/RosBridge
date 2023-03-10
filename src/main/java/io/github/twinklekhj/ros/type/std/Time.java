@@ -1,7 +1,8 @@
 package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
+
 
 public class Time extends RosMessage {
     public static final String FIELD_DATA = "data";
@@ -24,11 +25,11 @@ public class Time extends RosMessage {
     }
 
     public static Time fromMessage(RosMessage m) {
-        return Time.fromJSONObject(m.getJsonObject());
+        return Time.fromJsonObject(m.getJsonObject());
     }
 
-    public static Time fromJSONObject(JSONObject jsonObject) {
-        Time data = jsonObject.has(Time.FIELD_DATA) ? Time.fromJSONObject(jsonObject) : new Time();
+    public static Time fromJsonObject(JsonObject jsonObject) {
+        Time data = jsonObject.containsKey(Time.FIELD_DATA) ? Time.fromJsonObject(jsonObject) : new Time();
         return new Time(data);
     }
 
@@ -38,7 +39,6 @@ public class Time extends RosMessage {
 
     @Override
     public Time clone() {
-        // time objects are mutable, create a clone
         return new Time(this.data.clone());
     }
 }

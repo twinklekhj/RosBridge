@@ -2,7 +2,8 @@ package io.github.twinklekhj.ros.type.geometry;
 
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
+
 
 public class Pose extends RosMessage {
     public static final String FIELD_POSITION = "position";
@@ -38,12 +39,12 @@ public class Pose extends RosMessage {
     }
 
     public static Pose fromMessage(RosMessage m) {
-        return Pose.fromJSONObject(m.getJsonObject());
+        return Pose.fromJsonObject(m.getJsonObject());
     }
 
-    public static Pose fromJSONObject(JSONObject jsonObject) {
-        Point position = jsonObject.has(Pose.FIELD_POSITION) ? Point.fromJSONObject(jsonObject.getJSONObject(Pose.FIELD_POSITION)) : new Point();
-        Quaternion orientation = jsonObject.has(Pose.FIELD_ORIENTATION) ? Quaternion.fromJSONObject(jsonObject.getJSONObject(Pose.FIELD_ORIENTATION)) : new Quaternion();
+    public static Pose fromJsonObject(JsonObject jsonObject) {
+        Point position = jsonObject.containsKey(Pose.FIELD_POSITION) ? Point.fromJsonObject(jsonObject.getJsonObject(Pose.FIELD_POSITION)) : new Point();
+        Quaternion orientation = jsonObject.containsKey(Pose.FIELD_ORIENTATION) ? Quaternion.fromJsonObject(jsonObject.getJsonObject(Pose.FIELD_ORIENTATION)) : new Quaternion();
         return new Pose(position, orientation);
     }
 

@@ -1,7 +1,7 @@
 package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
 
 import java.awt.*;
 
@@ -58,10 +58,10 @@ public class ColorRGBA extends RosMessage {
      * @return A new ColorRGBA message based on the given color information.
      */
     public static ColorRGBA fromColor(Color c) {
-        float r = (float) c.getRed() / 255.0f;
-        float g = (float) c.getGreen() / 255.0f;
-        float b = (float) c.getBlue() / 255.0f;
-        float a = (float) c.getAlpha() / 255.0f;
+        float r = c.getRed() / 255.0f;
+        float g = c.getGreen() / 255.0f;
+        float b = c.getBlue() / 255.0f;
+        float a = c.getAlpha() / 255.0f;
         return new ColorRGBA(r, g, b, a);
     }
 
@@ -70,14 +70,14 @@ public class ColorRGBA extends RosMessage {
     }
 
     public static ColorRGBA fromMessage(RosMessage m) {
-        return ColorRGBA.fromJSONObject(m.getJsonObject());
+        return ColorRGBA.fromJsonObject(m.getJsonObject());
     }
 
-    public static ColorRGBA fromJSONObject(JSONObject jsonObject) {
-        float r = jsonObject.has(ColorRGBA.FIELD_R) ? (float) jsonObject.getDouble(ColorRGBA.FIELD_R) : 0f;
-        float g = jsonObject.has(ColorRGBA.FIELD_G) ? (float) jsonObject.getDouble(ColorRGBA.FIELD_G) : 0f;
-        float b = jsonObject.has(ColorRGBA.FIELD_B) ? (float) jsonObject.getDouble(ColorRGBA.FIELD_B) : 0f;
-        float a = jsonObject.has(ColorRGBA.FIELD_A) ? (float) jsonObject.getDouble(ColorRGBA.FIELD_A) : 0f;
+    public static ColorRGBA fromJsonObject(JsonObject jsonObject) {
+        float r = jsonObject.containsKey(ColorRGBA.FIELD_R) ? jsonObject.getDouble(ColorRGBA.FIELD_R).floatValue() : 0f;
+        float g = jsonObject.containsKey(ColorRGBA.FIELD_G) ? jsonObject.getDouble(ColorRGBA.FIELD_G).floatValue() : 0f;
+        float b = jsonObject.containsKey(ColorRGBA.FIELD_B) ? jsonObject.getDouble(ColorRGBA.FIELD_B).floatValue() : 0f;
+        float a = jsonObject.containsKey(ColorRGBA.FIELD_A) ? jsonObject.getDouble(ColorRGBA.FIELD_A).floatValue() : 0f;
 
         return new ColorRGBA(r, g, b, a);
     }

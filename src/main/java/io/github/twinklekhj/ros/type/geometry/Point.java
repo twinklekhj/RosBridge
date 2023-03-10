@@ -1,7 +1,8 @@
 package io.github.twinklekhj.ros.type.geometry;
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
+
 
 public class Point extends RosMessage {
     public static final String FIELD_X = "x";
@@ -15,13 +16,6 @@ public class Point extends RosMessage {
         this(0, 0, 0);
     }
 
-    /**
-     * Create a new Point with the given values.
-     *
-     * @param x The x value of the point.
-     * @param y The y value of the point.
-     * @param z The z value of the point.
-     */
     public Point(double x, double y, double z) {
         // build the JSON object
         super(jsonBuilder().put(Point.FIELD_X, x).put(Point.FIELD_Y, y).put(Point.FIELD_Z, z), Point.TYPE);
@@ -36,14 +30,14 @@ public class Point extends RosMessage {
 
     public static Point fromMessage(RosMessage m) {
         // get it from the JSON object
-        return fromJSONObject(m.getJsonObject());
+        return fromJsonObject(m.getJsonObject());
     }
 
-    public static Point fromJSONObject(JSONObject jsonObject) {
+    public static Point fromJsonObject(JsonObject jsonObject) {
         // check the fields
-        double x = jsonObject.has(Point.FIELD_X) ? jsonObject.getDouble(Point.FIELD_X) : 0.0;
-        double y = jsonObject.has(Point.FIELD_Y) ? jsonObject.getDouble(Point.FIELD_Y) : 0.0;
-        double z = jsonObject.has(Point.FIELD_Z) ? jsonObject.getDouble(Point.FIELD_Z) : 0.0;
+        double x = jsonObject.containsKey(Point.FIELD_X) ? jsonObject.getDouble(Point.FIELD_X) : 0.0;
+        double y = jsonObject.containsKey(Point.FIELD_Y) ? jsonObject.getDouble(Point.FIELD_Y) : 0.0;
+        double z = jsonObject.containsKey(Point.FIELD_Z) ? jsonObject.getDouble(Point.FIELD_Z) : 0.0;
         return new Point(x, y, z);
     }
 

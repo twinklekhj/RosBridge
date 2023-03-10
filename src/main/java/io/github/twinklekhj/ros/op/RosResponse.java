@@ -1,12 +1,14 @@
 package io.github.twinklekhj.ros.op;
 
 
-import com.fasterxml.jackson.databind.JsonNode;
+import io.vertx.core.json.JsonObject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.json.JSONObject;
+
+import java.util.Map;
+
 
 @Builder
 @AllArgsConstructor
@@ -19,7 +21,7 @@ public class RosResponse implements RosOperation {
     private final boolean result;
 
     private String id;
-    private JsonNode values;
+    private Map<String, Object> values;
 
     private static RosResponseBuilder builder() {
         return new RosResponseBuilder();
@@ -27,6 +29,19 @@ public class RosResponse implements RosOperation {
 
     public static RosResponseBuilder builder(String service, boolean result) {
         return builder().service(service).result(result);
+    }
+
+    public static RosResponse fromString(String str){
+        JsonObject node = new JsonObject(str);
+        return fromJsonObject(node);
+    }
+    public static RosResponse fromJsonObject(JsonObject node) {
+        String id = node.getString("id");
+        Map<String, Object> values = (Map<String, Object>) node.getMap().get("values");
+        boolean result = node.getBoolean("result");
+        String service = node.getString("service");
+
+        return new RosResponse(service, result, id, values);
     }
 
     public String getService() {
@@ -45,17 +60,17 @@ public class RosResponse implements RosOperation {
         this.id = id;
     }
 
-    public JsonNode getValues() {
+    public Map<String, Object> getValues() {
         return values;
     }
 
-    public void setValues(JsonNode values) {
+    public void setValues(Map<String, Object> values) {
         this.values = values;
     }
 
     @Override
     public String toString() {
-        return new JSONObject()
+        return new JsonObject()
                 .put("op", this.op.code)
                 .put("service", this.service)
                 .put("values", this.values)

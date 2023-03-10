@@ -1,7 +1,8 @@
 package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
+
 
 public class Float32 extends RosMessage {
     public static final String FIELD_DATA = "data";
@@ -10,18 +11,10 @@ public class Float32 extends RosMessage {
 
     private final float data;
 
-    /**
-     * Create a new Float32 with a default of 0.
-     */
     public Float32() {
         this(0f);
     }
 
-    /**
-     * Create a new Float32 with the given data value.
-     *
-     * @param data The data value of the float.
-     */
     public Float32(float data) {
         super(jsonBuilder().put(Float32.FIELD_DATA, data), Float32.TYPE);
         this.data = data;
@@ -32,11 +25,11 @@ public class Float32 extends RosMessage {
     }
 
     public static Float32 fromMessage(RosMessage m) {
-        return Float32.fromJSONObject(m.getJsonObject());
+        return Float32.fromJsonObject(m.getJsonObject());
     }
 
-    public static Float32 fromJSONObject(JSONObject jsonObject) {
-        float data = jsonObject.has(Float32.FIELD_DATA) ? (float) jsonObject.getDouble(Float32.FIELD_DATA) : 0f;
+    public static Float32 fromJsonObject(JsonObject jsonObject) {
+        float data = jsonObject.containsKey(Float32.FIELD_DATA) ? jsonObject.getDouble(Float32.FIELD_DATA).floatValue() : 0f;
         return new Float32(data);
     }
 

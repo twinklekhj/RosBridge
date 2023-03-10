@@ -1,7 +1,7 @@
 package io.github.twinklekhj.ros.type.primitives;
 
 import io.github.twinklekhj.ros.type.JsonWrapper;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
 
 import java.math.BigInteger;
 
@@ -18,8 +18,7 @@ public abstract class Primitive extends JsonWrapper {
      * @param primitiveType The type of the primitive (e.g., "geometry_msgs/Twist").
      */
     public Primitive(String jsonString, String primitiveType) {
-        // parse and pass it to the JSON constructor
-        this(new JSONObject(jsonString), primitiveType);
+        this(new JsonObject(jsonString), primitiveType);
     }
 
     /**
@@ -28,7 +27,7 @@ public abstract class Primitive extends JsonWrapper {
      * @param jsonObject    The JSON object containing the primitive data.
      * @param primitiveType The type of the primitive (e.g., "time").
      */
-    public Primitive(JSONObject jsonObject, String primitiveType) {
+    public Primitive(JsonObject jsonObject, String primitiveType) {
         super(jsonObject);
         this.primitiveType = primitiveType;
     }
@@ -207,6 +206,10 @@ public abstract class Primitive extends JsonWrapper {
      */
     public static long toUInt64(BigInteger value) {
         return value.longValue();
+    }
+
+    public static long toUInt64(Long value) {
+        return value;
     }
 
     /**

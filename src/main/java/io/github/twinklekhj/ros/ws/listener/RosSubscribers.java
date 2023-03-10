@@ -1,6 +1,6 @@
-package io.github.twinklekhj.ros.listener;
+package io.github.twinklekhj.ros.ws.listener;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import io.vertx.core.json.JsonObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,7 +21,7 @@ public class RosSubscribers {
         this.delegates.remove(delegate);
     }
 
-    public void receive(JsonNode data, String stringRep) {
+    public void receive(JsonObject data, String stringRep) {
         this.delegates.forEach(delegate -> delegate.receive(data, stringRep));
     }
 

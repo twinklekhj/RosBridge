@@ -1,6 +1,7 @@
 package io.github.twinklekhj.ros.type.primitives;
 
-import org.json.JSONObject;
+
+import io.vertx.core.json.JsonObject;
 
 public class Duration extends TimeBase<Duration> {
     public static final String TYPE = "duration";
@@ -30,12 +31,12 @@ public class Duration extends TimeBase<Duration> {
     }
 
     public static Duration fromJsonString(String jsonString) {
-        return Duration.fromJSONObject(new JSONObject(jsonString));
+        return Duration.fromJsonObject(new JsonObject(jsonString));
     }
 
-    public static Duration fromJSONObject(JSONObject jsonObject) {
-        int secs = jsonObject.has(FIELD_SECS) ? jsonObject.getInt(FIELD_SECS) : 0;
-        int nsecs = jsonObject.has(FIELD_NSECS) ? jsonObject.getInt(FIELD_NSECS) : 0;
+    public static Duration fromJsonObject(JsonObject jsonObject) {
+        int secs = jsonObject.containsKey(FIELD_SECS) ? jsonObject.getInteger(FIELD_SECS) : 0;
+        int nsecs = jsonObject.containsKey(FIELD_NSECS) ? jsonObject.getInteger(FIELD_NSECS) : 0;
         return new Duration(secs, nsecs);
     }
 

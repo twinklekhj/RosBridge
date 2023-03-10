@@ -1,7 +1,8 @@
 package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
+
 
 public class Bool extends RosMessage {
     public static final java.lang.String FIELD_DATA = "data";
@@ -9,18 +10,10 @@ public class Bool extends RosMessage {
 
     private final boolean data;
 
-    /**
-     * Create a new Bool with a default of false.
-     */
     public Bool() {
         this(false);
     }
 
-    /**
-     * Create a new Bool with the given data value.
-     *
-     * @param data The data value of the boolean.
-     */
     public Bool(boolean data) {
         // build the JSON object
         super(jsonBuilder().put(FIELD_DATA, data), Bool.TYPE);
@@ -32,11 +25,11 @@ public class Bool extends RosMessage {
     }
 
     public static Bool fromMessage(RosMessage m) {
-        return Bool.fromJSONObject(m.getJsonObject());
+        return Bool.fromJsonObject(m.getJsonObject());
     }
 
-    public static Bool fromJSONObject(JSONObject jsonObject) {
-        boolean data = jsonObject.has(Bool.FIELD_DATA) && jsonObject.getBoolean(Bool.FIELD_DATA);
+    public static Bool fromJsonObject(JsonObject jsonObject) {
+        boolean data = jsonObject.containsKey(Bool.FIELD_DATA) && jsonObject.getBoolean(Bool.FIELD_DATA);
         return new Bool(data);
     }
 

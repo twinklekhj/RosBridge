@@ -2,7 +2,7 @@ package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.primitives.Primitive;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
 
 
 /**
@@ -37,10 +37,7 @@ public class Header extends RosMessage {
      */
     public Header(int seq, Time stamp, String frameID) {
         // build the JSON object
-        super(jsonBuilder()
-                .put(Header.FIELD_SEQ, Primitive.fromUInt32(seq))
-                .put(Header.FIELD_STAMP, stamp.getJsonObject())
-                .put(Header.FIELD_FRAME_ID, frameID), Header.TYPE);
+        super(jsonBuilder().put(Header.FIELD_SEQ, Primitive.fromUInt32(seq)).put(Header.FIELD_STAMP, stamp.getJsonObject()).put(Header.FIELD_FRAME_ID, frameID), Header.TYPE);
         this.seq = seq;
         this.stamp = stamp;
         this.frameID = frameID;
@@ -67,7 +64,7 @@ public class Header extends RosMessage {
      */
     public static Header fromMessage(RosMessage m) {
         // get it from the JSON object
-        return Header.fromJSONObject(m.getJsonObject());
+        return Header.fromJsonObject(m.getJsonObject());
     }
 
     /**
@@ -77,11 +74,11 @@ public class Header extends RosMessage {
      * @param jsonObject The JSON object to parse.
      * @return A Header message based on the given JSON object.
      */
-    public static Header fromJSONObject(JSONObject jsonObject) {
+    public static Header fromJsonObject(JsonObject jsonObject) {
         // check the fields
-        long seq64 = jsonObject.has(Header.FIELD_SEQ) ? jsonObject.getLong(Header.FIELD_SEQ) : 0;
-        Time stamp = jsonObject.has(Header.FIELD_STAMP) ? Time.fromJSONObject(jsonObject.getJSONObject(Header.FIELD_SEQ)) : new Time();
-        String frameID = jsonObject.has(Header.FIELD_FRAME_ID) ? jsonObject.getString(Header.FIELD_FRAME_ID) : "";
+        long seq64 = jsonObject.containsKey(Header.FIELD_SEQ) ? jsonObject.getLong(Header.FIELD_SEQ) : 0;
+        Time stamp = jsonObject.containsKey(Header.FIELD_STAMP) ? Time.fromJsonObject(jsonObject.getJsonObject(Header.FIELD_SEQ)) : new Time();
+        String frameID = jsonObject.containsKey(Header.FIELD_FRAME_ID) ? jsonObject.getString(Header.FIELD_FRAME_ID) : "";
 
         // convert to a 32-bit number
         int seq32 = Primitive.toUInt32(seq64);

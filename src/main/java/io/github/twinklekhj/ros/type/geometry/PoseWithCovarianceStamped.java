@@ -3,7 +3,8 @@ package io.github.twinklekhj.ros.type.geometry;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.std.Header;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
+
 
 public class PoseWithCovarianceStamped extends RosMessage {
     public static final String FIELD_HEADER = "header";
@@ -19,12 +20,6 @@ public class PoseWithCovarianceStamped extends RosMessage {
         this(new Header(), new PoseWithCovariance());
     }
 
-    /**
-     * Create a new PoseWithCovarianceStamped with the given values.
-     *
-     * @param header The header value of the pose.
-     * @param pose   The pose value of the pose.
-     */
     public PoseWithCovarianceStamped(Header header, PoseWithCovariance pose) {
         // build the JSON object
         super(jsonBuilder().put(PoseWithCovarianceStamped.FIELD_HEADER, header.getJsonObject()).put(PoseWithCovarianceStamped.FIELD_POSE, pose.getJsonObject()), PoseWithCovarianceStamped.TYPE);
@@ -39,14 +34,14 @@ public class PoseWithCovarianceStamped extends RosMessage {
 
     public static PoseWithCovarianceStamped fromMessage(RosMessage m) {
         // get it from the JSON object
-        return PoseWithCovarianceStamped.fromJSONObject(m.getJsonObject());
+        return PoseWithCovarianceStamped.fromJsonObject(m.getJsonObject());
     }
 
 
-    public static PoseWithCovarianceStamped fromJSONObject(JSONObject jsonObject) {
+    public static PoseWithCovarianceStamped fromJsonObject(JsonObject jsonObject) {
         // check the fields
-        Header header = jsonObject.has(PoseWithCovarianceStamped.FIELD_HEADER) ? Header.fromJSONObject(jsonObject.getJSONObject(PoseWithCovarianceStamped.FIELD_HEADER)) : new Header();
-        PoseWithCovariance pose = jsonObject.has(PoseWithCovarianceStamped.FIELD_POSE) ? PoseWithCovariance.fromJSONObject(jsonObject.getJSONObject(PoseWithCovarianceStamped.FIELD_POSE)) : new PoseWithCovariance();
+        Header header = jsonObject.containsKey(PoseWithCovarianceStamped.FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(PoseWithCovarianceStamped.FIELD_HEADER)) : new Header();
+        PoseWithCovariance pose = jsonObject.containsKey(PoseWithCovarianceStamped.FIELD_POSE) ? PoseWithCovariance.fromJsonObject(jsonObject.getJsonObject(PoseWithCovarianceStamped.FIELD_POSE)) : new PoseWithCovariance();
         return new PoseWithCovarianceStamped(header, pose);
     }
 

@@ -3,11 +3,12 @@ package io.github.twinklekhj.ros.op;
 
 import io.github.twinklekhj.ros.type.MessageType;
 import io.github.twinklekhj.ros.type.RosMessage;
+import io.vertx.core.json.JsonObject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.json.JSONObject;
+
 
 /**
  * Publish Topic
@@ -63,7 +64,7 @@ public class RosTopic implements RosOperation {
 
     @Override
     public String toString() {
-        JSONObject json = new JSONObject().put("op", this.op.code)
+        JsonObject json = new JsonObject().put("op", this.op.code)
                 .put("topic", this.name)
                 .put("type", this.type)
                 .put("id", this.id);

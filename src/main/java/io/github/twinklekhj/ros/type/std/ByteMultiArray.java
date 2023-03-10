@@ -1,8 +1,8 @@
 package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 import java.util.Arrays;
 
@@ -19,20 +19,11 @@ public class ByteMultiArray extends RosMessage {
         this(new MultiArrayLayout(), new byte[]{});
     }
 
-    /**
-     * Create a new ByteMultiArray with the given layout and data. The array of
-     * data will be copied into this object.
-     *
-     * @param layout The specification of data layout.
-     * @param data   The array of data.
-     */
     public ByteMultiArray(MultiArrayLayout layout, byte[] data) {
-        // build the JSON object
         super(jsonBuilder()
                 .put(ByteMultiArray.FIELD_LAYOUT, layout.getJsonObject())
                 .put(ByteMultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data))), ByteMultiArray.TYPE);
         this.layout = layout;
-        // copy the array
         this.data = new byte[data.length];
         System.arraycopy(data, 0, this.data, 0, data.length);
     }
@@ -42,21 +33,18 @@ public class ByteMultiArray extends RosMessage {
     }
 
     public static ByteMultiArray fromMessage(RosMessage m) {
-        return ByteMultiArray.fromJSONObject(m.getJsonObject());
+        return ByteMultiArray.fromJsonObject(m.getJsonObject());
     }
 
-    public static ByteMultiArray fromJSONObject(JSONObject jsonObject) {
-        // check the layout
-        MultiArrayLayout layout = jsonObject.has(ByteMultiArray.FIELD_LAYOUT) ? MultiArrayLayout.fromJSONObject(jsonObject.getJSONObject(ByteMultiArray.FIELD_LAYOUT)) : new MultiArrayLayout();
+    public static ByteMultiArray fromJsonObject(JsonObject jsonObject) {
+        MultiArrayLayout layout = jsonObject.containsKey(ByteMultiArray.FIELD_LAYOUT) ? MultiArrayLayout.fromJsonObject(jsonObject.getJsonObject(ByteMultiArray.FIELD_LAYOUT)) : new MultiArrayLayout();
 
-        // check the array
         byte[] data = new byte[]{};
-        JSONArray jsonData = jsonObject.getJSONArray(ByteMultiArray.FIELD_DATA);
+        JsonArray jsonData = jsonObject.getJsonArray(ByteMultiArray.FIELD_DATA);
         if (jsonData != null) {
-            // convert each data
-            data = new byte[jsonData.length()];
+            data = new byte[jsonData.size()];
             for (int i = 0; i < data.length; i++) {
-                data[i] = (byte) jsonData.getInt(i);
+                data[i] = jsonData.getInteger(i).byteValue();
             }
         }
         return new ByteMultiArray(layout, data);

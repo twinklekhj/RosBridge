@@ -2,7 +2,8 @@ package io.github.twinklekhj.ros.type.geometry;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.std.Header;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
+
 
 public class WrenchStamped extends RosMessage {
     public static final String FIELD_HEADER = "header";
@@ -13,19 +14,10 @@ public class WrenchStamped extends RosMessage {
     private final Header header;
     private final Wrench wrench;
 
-    /**
-     * Create a new WrenchStamped with all 0s.
-     */
     public WrenchStamped() {
         this(new Header(), new Wrench());
     }
 
-    /**
-     * Create a new WrenchStamped with the given values.
-     *
-     * @param header The header value of the wrench.
-     * @param wrench The wrench value of the wrench.
-     */
     public WrenchStamped(Header header, Wrench wrench) {
         // build the JSON object
         super(jsonBuilder().put(WrenchStamped.FIELD_HEADER, header.getJsonObject()).put(WrenchStamped.FIELD_WRENCH, wrench.getJsonObject()), WrenchStamped.TYPE);
@@ -38,13 +30,13 @@ public class WrenchStamped extends RosMessage {
     }
 
     public static WrenchStamped fromMessage(RosMessage m) {
-        return WrenchStamped.fromJSONObject(m.getJsonObject());
+        return WrenchStamped.fromJsonObject(m.getJsonObject());
     }
 
-    public static WrenchStamped fromJSONObject(JSONObject jsonObject) {
+    public static WrenchStamped fromJsonObject(JsonObject jsonObject) {
         // check the fields
-        Header header = jsonObject.has(WrenchStamped.FIELD_HEADER) ? Header.fromJSONObject(jsonObject.getJSONObject(WrenchStamped.FIELD_HEADER)) : new Header();
-        Wrench wrench = jsonObject.has(WrenchStamped.FIELD_WRENCH) ? Wrench.fromJSONObject(jsonObject.getJSONObject(WrenchStamped.FIELD_WRENCH)) : new Wrench();
+        Header header = jsonObject.containsKey(WrenchStamped.FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(WrenchStamped.FIELD_HEADER)) : new Header();
+        Wrench wrench = jsonObject.containsKey(WrenchStamped.FIELD_WRENCH) ? Wrench.fromJsonObject(jsonObject.getJsonObject(WrenchStamped.FIELD_WRENCH)) : new Wrench();
         return new WrenchStamped(header, wrench);
     }
 

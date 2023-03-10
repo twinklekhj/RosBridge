@@ -2,7 +2,8 @@ package io.github.twinklekhj.ros.type.geometry;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.std.Header;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
+
 
 public class PoseStamped extends RosMessage {
     public static final String FIELD_HEADER = "header";
@@ -13,19 +14,10 @@ public class PoseStamped extends RosMessage {
     private final Header header;
     private final Pose pose;
 
-    /**
-     * Create a new PoseStamped with all 0s.
-     */
     public PoseStamped() {
         this(new Header(), new Pose());
     }
 
-    /**
-     * Create a new PoseStamped with the given values.
-     *
-     * @param header The header value of the pose.
-     * @param pose   The pose value of the pose.
-     */
     public PoseStamped(Header header, Pose pose) {
         super(jsonBuilder().put(PoseStamped.FIELD_HEADER, header.getJsonObject()).put(PoseStamped.FIELD_POSE, pose.getJsonObject()), PoseStamped.TYPE);
         this.header = header;
@@ -37,12 +29,12 @@ public class PoseStamped extends RosMessage {
     }
 
     public static PoseStamped fromMessage(RosMessage m) {
-        return PoseStamped.fromJSONObject(m.getJsonObject());
+        return PoseStamped.fromJsonObject(m.getJsonObject());
     }
 
-    public static PoseStamped fromJSONObject(JSONObject jsonObject) {
-        Header header = jsonObject.has(PoseStamped.FIELD_HEADER) ? Header.fromJSONObject(jsonObject.getJSONObject(PoseStamped.FIELD_HEADER)) : new Header();
-        Pose pose = jsonObject.has(PoseStamped.FIELD_POSE) ? Pose.fromJSONObject(jsonObject.getJSONObject(PoseStamped.FIELD_POSE)) : new Pose();
+    public static PoseStamped fromJsonObject(JsonObject jsonObject) {
+        Header header = jsonObject.containsKey(PoseStamped.FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(PoseStamped.FIELD_HEADER)) : new Header();
+        Pose pose = jsonObject.containsKey(PoseStamped.FIELD_POSE) ? Pose.fromJsonObject(jsonObject.getJsonObject(PoseStamped.FIELD_POSE)) : new Pose();
         return new PoseStamped(header, pose);
     }
 

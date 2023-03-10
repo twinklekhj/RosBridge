@@ -3,7 +3,8 @@ package io.github.twinklekhj.ros.type.geometry;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.std.Header;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
+
 
 public class PolygonStamped extends RosMessage {
     public static final String FIELD_HEADER = "header";
@@ -36,12 +37,12 @@ public class PolygonStamped extends RosMessage {
     }
 
     public static PolygonStamped fromMessage(RosMessage m) {
-        return PolygonStamped.fromJSONObject(m.getJsonObject());
+        return PolygonStamped.fromJsonObject(m.getJsonObject());
     }
 
-    public static PolygonStamped fromJSONObject(JSONObject jsonObject) {
-        Header header = jsonObject.has(PolygonStamped.FIELD_HEADER) ? Header.fromJSONObject(jsonObject.getJSONObject(PolygonStamped.FIELD_HEADER)) : new Header();
-        Polygon polygon = jsonObject.has(PolygonStamped.FIELD_POLYGON) ? Polygon.fromJSONObject(jsonObject.getJSONObject(PolygonStamped.FIELD_POLYGON)) : new Polygon();
+    public static PolygonStamped fromJsonObject(JsonObject jsonObject) {
+        Header header = jsonObject.containsKey(PolygonStamped.FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(PolygonStamped.FIELD_HEADER)) : new Header();
+        Polygon polygon = jsonObject.containsKey(PolygonStamped.FIELD_POLYGON) ? Polygon.fromJsonObject(jsonObject.getJsonObject(PolygonStamped.FIELD_POLYGON)) : new Polygon();
         return new PolygonStamped(header, polygon);
     }
 

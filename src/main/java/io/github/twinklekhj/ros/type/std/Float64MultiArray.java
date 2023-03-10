@@ -1,8 +1,8 @@
 package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 import java.util.Arrays;
 
@@ -15,27 +15,13 @@ public class Float64MultiArray extends RosMessage {
     private final MultiArrayLayout layout;
     private final double[] data;
 
-    /**
-     * Create a new, empty Float64MultiArray.
-     */
     public Float64MultiArray() {
         this(new MultiArrayLayout(), new double[]{});
     }
 
-    /**
-     * Create a new Float64MultiArray with the given layout and data. The array
-     * of data will be copied into this object.
-     *
-     * @param layout The specification of data layout.
-     * @param data   The array of data.
-     */
     public Float64MultiArray(MultiArrayLayout layout, double[] data) {
-        // build the JSON object
-        super(jsonBuilder()
-                .put(Float64MultiArray.FIELD_LAYOUT, layout.getJsonObject())
-                .put(Float64MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data))), Float64MultiArray.TYPE);
+        super(jsonBuilder().put(Float64MultiArray.FIELD_LAYOUT, layout.getJsonObject()).put(Float64MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data))), Float64MultiArray.TYPE);
         this.layout = layout;
-        // copy the array
         this.data = new double[data.length];
         System.arraycopy(data, 0, this.data, 0, data.length);
     }
@@ -45,19 +31,16 @@ public class Float64MultiArray extends RosMessage {
     }
 
     public static Float64MultiArray fromMessage(RosMessage m) {
-        return Float64MultiArray.fromJSONObject(m.getJsonObject());
+        return Float64MultiArray.fromJsonObject(m.getJsonObject());
     }
 
-    public static Float64MultiArray fromJSONObject(JSONObject jsonObject) {
-        // check the layout
-        MultiArrayLayout layout = jsonObject.has(Float64MultiArray.FIELD_LAYOUT) ? MultiArrayLayout.fromJSONObject(jsonObject.getJSONObject(Float64MultiArray.FIELD_LAYOUT)) : new MultiArrayLayout();
+    public static Float64MultiArray fromJsonObject(JsonObject jsonObject) {
+        MultiArrayLayout layout = jsonObject.containsKey(Float64MultiArray.FIELD_LAYOUT) ? MultiArrayLayout.fromJsonObject(jsonObject.getJsonObject(Float64MultiArray.FIELD_LAYOUT)) : new MultiArrayLayout();
 
-        // check the array
         double[] data = new double[]{};
-        JSONArray jsonData = jsonObject.getJSONArray(Float64MultiArray.FIELD_DATA);
+        JsonArray jsonData = jsonObject.getJsonArray(Float64MultiArray.FIELD_DATA);
         if (jsonData != null) {
-            // convert each data
-            data = new double[jsonData.length()];
+            data = new double[jsonData.size()];
             for (int i = 0; i < data.length; i++) {
                 data[i] = jsonData.getDouble(i);
             }

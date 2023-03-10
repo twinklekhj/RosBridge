@@ -1,8 +1,8 @@
 package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 import java.util.Arrays;
 
@@ -15,27 +15,13 @@ public class Int8MultiArray extends RosMessage {
     private final MultiArrayLayout layout;
     private final byte[] data;
 
-    /**
-     * Create a new, empty Int8MultiArray.
-     */
     public Int8MultiArray() {
         this(new MultiArrayLayout(), new byte[]{});
     }
 
-    /**
-     * Create a new Int8MultiArray with the given layout and data. The array of
-     * data will be copied into this object.
-     *
-     * @param layout The specification of data layout.
-     * @param data   The array of data.
-     */
     public Int8MultiArray(MultiArrayLayout layout, byte[] data) {
-        // build the JSON object
-        super(jsonBuilder()
-                .put(Int8MultiArray.FIELD_LAYOUT, layout.getJsonObject())
-                .put(Int8MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data))), Int8MultiArray.TYPE);
+        super(jsonBuilder().put(Int8MultiArray.FIELD_LAYOUT, layout.getJsonObject()).put(Int8MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data))), Int8MultiArray.TYPE);
         this.layout = layout;
-        // copy the array
         this.data = new byte[data.length];
         System.arraycopy(data, 0, this.data, 0, data.length);
     }
@@ -45,21 +31,18 @@ public class Int8MultiArray extends RosMessage {
     }
 
     public static Int8MultiArray fromMessage(RosMessage m) {
-        return Int8MultiArray.fromJSONObject(m.getJsonObject());
+        return Int8MultiArray.fromJsonObject(m.getJsonObject());
     }
 
-    public static Int8MultiArray fromJSONObject(JSONObject jsonObject) {
-        // check the layout
-        MultiArrayLayout layout = jsonObject.has(Int8MultiArray.FIELD_LAYOUT) ? MultiArrayLayout.fromJSONObject(jsonObject.getJSONObject(Int8MultiArray.FIELD_LAYOUT)) : new MultiArrayLayout();
+    public static Int8MultiArray fromJsonObject(JsonObject jsonObject) {
+        MultiArrayLayout layout = jsonObject.containsKey(Int8MultiArray.FIELD_LAYOUT) ? MultiArrayLayout.fromJsonObject(jsonObject.getJsonObject(Int8MultiArray.FIELD_LAYOUT)) : new MultiArrayLayout();
 
-        // check the array
         byte[] data = new byte[]{};
-        JSONArray jsonData = jsonObject.getJSONArray(Int8MultiArray.FIELD_DATA);
+        JsonArray jsonData = jsonObject.getJsonArray(Int8MultiArray.FIELD_DATA);
         if (jsonData != null) {
-            // convert each data
-            data = new byte[jsonData.length()];
+            data = new byte[jsonData.size()];
             for (int i = 0; i < data.length; i++) {
-                data[i] = (byte) jsonData.getInt(i);
+                data[i] = jsonData.getInteger(i).byteValue();
             }
         }
         return new Int8MultiArray(layout, data);

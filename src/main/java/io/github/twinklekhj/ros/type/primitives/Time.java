@@ -1,6 +1,8 @@
 package io.github.twinklekhj.ros.type.primitives;
 
-import org.json.JSONObject;
+
+
+import io.vertx.core.json.JsonObject;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -100,7 +102,7 @@ public class Time extends TimeBase<Time> {
      */
     public static Time fromJsonString(String jsonString) {
         // convert to a JSON object
-        return Time.fromJSONObject(new JSONObject(jsonString));
+        return Time.fromJsonObject(new JsonObject(jsonString));
     }
 
     /**
@@ -110,10 +112,10 @@ public class Time extends TimeBase<Time> {
      * @param jsonObject The JSON object to parse.
      * @return A Time message based on the given JSON object.
      */
-    public static Time fromJSONObject(JSONObject jsonObject) {
+    public static Time fromJsonObject(JsonObject jsonObject) {
         // check the fields
-        int secs = jsonObject.has(Time.FIELD_SECS) ? jsonObject.getInt(Time.FIELD_SECS) : 0;
-        int nsecs = jsonObject.has(Time.FIELD_NSECS) ? jsonObject.getInt(Time.FIELD_NSECS) : 0;
+        int secs = jsonObject.containsKey(Time.FIELD_SECS) ? jsonObject.getInteger(Time.FIELD_SECS) : 0;
+        int nsecs = jsonObject.containsKey(Time.FIELD_NSECS) ? jsonObject.getInteger(Time.FIELD_NSECS) : 0;
         return new Time(secs, nsecs);
     }
 

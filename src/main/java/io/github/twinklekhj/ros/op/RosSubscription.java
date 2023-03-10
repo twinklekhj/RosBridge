@@ -2,11 +2,12 @@ package io.github.twinklekhj.ros.op;
 
 
 import io.github.twinklekhj.ros.type.MessageType;
+import io.vertx.core.json.JsonObject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.json.JSONObject;
+
 
 /**
  * Subscribe topic
@@ -84,7 +85,7 @@ public class RosSubscription implements RosOperation {
 
     @Override
     public String toString() {
-        JSONObject json = new JSONObject()
+        JsonObject json = new JsonObject()
                 .put("op", this.op.code)
                 .put("topic", this.topic)
                 .put("id", this.id)

@@ -2,7 +2,8 @@ package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.primitives.Primitive;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
+
 
 public class UInt8 extends RosMessage {
     public static final String FIELD_DATA = "data";
@@ -15,14 +16,7 @@ public class UInt8 extends RosMessage {
         this((byte) 0);
     }
 
-    /**
-     * Create a new UInt8 with the given data value treated as a 8-bit unsigned
-     * integer.
-     *
-     * @param data The data value of the byte.
-     */
     public UInt8(byte data) {
-        // build the JSON object
         super(jsonBuilder().put(UInt8.FIELD_DATA, Primitive.fromUInt8(data)), UInt8.TYPE);
         this.data = data;
     }
@@ -32,11 +26,11 @@ public class UInt8 extends RosMessage {
     }
 
     public static UInt8 fromMessage(RosMessage m) {
-        return UInt8.fromJSONObject(m.getJsonObject());
+        return UInt8.fromJsonObject(m.getJsonObject());
     }
 
-    public static UInt8 fromJSONObject(JSONObject jsonObject) {
-        byte data = jsonObject.has(UInt8.FIELD_DATA) ? Primitive.toUInt8((short) jsonObject.getInt(UInt8.FIELD_DATA)) : 0;
+    public static UInt8 fromJsonObject(JsonObject jsonObject) {
+        byte data = jsonObject.containsKey(UInt8.FIELD_DATA) ? Primitive.toUInt8(jsonObject.getInteger(UInt8.FIELD_DATA).shortValue()) : 0;
         return new UInt8(data);
     }
 

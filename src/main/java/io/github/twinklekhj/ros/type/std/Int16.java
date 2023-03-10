@@ -1,7 +1,8 @@
 package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
+
 
 public class Int16 extends RosMessage {
     public static final String FIELD_DATA = "data";
@@ -10,18 +11,10 @@ public class Int16 extends RosMessage {
 
     private final short data;
 
-    /**
-     * Create a new Int16 with a default of 0.
-     */
     public Int16() {
         this((short) 0);
     }
 
-    /**
-     * Create a new Int16 with the given data value.
-     *
-     * @param data The data value of the short.
-     */
     public Int16(short data) {
         super(jsonBuilder().put(Int16.FIELD_DATA, data), Int16.TYPE);
         this.data = data;
@@ -32,12 +25,11 @@ public class Int16 extends RosMessage {
     }
 
     public static Int16 fromMessage(RosMessage m) {
-        return Int16.fromJSONObject(m.getJsonObject());
+        return Int16.fromJsonObject(m.getJsonObject());
     }
 
-    public static Int16 fromJSONObject(JSONObject jsonObject) {
-        // check the fields
-        short data = jsonObject.has(Int16.FIELD_DATA) ? (short) jsonObject.getInt(Int16.FIELD_DATA) : 0;
+    public static Int16 fromJsonObject(JsonObject jsonObject) {
+        short data = jsonObject.containsKey(Int16.FIELD_DATA) ? jsonObject.getInteger(Int16.FIELD_DATA).shortValue() : 0;
         return new Int16(data);
     }
 
