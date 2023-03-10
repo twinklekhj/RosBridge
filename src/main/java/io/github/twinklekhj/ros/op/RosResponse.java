@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Collections;
 import java.util.Map;
 
 
@@ -31,13 +32,23 @@ public class RosResponse implements RosOperation {
         return builder().service(service).result(result);
     }
 
-    public static RosResponse fromString(String str){
+    public static RosResponse fromString(String str) {
         JsonObject node = new JsonObject(str);
         return fromJsonObject(node);
     }
+
     public static RosResponse fromJsonObject(JsonObject node) {
+        Object valuesObj = node.getMap().get("values");
+
         String id = node.getString("id");
-        Map<String, Object> values = (Map<String, Object>) node.getMap().get("values");
+
+        Map<String, Object> values = Collections.emptyMap();
+        if (valuesObj instanceof Map) {
+            values = (Map<String, Object>) valuesObj;
+        } else if (valuesObj instanceof JsonObject) {
+            values = ((JsonObject) valuesObj).getMap();
+        }
+
         boolean result = node.getBoolean("result");
         String service = node.getString("service");
 

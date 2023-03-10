@@ -1,10 +1,11 @@
 package io.github.twinklekhj.ros;
 
-import io.github.twinklekhj.ros.op.RosService;
+import io.github.twinklekhj.ros.op.RosResponse;
 import io.github.twinklekhj.ros.ws.ConnProps;
 import io.github.twinklekhj.ros.ws.RosVerticle;
 import io.github.twinklekhj.utils.PropertyUtil;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonArray;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import org.junit.jupiter.api.DisplayName;
@@ -40,17 +41,16 @@ public class RosVerticleTest {
     @DisplayName("Topics 테스트")
     public void testService() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
-        RosService service = RosService.builder("/rosapi/topics").build();
-
         props.setPrintStackTrace(true);
         props.setWait(true);
         props.setPrintSendMsg(true);
         props.setPrintReceivedMsg(true);
 
         socket.start();
-        socket.callService(service, message -> {
-            logger.info("response: {}", message);
-            context.completed();
+        socket.getTopics(message -> {
+            RosResponse res = RosResponse.fromJsonObject(message.body());
+            JsonArray topics = (JsonArray) res.getValues().get("topics");
+            logger.info("topics: {}", topics);
         });
 
         context.awaitCompletion(10, TimeUnit.SECONDS);

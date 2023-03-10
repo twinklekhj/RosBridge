@@ -112,6 +112,7 @@ public class RosBridgeTest {
     public void getTopics() {
         bridge.getTopics(response -> {
             logger.info("values: {}", response.getValues());
+            List<?> topics = (List<?>) response.getValues().get("topics");
         });
 
         bridge.awaitClose(3000, TimeUnit.MILLISECONDS);
@@ -160,12 +161,11 @@ public class RosBridgeTest {
             List<String> devices = new ArrayList<>();
 
             logger.info("response: {}", response);
-            Map<String, Object> nodes = response.getValues();
+            Map<String, Object> values = response.getValues();
+            List<?> nodes = (List<?>) values.get("nodes");
 
-            logger.info("nodes: {}", nodes);
-            nodes.forEach((node, value) -> {
+            nodes.forEach(node -> {
                 String[] names = node.toString().split("/");
-                System.err.println(Arrays.toString(names));
                 if (names.length > 2 && names[2].equals("tetraDS")) {
                     devices.add(names[1]);
                 }
