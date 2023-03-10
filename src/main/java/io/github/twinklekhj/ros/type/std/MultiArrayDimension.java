@@ -2,7 +2,8 @@ package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.primitives.Primitive;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
+
 
 public class MultiArrayDimension extends RosMessage {
     public static final String FIELD_LABEL = "label";
@@ -14,9 +15,6 @@ public class MultiArrayDimension extends RosMessage {
     private final String label;
     private final int size, stride;
 
-    /**
-     * Create a new MultiArrayDimension with all empty values.
-     */
     public MultiArrayDimension() {
         this("", 0, 0);
     }
@@ -31,7 +29,6 @@ public class MultiArrayDimension extends RosMessage {
      *               integer.
      */
     public MultiArrayDimension(String label, int size, int stride) {
-        // build the JSON object
         super(jsonBuilder()
                 .put(MultiArrayDimension.FIELD_LABEL, label)
                 .put(MultiArrayDimension.FIELD_SIZE, Primitive.fromUInt32(size))
@@ -46,23 +43,14 @@ public class MultiArrayDimension extends RosMessage {
     }
 
     public static MultiArrayDimension fromMessage(RosMessage m) {
-        return MultiArrayDimension.fromJSONObject(m.getJsonObject());
+        return MultiArrayDimension.fromJsonObject(m.getJsonObject());
     }
 
-    /**
-     * Create a new MultiArrayDimension based on the given JSON object. Any
-     * missing values will be set to their defaults.
-     *
-     * @param jsonObject The JSON object to parse.
-     * @return A MultiArrayDimension message based on the given JSON object.
-     */
-    public static MultiArrayDimension fromJSONObject(JSONObject jsonObject) {
-        // check the fields
-        String label = jsonObject.has(MultiArrayDimension.FIELD_LABEL) ? jsonObject.getString(MultiArrayDimension.FIELD_LABEL) : "";
-        long size64 = jsonObject.has(MultiArrayDimension.FIELD_SIZE) ? jsonObject.getLong(MultiArrayDimension.FIELD_SIZE) : 0L;
-        long stride64 = jsonObject.has(MultiArrayDimension.FIELD_STRIDE) ? jsonObject.getLong(MultiArrayDimension.FIELD_STRIDE) : 0L;
+    public static MultiArrayDimension fromJsonObject(JsonObject jsonObject) {
+        String label = jsonObject.containsKey(MultiArrayDimension.FIELD_LABEL) ? jsonObject.getString(MultiArrayDimension.FIELD_LABEL) : "";
+        long size64 = jsonObject.containsKey(MultiArrayDimension.FIELD_SIZE) ? jsonObject.getLong(MultiArrayDimension.FIELD_SIZE) : 0L;
+        long stride64 = jsonObject.containsKey(MultiArrayDimension.FIELD_STRIDE) ? jsonObject.getLong(MultiArrayDimension.FIELD_STRIDE) : 0L;
 
-        // convert to a 32-bit number
         int size32 = Primitive.toUInt32(size64);
         int stride32 = Primitive.toUInt32(stride64);
         return new MultiArrayDimension(label, size32, stride32);

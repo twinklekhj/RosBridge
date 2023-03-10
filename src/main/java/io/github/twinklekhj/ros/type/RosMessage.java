@@ -1,8 +1,8 @@
 package io.github.twinklekhj.ros.type;
 
+import io.vertx.core.json.JsonObject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import org.json.JSONObject;
 
 import java.util.Map;
 
@@ -11,7 +11,7 @@ import java.util.Map;
 public class RosMessage {
     public static final String EMPTY_MESSAGE = "{}";
 
-    private final JSONObject jsonObject;
+    private final JsonObject jsonObject;
     private final String jsonString;
     private final String type;
 
@@ -25,23 +25,23 @@ public class RosMessage {
         this.type = type;
     }
 
-    public RosMessage(JSONObject jsonObject, String type) {
+    public RosMessage(JsonObject jsonObject, String type) {
         this.jsonObject = jsonObject;
         this.jsonString = toJsonString(jsonObject);
         this.type = type;
     }
 
-    public static JSONObject jsonBuilder() {
-        return new JSONObject();
+    public static JsonObject jsonBuilder() {
+        return new JsonObject();
     }
-    public static JSONObject jsonBuilder(String jsonString) {
-        return new JSONObject(jsonString);
+    public static JsonObject jsonBuilder(String jsonString) {
+        return new JsonObject(jsonString);
     }
-    public static JSONObject jsonBuilder(Map<?,?> jsonMap) {
-        return new JSONObject(jsonMap);
+    public static JsonObject jsonBuilder(Map<?,?> jsonMap) {
+        return JsonObject.mapFrom(jsonMap);
     }
 
-    public static String toJsonString(JSONObject jsonObject) {
+    public static String toJsonString(JsonObject jsonObject) {
         return jsonObject.toString();
     }
 
@@ -53,7 +53,7 @@ public class RosMessage {
         return builder().jsonString(jsonString).jsonObject(jsonBuilder(jsonString)).type(type);
     }
 
-    public static RosMessageBuilder builder(JSONObject jsonObject, String type) {
+    public static RosMessageBuilder builder(JsonObject jsonObject, String type) {
         return builder().jsonString(toJsonString(jsonObject)).jsonObject(jsonObject).type(type);
     }
 
@@ -61,7 +61,7 @@ public class RosMessage {
         return type;
     }
 
-    public JSONObject getJsonObject() {
+    public JsonObject getJsonObject() {
         return jsonObject;
     }
 

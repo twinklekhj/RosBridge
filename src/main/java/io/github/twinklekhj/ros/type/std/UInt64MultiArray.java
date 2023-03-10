@@ -2,8 +2,8 @@ package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.primitives.Primitive;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 import java.util.Arrays;
 
@@ -22,13 +22,11 @@ public class UInt64MultiArray extends RosMessage {
     }
 
     public UInt64MultiArray(MultiArrayLayout layout, long[] data) {
-        // build the JSON object
-        super(new JSONObject()
+        super(new JsonObject()
                 .put(UInt64MultiArray.FIELD_LAYOUT, layout.getJsonObject())
                 .put(UInt64MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(Primitive.fromUInt64(data)))), UInt64MultiArray.TYPE);
 
         this.layout = layout;
-        // copy the array
         this.data = new long[data.length];
         System.arraycopy(data, 0, this.data, 0, data.length);
     }
@@ -39,21 +37,18 @@ public class UInt64MultiArray extends RosMessage {
 
 
     public static UInt64MultiArray fromMessage(RosMessage m) {
-        return UInt64MultiArray.fromJSONObject(m.getJsonObject());
+        return UInt64MultiArray.fromJsonObject(m.getJsonObject());
     }
 
-    public static UInt64MultiArray fromJSONObject(JSONObject jsonObject) {
-        // check the layout
-        MultiArrayLayout layout = jsonObject.has(UInt64MultiArray.FIELD_LAYOUT) ? MultiArrayLayout.fromJSONObject(jsonObject.getJSONObject(UInt64MultiArray.FIELD_LAYOUT)) : new MultiArrayLayout();
+    public static UInt64MultiArray fromJsonObject(JsonObject jsonObject) {
+        MultiArrayLayout layout = jsonObject.containsKey(UInt64MultiArray.FIELD_LAYOUT) ? MultiArrayLayout.fromJsonObject(jsonObject.getJsonObject(UInt64MultiArray.FIELD_LAYOUT)) : new MultiArrayLayout();
 
-        // check the array
         long[] data = new long[]{};
-        JSONArray jsonData = jsonObject.getJSONArray(UInt64MultiArray.FIELD_DATA);
+        JsonArray jsonData = jsonObject.getJsonArray(UInt64MultiArray.FIELD_DATA);
         if (jsonData != null) {
-            // convert each data
-            data = new long[jsonData.length()];
+            data = new long[jsonData.size()];
             for (int i = 0; i < data.length; i++) {
-                data[i] = Primitive.toUInt64(jsonData.getBigInteger(i));
+                data[i] = Primitive.toUInt64(jsonData.getLong(i));
             }
         }
         return new UInt64MultiArray(layout, data);

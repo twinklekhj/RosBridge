@@ -34,7 +34,7 @@
             <AppenderRef ref="Console_Appender"/>
             <AppenderRef ref="File_Appender"/>
         </Root>
-        <Logger name="org.springframework" level="INFO"
+        <Logger name="io.github.twinklekhj.ros" level="INFO"
                 additivity="false">
             <AppenderRef ref="Console_Appender"/>
             <AppenderRef ref="File_Appender"/>

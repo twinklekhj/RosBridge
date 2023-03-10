@@ -1,7 +1,8 @@
 package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
+
 
 public class Empty extends RosMessage {
     public static final String TYPE = "std_msgs/Empty";
@@ -15,10 +16,10 @@ public class Empty extends RosMessage {
     }
 
     public static Empty fromMessage(RosMessage m) {
-        return Empty.fromJSONObject(m.getJsonObject());
+        return Empty.fromJsonObject(m.getJsonObject());
     }
 
-    public static Empty fromJSONObject(JSONObject jsonObject) {
+    public static Empty fromJsonObject(JsonObject jsonObject) {
         return new Empty();
     }
 

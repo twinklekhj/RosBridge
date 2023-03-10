@@ -2,8 +2,8 @@ package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.primitives.Primitive;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 import java.util.Arrays;
 
@@ -16,27 +16,14 @@ public class UInt32MultiArray extends RosMessage {
     private final MultiArrayLayout layout;
     private final int[] data;
 
-    /**
-     * Create a new, empty UInt32MultiArray.
-     */
     public UInt32MultiArray() {
         this(new MultiArrayLayout(), new int[]{});
     }
 
-    /**
-     * Create a new UInt32MultiArray with the given layout and data. The array
-     * of data will be copied into this object. All values will be treated as an
-     * unsigned representation.
-     *
-     * @param layout The specification of data layout.
-     * @param data   The array of data.
-     */
     public UInt32MultiArray(MultiArrayLayout layout, int[] data) {
-        // build the JSON object
         super(jsonBuilder().put(UInt32MultiArray.FIELD_LAYOUT, layout.getJsonObject()).put(UInt32MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(Primitive.fromUInt32(data)))), UInt32MultiArray.TYPE);
 
         this.layout = layout;
-        // copy the array
         this.data = new int[data.length];
         System.arraycopy(data, 0, this.data, 0, data.length);
     }
@@ -46,19 +33,16 @@ public class UInt32MultiArray extends RosMessage {
     }
 
     public static UInt32MultiArray fromMessage(RosMessage m) {
-        return UInt32MultiArray.fromJSONObject(m.getJsonObject());
+        return UInt32MultiArray.fromJsonObject(m.getJsonObject());
     }
 
-    public static UInt32MultiArray fromJSONObject(JSONObject jsonObject) {
-        // check the layout
-        MultiArrayLayout layout = jsonObject.has(UInt32MultiArray.FIELD_LAYOUT) ? MultiArrayLayout.fromJSONObject(jsonObject.getJSONObject(UInt32MultiArray.FIELD_LAYOUT)) : new MultiArrayLayout();
+    public static UInt32MultiArray fromJsonObject(JsonObject jsonObject) {
+        MultiArrayLayout layout = jsonObject.containsKey(UInt32MultiArray.FIELD_LAYOUT) ? MultiArrayLayout.fromJsonObject(jsonObject.getJsonObject(UInt32MultiArray.FIELD_LAYOUT)) : new MultiArrayLayout();
 
-        // check the array
         int[] data = new int[]{};
-        JSONArray jsonData = jsonObject.getJSONArray(UInt32MultiArray.FIELD_DATA);
+        JsonArray jsonData = jsonObject.getJsonArray(UInt32MultiArray.FIELD_DATA);
         if (jsonData != null) {
-            // convert each data
-            data = new int[jsonData.length()];
+            data = new int[jsonData.size()];
             for (int i = 0; i < data.length; i++) {
                 data[i] = Primitive.toUInt32(jsonData.getLong(i));
             }

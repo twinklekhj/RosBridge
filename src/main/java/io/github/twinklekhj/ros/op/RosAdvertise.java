@@ -1,10 +1,11 @@
 package io.github.twinklekhj.ros.op;
 
 
+import io.vertx.core.json.JsonObject;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.json.JSONObject;
+
 
 /**
  * [RosOperation] 토픽 게시
@@ -36,7 +37,7 @@ public class RosAdvertise implements RosOperation {
 
     @Override
     public String toString() {
-        return new JSONObject().put("op", this.op.code).put("topic", this.topic).put("type", this.type).put("id", this.id).toString();
+        return new JsonObject().put("op", this.op.code).put("topic", this.topic).put("type", this.type).put("id", this.id).toString();
     }
 
     @Override

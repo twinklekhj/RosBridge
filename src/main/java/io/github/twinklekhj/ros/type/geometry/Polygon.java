@@ -2,8 +2,8 @@ package io.github.twinklekhj.ros.type.geometry;
 
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 import java.util.Arrays;
 
@@ -13,19 +13,10 @@ public class Polygon extends RosMessage {
 
     private final Point32[] points;
 
-    /**
-     * Create a new Polygon with no points.
-     */
     public Polygon() {
         this(new Point32[]{});
     }
 
-    /**
-     * Create a new Polygon with the given set of points. The array of points
-     * will be copied into this object.
-     *
-     * @param points The points of the polygon.
-     */
     public Polygon(Point32[] points) {
         super(jsonBuilder().put(Polygon.FIELD_POINTS, jsonBuilder(Arrays.deepToString(points))), Polygon.TYPE);
 
@@ -38,17 +29,17 @@ public class Polygon extends RosMessage {
     }
 
     public static Polygon fromMessage(RosMessage m) {
-        return Polygon.fromJSONObject(m.getJsonObject());
+        return Polygon.fromJsonObject(m.getJsonObject());
     }
 
-    public static Polygon fromJSONObject(JSONObject jsonObject) {
-        JSONArray jsonPoints = jsonObject.getJSONArray(Polygon.FIELD_POINTS);
+    public static Polygon fromJsonObject(JsonObject jsonObject) {
+        JsonArray jsonPoints = jsonObject.getJsonArray(Polygon.FIELD_POINTS);
 
         if (jsonPoints != null) {
             // convert each point
-            Point32[] points = new Point32[jsonPoints.length()];
+            Point32[] points = new Point32[jsonPoints.size()];
             for (int i = 0; i < points.length; i++) {
-                points[i] = Point32.fromJSONObject(jsonPoints.getJSONObject(i));
+                points[i] = Point32.fromJsonObject(jsonPoints.getJsonObject(i));
             }
             return new Polygon(points);
         } else {

@@ -2,7 +2,8 @@ package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.primitives.Primitive;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
+
 
 public class UInt16 extends RosMessage {
     public static final java.lang.String FIELD_DATA = "data";
@@ -11,21 +12,11 @@ public class UInt16 extends RosMessage {
 
     private final short data;
 
-    /**
-     * Create a new UInt16 with a default of 0.
-     */
     public UInt16() {
         this((short) 0);
     }
 
-    /**
-     * Create a new UInt16 with the given data value treated as a 16-bit
-     * unsigned integer.
-     *
-     * @param data The data value of the short.
-     */
     public UInt16(short data) {
-        // build the JSON object
         super(jsonBuilder().put(UInt16.FIELD_DATA, Primitive.fromUInt16(data)), UInt16.TYPE);
         this.data = data;
     }
@@ -36,12 +27,12 @@ public class UInt16 extends RosMessage {
 
     public static UInt16 fromMessage(RosMessage m) {
         // get it from the JSON object
-        return UInt16.fromJSONObject(m.getJsonObject());
+        return UInt16.fromJsonObject(m.getJsonObject());
     }
 
-    public static UInt16 fromJSONObject(JSONObject jsonObject) {
+    public static UInt16 fromJsonObject(JsonObject jsonObject) {
         // check the fields
-        short data = jsonObject.has(UInt16.FIELD_DATA) ? Primitive.toUInt16(jsonObject.getInt(UInt16.FIELD_DATA)) : 0;
+        short data = jsonObject.containsKey(UInt16.FIELD_DATA) ? Primitive.toUInt16(jsonObject.getInteger(UInt16.FIELD_DATA)) : 0;
         return new UInt16(data);
     }
 

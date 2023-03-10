@@ -1,67 +1,42 @@
-package ros;
+package io.github.twinklekhj.ros;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import io.github.twinklekhj.ros.RosBridge;
 import io.github.twinklekhj.ros.op.RosService;
 import io.github.twinklekhj.ros.op.RosTopic;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.std.Int32;
+import io.github.twinklekhj.ros.ws.ConnProps;
+import io.github.twinklekhj.ros.ws.RosBridge;
+import io.github.twinklekhj.utils.PropertyUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class RosBridgeTest {
-    public static final String fileName = "config/config.properties";
     private static final Logger logger = LoggerFactory.getLogger(RosBridgeTest.class);
-    public RosBridge bridge;
+    public final RosBridge bridge;
+    private final ConnProps props;
 
     /**
      * Test 객체 생성
      */
     RosBridgeTest() {
-        Properties properties = readProperties(fileName);
+        String host = PropertyUtil.getProperty("ros.host");
+        int port = PropertyUtil.getPropertyInt("ros.port");
 
-        String host = Objects.requireNonNull(properties).getProperty("ros.host");
-        String port = Objects.requireNonNull(properties).getProperty("ros.port");
-
-        RosBridge.Connection connection = RosBridge.Connection.builder(host, port).wait(true).maxIdleTimeout(10000).printSendMsg(true).build();
-
-        this.bridge = RosBridge.createConnection(connection);
+        this.props = ConnProps.builder(host, port).wait(true).idleTimeout(10000).printSendMsg(true).build();
+        this.bridge = RosBridge.createBridge(props);
     }
 
     public static void main(String[] args) {
         logger.info("===== Welcome To RosBridge Test =====");
-    }
-
-    /**
-     * [Properties] 파일을 가져와 Properties 객체 생성
-     *
-     * @param fileName 파일명
-     * @return Properties 객체 반환
-     */
-    public static Properties readProperties(String fileName) {
-        Properties prop = new Properties();
-        InputStream inputStream = RosBridgeTest.class.getClassLoader().getResourceAsStream(fileName);
-
-        try {
-            if (inputStream != null) {
-                prop.load(inputStream);
-                return prop;
-            } else {
-                throw new FileNotFoundException(String.format("Can not Found Properties File - %s", fileName));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     @Override
@@ -155,8 +130,10 @@ public class RosBridgeTest {
     @Test
     @DisplayName("ROS Node 목록 조회")
     public void getNodes() {
+        props.setPrintStackTrace(true);
+
         bridge.getNodes(response -> {
-            JsonNode values = response.getValues();
+            Map<String, Object> values = response.getValues();
             logger.info("values: {}", values);
         });
 
@@ -176,21 +153,20 @@ public class RosBridgeTest {
 
     @Test
     @DisplayName("TETRA Test")
-    public void tetraTest(){
+    public void tetraTest() {
         bridge.enablePrintStackTrace(true);
 
         bridge.getNodes(response -> {
             List<String> devices = new ArrayList<>();
 
             logger.info("response: {}", response);
-            JsonNode values = response.getValues();
-            JsonNode nodes = values.get("nodes");
+            Map<String, Object> nodes = response.getValues();
 
             logger.info("nodes: {}", nodes);
-            nodes.forEach(node -> {
-                String[] names = node.asText().split("/");
+            nodes.forEach((node, value) -> {
+                String[] names = node.toString().split("/");
                 System.err.println(Arrays.toString(names));
-                if(names.length > 2 && names[2].equals("tetraDS")){
+                if (names.length > 2 && names[2].equals("tetraDS")) {
                     devices.add(names[1]);
                 }
             });

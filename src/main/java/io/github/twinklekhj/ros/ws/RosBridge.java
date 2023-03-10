@@ -1,14 +1,11 @@
-package io.github.twinklekhj.ros;
+package io.github.twinklekhj.ros.ws;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.twinklekhj.ros.listener.RosServiceDelegate;
-import io.github.twinklekhj.ros.listener.RosSubscribeDelegate;
-import io.github.twinklekhj.ros.listener.RosSubscribers;
 import io.github.twinklekhj.ros.op.*;
 import io.github.twinklekhj.ros.type.MessageType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import io.github.twinklekhj.ros.ws.listener.RosServiceDelegate;
+import io.github.twinklekhj.ros.ws.listener.RosSubscribeDelegate;
+import io.github.twinklekhj.ros.ws.listener.RosSubscribers;
+import io.vertx.core.json.JsonObject;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
@@ -16,7 +13,6 @@ import org.eclipse.jetty.websocket.client.WebSocketClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -33,20 +29,17 @@ import java.util.concurrent.TimeUnit;
 public class RosBridge {
     private static final Logger logger = LoggerFactory.getLogger(RosBridge.class);
     protected final CountDownLatch closeLatch;
-    protected String host;
-    protected String port;
+    protected ConnProps props;
+
     protected Session session;
     protected Set<String> publishedTopics = new HashSet<>();
     protected Map<String, FragmentManager> fragmentManagers = new HashMap<>();
     protected Map<String, RosSubscribers> topicListeners = new HashMap<>();
     protected Map<String, RosServiceDelegate> serviceListeners = new HashMap<>();
 
-    protected boolean hasConnected = false;
-    protected boolean hasConnectError = false;
+    protected boolean connected = false;
+    protected boolean connectedError = false;
 
-    protected boolean printSendMsg = false;
-    protected boolean printReceivedMsg = false;
-    protected boolean printStackTrace = false;
 
     private RosBridge() {
         this.closeLatch = new CountDownLatch(1);
@@ -60,25 +53,27 @@ public class RosBridge {
      * @param waitForConnection 기다림 여부
      * @return RosBridge 객체
      */
-    public static RosBridge createConnection(String host, String port, boolean waitForConnection) {
-        return createConnection(Connection.builder(host, port, waitForConnection).build());
+    public static RosBridge createBridge(String host, int port, boolean waitForConnection) {
+        ConnProps props = ConnProps.builder(host, port, waitForConnection).build();
+        return createBridge(props);
     }
 
     /**
      * Connection 객체로 RosBridge 객체 생성후 WebSocket 연결
      *
-     * @param connection 연결 옵션 객체
+     * @param props 연결 옵션 객체
      * @return RosBridge 객체
      */
-    public static RosBridge createConnection(Connection connection) {
+    public static RosBridge createBridge(ConnProps props) {
         RosBridge bridge = new RosBridge();
-        bridge.connect(connection);
-        bridge.enablePrintMsgSend(connection.printSendMsg);
-        bridge.enablePrintMsgReceived(connection.printReceivedMsg);
-        bridge.enablePrintStackTrace(connection.printStackTrace);
+        bridge.connect(props);
+        bridge.enablePrintMsgSend(props.printSendMsg);
+        bridge.enablePrintMsgReceived(props.printReceivedMsg);
+        bridge.enablePrintStackTrace(props.printStackTrace);
 
         return bridge;
     }
+
 
     /**
      * 메시지 송신시 로그 사용여부
@@ -86,7 +81,7 @@ public class RosBridge {
      * @param flag 로깅 활성 여부
      */
     public void enablePrintMsgSend(boolean flag) {
-        this.printSendMsg = flag;
+        this.props.setPrintSendMsg(flag);
     }
 
     /**
@@ -95,53 +90,52 @@ public class RosBridge {
      * @param flag 로깅 활성여부
      */
     public void enablePrintMsgReceived(boolean flag) {
-        this.printReceivedMsg = flag;
+        this.props.setPrintReceivedMsg(flag);
     }
 
     /**
      * 에러 발생시 Stack Trace 출력여부
-     * 
+     *
      * @param flag 에러 출력여부
      */
     public void enablePrintStackTrace(boolean flag) {
-        this.printStackTrace = flag;
+        this.props.setPrintStackTrace(flag);
     }
 
     /**
      * WebSocket 연결
      *
-     * @param connection - 웹소켓 연결 정보
+     * @param props - 웹소켓 연결 정보
      */
-    private void connect(Connection connection) {
-        this.host = connection.host;
-        this.port = connection.port;
+    private void connect(ConnProps props) {
+        this.props = props;
 
         WebSocketClient client = new WebSocketClient();
 
         try {
-            if (connection.maxIdleTimeout != 0) {
-                client.setMaxIdleTimeout(connection.maxIdleTimeout);
+            if (props.idleTimeout != 0) {
+                client.setMaxIdleTimeout(props.idleTimeout);
             }
-            if (connection.connectTimeout != 0) {
-                client.setConnectTimeout(connection.connectTimeout);
+            if (props.connectTimeout != 0) {
+                client.setConnectTimeout(props.connectTimeout);
             }
-            if (connection.stopTimeout != 0) {
-                client.setStopTimeout(connection.stopTimeout);
+            if (props.stopTimeout != 0) {
+                client.setStopTimeout(props.stopTimeout);
             }
             client.start();
 
-            String url = String.format("ws://%s:%s", connection.host, connection.port);
+            String url = String.format("ws://%s:%s", props.host, props.port);
             URI echoUri = new URI(url);
 
             ClientUpgradeRequest request = new ClientUpgradeRequest();
             client.connect(this, echoUri, request);
             logger.info("Connecting to: {}", echoUri);
-            if (connection.wait) {
+            if (props.wait) {
                 waitForConnection();
             }
         } catch (Exception e) {
             logger.error("Error! Message: {}", e.getMessage());
-            if(connection.printStackTrace){
+            if (props.printStackTrace) {
                 e.printStackTrace();
             }
         }
@@ -151,17 +145,17 @@ public class RosBridge {
      * 연결될 때까지 기다린다
      */
     public void waitForConnection() {
-        if (this.hasConnected || this.hasConnectError) {
+        if (this.connected || this.connectedError) {
             return;
         }
 
         synchronized (this) {
-            while (!this.hasConnected && !this.hasConnectError) {
+            while (!this.connected && !this.connectedError) {
                 try {
                     wait();
                 } catch (InterruptedException e) {
                     logger.error("Error! Message: {}", e.getMessage());
-                    if(this.printStackTrace){
+                    if (this.props.isPrintStackTrace()) {
                         e.printStackTrace();
                     }
                 }
@@ -175,7 +169,7 @@ public class RosBridge {
      * @return 연결상태
      */
     public boolean hasConnected() {
-        return this.hasConnected;
+        return this.connected;
     }
 
     public boolean awaitClose(int duration, TimeUnit unit) {
@@ -183,7 +177,7 @@ public class RosBridge {
             return this.closeLatch.await(duration, unit);
         } catch (InterruptedException e) {
             logger.error("Error! message: {}", e.getMessage());
-            if(this.printStackTrace){
+            if (this.props.isPrintStackTrace()) {
                 e.printStackTrace();
             }
             return false;
@@ -208,7 +202,7 @@ public class RosBridge {
         logger.info("WebSocket Connected! Session: {}", session);
 
         this.session = session;
-        this.hasConnected = true;
+        this.connected = true;
         synchronized (this) {
             notifyAll();
         }
@@ -230,12 +224,12 @@ public class RosBridge {
     @OnWebSocketError
     public void onError(Session session, Throwable e) {
         logger.warn("WebSocket Error! msg: {}", e.getMessage());
-        if(this.printStackTrace){
+        if (this.props.isPrintStackTrace()) {
             e.printStackTrace();
         }
 
         synchronized (this) {
-            this.hasConnectError = true;
+            this.connectedError = true;
             notifyAll();
         }
         if (this.session == null) {
@@ -253,11 +247,11 @@ public class RosBridge {
     /**
      * WebSocket 재연결
      *
-     * @param waitForConnection 연결 기다림 여부
+     * @param flag 연결 기다림 여부
      */
-    public void reconnect(boolean waitForConnection) {
-        Connection conn = Connection.builder(this.host, this.port, waitForConnection).build();
-        this.connect(conn);
+    public void reconnect(boolean flag) {
+        props.setWait(flag);
+        this.connect(props);
     }
 
     /**
@@ -267,47 +261,31 @@ public class RosBridge {
      */
     @OnWebSocketMessage
     public void onMessage(String msg) {
-        if (this.printReceivedMsg) {
+        if (this.props.isPrintReceivedMsg()) {
             logger.info("[RESPONSE] msg: {}", msg);
         }
-
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode node;
-        try {
-            node = mapper.readTree(msg);
-            if (node.has("op")) {
-                // publish
-                String op = node.get("op").asText();
-                switch (op) {
-                    case "publish":
-                        String topic = node.get("topic").asText();
-                        RosSubscribers subscriber = this.topicListeners.get(topic);
-                        if (subscriber != null) {
-                            subscriber.receive(node, msg);
-                        }
-                        break;
-                    case "service_response":
-                        String id = node.get("id").asText();
-
-                        JsonNode values = node.findValue("values");
-                        boolean result = node.get("result").asBoolean();
-                        String service = node.get("service").asText();
-
-                        RosResponse res = RosResponse.builder(service, result).id(id).values(values).build();
-                        RosServiceDelegate delegate = serviceListeners.remove(res.getId());
-                        if (delegate != null) {
-                            delegate.receive(res);
-                        }
-                        break;
-                    case "fragment":
-                        processFragment(node);
-                        break;
-                }
-            }
-        } catch (IOException e) {
-            logger.error("Error! Message: Could not parse ROSBridge web socket message into JSON data");
-            if(this.printStackTrace){
-                e.printStackTrace();
+        JsonObject json = new JsonObject(msg);
+        if (json.containsKey("op")) {
+            // publish
+            String op = json.getString("op");
+            switch (op) {
+                case "publish":
+                    String topic = json.getString("topic");
+                    RosSubscribers subscriber = this.topicListeners.get(topic);
+                    if (subscriber != null) {
+                        subscriber.receive(json, msg);
+                    }
+                    break;
+                case "service_response":
+                    RosResponse res = RosResponse.fromJsonObject(json);
+                    RosServiceDelegate delegate = serviceListeners.remove(res.getId());
+                    if (delegate != null) {
+                        delegate.receive(res);
+                    }
+                    break;
+                case "fragment":
+                    processFragment(json);
+                    break;
             }
         }
     }
@@ -324,7 +302,7 @@ public class RosBridge {
      * @return 메세지 전송 성공 여부
      */
     private boolean send(String message) {
-        if (printSendMsg) {
+        if (this.props.isPrintSendMsg()) {
             logger.info("[REQUEST] msg: {}", message);
         }
         try {
@@ -333,7 +311,7 @@ public class RosBridge {
             return true;
         } catch (Exception e) {
             logger.error("Error! Message: {}", message);
-            if(this.printStackTrace){
+            if (this.props.isPrintStackTrace()) {
                 e.printStackTrace();
             }
         }
@@ -505,28 +483,6 @@ public class RosBridge {
     }
 
     /**
-     * Fragment 처리하기
-     *
-     * @param node - 조각
-     */
-    protected void processFragment(JsonNode node) {
-        String id = node.get("id").textValue();
-
-        FragmentManager manager = this.fragmentManagers.get(id);
-        if (manager == null) {
-            manager = new FragmentManager(node);
-            this.fragmentManagers.put(id, manager);
-        }
-        boolean complete = manager.updateFragment(node);
-
-        if (complete) {
-            String fullMsg = manager.generateFullMessage();
-            this.fragmentManagers.remove(id);
-            onMessage(fullMsg);
-        }
-    }
-
-    /**
      * [RosBridge] ROS Topic 목록 조회
      *
      * @param delegate 서비스 응답 처리 함수
@@ -567,56 +523,25 @@ public class RosBridge {
         callService(service, delegate);
     }
 
-    @Builder
-    @AllArgsConstructor
-    public static class Connection {
-        private String host = "127.0.0.1";
-        private String port = "9090";
-        private boolean wait = false;
-        private boolean printSendMsg = false;
-        private boolean printReceivedMsg = false;
-        private boolean printStackTrace = false;
-        private long maxIdleTimeout = 0;
-        private long connectTimeout = 0;
-        private long stopTimeout = 0;
+    /**
+     * Fragment 처리하기
+     *
+     * @param node - 조각
+     */
+    protected void processFragment(JsonObject node) {
+        String id = node.getString("id");
 
-        public Connection() {
+        FragmentManager manager = this.fragmentManagers.get(id);
+        if (manager == null) {
+            manager = new FragmentManager(node);
+            this.fragmentManagers.put(id, manager);
         }
+        boolean complete = manager.updateFragment(node);
 
-        public static ConnectionBuilder builder(String host, String port) {
-            return new ConnectionBuilder().host(host).port(port);
-        }
-
-        public static ConnectionBuilder builder(String host, String port, boolean wait) {
-            return builder(host, port).wait(wait);
-        }
-
-        public Connection build() {
-            return new Connection(this.host, this.port, this.wait, this.printSendMsg, this.printReceivedMsg, this.printStackTrace, this.maxIdleTimeout, this.connectTimeout, this.stopTimeout);
-        }
-
-        public void setWait(boolean wait) {
-            this.wait = wait;
-        }
-
-        public void setMaxIdleTimeout(long maxIdleTimeout) {
-            this.maxIdleTimeout = maxIdleTimeout;
-        }
-
-        public void setConnectTimeout(long connectTimeout) {
-            this.connectTimeout = connectTimeout;
-        }
-
-        public void setPrintSendMsg(boolean printSendMsg) {
-            this.printSendMsg = printSendMsg;
-        }
-
-        public void setPrintReceivedMsg(boolean printReceivedMsg) {
-            this.printReceivedMsg = printReceivedMsg;
-        }
-
-        public void setPrintStackTrace(boolean printStackTrace) {
-            this.printStackTrace = printStackTrace;
+        if (complete) {
+            String fullMsg = manager.generateFullMessage();
+            this.fragmentManagers.remove(id);
+            onMessage(fullMsg);
         }
     }
 
@@ -628,16 +553,16 @@ public class RosBridge {
         protected String[] fragments;
         protected Set<Integer> completedFragments;
 
-        public FragmentManager(JsonNode fragmentJson) {
-            int total = fragmentJson.get("total").intValue();
+        public FragmentManager(JsonObject fragmentJson) {
+            int total = fragmentJson.getInteger("total");
             this.fragments = new String[total];
             this.completedFragments = new HashSet<>(total);
-            this.id = fragmentJson.get("id").textValue();
+            this.id = fragmentJson.getString("id");
         }
 
-        public boolean updateFragment(JsonNode fragmentJson) {
-            String data = fragmentJson.get("data").asText();
-            int num = fragmentJson.get("num").intValue();
+        public boolean updateFragment(JsonObject fragmentJson) {
+            String data = fragmentJson.getString("data");
+            int num = fragmentJson.getInteger("num");
             this.fragments[num] = data;
             this.completedFragments.add(num);
             return complete();

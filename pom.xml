@@ -8,7 +8,7 @@
     <artifactId>rosbridge</artifactId>
     <name>RosBridge</name>
     <description>RosBridge library for Java implementing ros bridge protocol</description>
-    <version>1.0.9</version>
+    <version>1.1.0</version>
 
     <packaging>jar</packaging>
     <url>https://github.com/twinklekhj/RosBridge</url>
@@ -118,11 +118,6 @@
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20220924</version>
-        </dependency>
 
         <!-- WebSocket -->
         <dependency>
@@ -136,6 +131,19 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>5.8.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Vertx -->
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-core</artifactId>
+            <version>4.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-junit5</artifactId>
+            <version>4.4.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -1,7 +1,8 @@
 package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
+
 
 public class Int8 extends RosMessage {
     public static final String FIELD_DATA = "data";
@@ -10,18 +11,10 @@ public class Int8 extends RosMessage {
 
     private final byte data;
 
-    /**
-     * Create a new Int8 with a default of 0.
-     */
     public Int8() {
         this((byte) 0);
     }
 
-    /**
-     * Create a new Int8 with the given data value.
-     *
-     * @param data The data value of the byte.
-     */
     public Int8(byte data) {
         // build the JSON object
         super(jsonBuilder().put(Int8.FIELD_DATA, data), Int8.TYPE);
@@ -33,12 +26,12 @@ public class Int8 extends RosMessage {
     }
 
     public static Int8 fromMessage(RosMessage m) {
-        return Int8.fromJSONObject(m.getJsonObject());
+        return Int8.fromJsonObject(m.getJsonObject());
     }
 
-    public static Int8 fromJSONObject(JSONObject jsonObject) {
+    public static Int8 fromJsonObject(JsonObject jsonObject) {
         // check the fields
-        byte data = jsonObject.has(Int8.FIELD_DATA) ? (byte) jsonObject.getInt(Int8.FIELD_DATA) : 0;
+        byte data = jsonObject.containsKey(Int8.FIELD_DATA) ? (byte) jsonObject.getInteger(Int8.FIELD_DATA).byteValue() : 0;
         return new Int8(data);
     }
 

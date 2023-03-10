@@ -2,7 +2,8 @@ package io.github.twinklekhj.ros.type.geometry;
 
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
+
 
 public class Transform extends RosMessage {
     public static final String FIELD_TRANSLATION = "translation";
@@ -13,21 +14,11 @@ public class Transform extends RosMessage {
     private final Vector3 translation;
     private final Quaternion rotation;
 
-    /**
-     * Create a new Transform with all 0s.
-     */
     public Transform() {
         this(new Vector3(), new Quaternion());
     }
 
-    /**
-     * Create a new Transform with the given translation and rotation values.
-     *
-     * @param translation The translation value of the transform.
-     * @param rotation    The rotation value of the transform.
-     */
     public Transform(Vector3 translation, Quaternion rotation) {
-        // build the JSON object
         super(jsonBuilder().put(Transform.FIELD_TRANSLATION, translation.getJsonObject()).put(Transform.FIELD_ROTATION, rotation.getJsonObject()), Transform.TYPE);
         this.translation = translation;
         this.rotation = rotation;
@@ -38,13 +29,12 @@ public class Transform extends RosMessage {
     }
 
     public static Transform fromMessage(RosMessage m) {
-        return Transform.fromJSONObject(m.getJsonObject());
+        return Transform.fromJsonObject(m.getJsonObject());
     }
 
-    public static Transform fromJSONObject(JSONObject jsonObject) {
-        // check the fields
-        Vector3 translation = jsonObject.has(Transform.FIELD_TRANSLATION) ? Vector3.fromJSONObject(jsonObject.getJSONObject(Transform.FIELD_TRANSLATION)) : new Vector3();
-        Quaternion rotation = jsonObject.has(Transform.FIELD_ROTATION) ? Quaternion.fromJSONObject(jsonObject.getJSONObject(Transform.FIELD_ROTATION)) : new Quaternion();
+    public static Transform fromJsonObject(JsonObject jsonObject) {
+        Vector3 translation = jsonObject.containsKey(Transform.FIELD_TRANSLATION) ? Vector3.fromJsonObject(jsonObject.getJsonObject(Transform.FIELD_TRANSLATION)) : new Vector3();
+        Quaternion rotation = jsonObject.containsKey(Transform.FIELD_ROTATION) ? Quaternion.fromJsonObject(jsonObject.getJsonObject(Transform.FIELD_ROTATION)) : new Quaternion();
         return new Transform(translation, rotation);
     }
 

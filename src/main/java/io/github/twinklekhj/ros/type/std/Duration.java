@@ -1,7 +1,8 @@
 package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonObject;
+
 
 public class Duration extends RosMessage {
     public static final String FIELD_DATA = "data";
@@ -14,13 +15,7 @@ public class Duration extends RosMessage {
         this(new Duration());
     }
 
-    /**
-     * Create a new Duration with the given duration primitive.
-     *
-     * @param data The data value of this duration.
-     */
     public Duration(Duration data) {
-        // build the JSON object
         super(jsonBuilder().put(Duration.FIELD_DATA, data.getJsonObject()), Duration.TYPE);
         this.data = data;
     }
@@ -30,11 +25,11 @@ public class Duration extends RosMessage {
     }
 
     public static Duration fromMessage(RosMessage m) {
-        return Duration.fromJSONObject(m.getJsonObject());
+        return Duration.fromJsonObject(m.getJsonObject());
     }
 
-    public static Duration fromJSONObject(JSONObject jsonObject) {
-        Duration data = jsonObject.has(Duration.FIELD_DATA) ? Duration.fromJSONObject(jsonObject.getJSONObject(Duration.FIELD_DATA)) : new Duration();
+    public static Duration fromJsonObject(JsonObject jsonObject) {
+        Duration data = jsonObject.containsKey(Duration.FIELD_DATA) ? Duration.fromJsonObject(jsonObject.getJsonObject(Duration.FIELD_DATA)) : new Duration();
         return new Duration(data);
     }
 
@@ -44,7 +39,6 @@ public class Duration extends RosMessage {
 
     @Override
     public Duration clone() {
-        // duration objects are mutable, create a clone
         return new Duration(this.data.clone());
     }
 }

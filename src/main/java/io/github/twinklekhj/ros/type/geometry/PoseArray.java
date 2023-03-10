@@ -3,8 +3,8 @@ package io.github.twinklekhj.ros.type.geometry;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.std.Header;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 import java.util.Arrays;
 
@@ -41,18 +41,18 @@ public class PoseArray extends RosMessage {
     }
 
     public static PoseArray fromMessage(RosMessage m) {
-        return PoseArray.fromJSONObject(m.getJsonObject());
+        return PoseArray.fromJsonObject(m.getJsonObject());
     }
 
-    public static PoseArray fromJSONObject(JSONObject jsonObject) {
-        Header header = jsonObject.has(PoseArray.FIELD_HEADER) ? Header.fromJSONObject(jsonObject.getJSONObject(PoseArray.FIELD_HEADER)) : new Header();
+    public static PoseArray fromJsonObject(JsonObject jsonObject) {
+        Header header = jsonObject.containsKey(PoseArray.FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(PoseArray.FIELD_HEADER)) : new Header();
 
-        JSONArray jsonPoses = jsonObject.getJSONArray(PoseArray.FIELD_POSES);
+        JsonArray jsonPoses = jsonObject.getJsonArray(PoseArray.FIELD_POSES);
         if (jsonPoses != null) {
             // convert each pose
-            Pose[] poses = new Pose[jsonPoses.length()];
+            Pose[] poses = new Pose[jsonPoses.size()];
             for (int i = 0; i < poses.length; i++) {
-                poses[i] = Pose.fromJSONObject(jsonPoses.getJSONObject(i));
+                poses[i] = Pose.fromJsonObject(jsonPoses.getJsonObject(i));
             }
             return new PoseArray(header, poses);
         } else {

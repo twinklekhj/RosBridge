@@ -2,6 +2,7 @@ package io.github.twinklekhj.ros.type.geometry;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.std.Header;
+import io.vertx.core.json.JsonObject;
 
 public class PointStamped extends RosMessage {
     public static final String FIELD_HEADER = "header";
@@ -12,19 +13,10 @@ public class PointStamped extends RosMessage {
     private final Header header;
     private final Point point;
 
-    /**
-     * Create a new PointStamped with all 0s.
-     */
     public PointStamped() {
         this(new Header(), new Point());
     }
 
-    /**
-     * Create a new PointStamped with the given values.
-     *
-     * @param header The header value of the point.
-     * @param point  The point value of the point.
-     */
     public PointStamped(Header header, Point point) {
         // build the JSON object
         super(jsonBuilder().put(PointStamped.FIELD_HEADER, header.getJsonObject()).put(PointStamped.FIELD_POINT, point.getJsonObject()), PointStamped.TYPE);
@@ -37,13 +29,13 @@ public class PointStamped extends RosMessage {
     }
 
     public static PointStamped fromMessage(RosMessage m) {
-        return PointStamped.fromJSONObject(m.getJsonObject());
+        return PointStamped.fromJsonObject(m.getJsonObject());
     }
 
-    public static PointStamped fromJSONObject(org.json.JSONObject jsonObject) {
+    public static PointStamped fromJsonObject(JsonObject jsonObject) {
         // check the fields
-        Header header = jsonObject.has(PointStamped.FIELD_HEADER) ? Header.fromJSONObject(jsonObject.getJSONObject(PointStamped.FIELD_HEADER)) : new Header();
-        Point point = jsonObject.has(PointStamped.FIELD_POINT) ? Point.fromJSONObject(jsonObject.getJSONObject(PointStamped.FIELD_POINT)) : new Point();
+        Header header = jsonObject.containsKey(PointStamped.FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(PointStamped.FIELD_HEADER)) : new Header();
+        Point point = jsonObject.containsKey(PointStamped.FIELD_POINT) ? Point.fromJsonObject(jsonObject.getJsonObject(PointStamped.FIELD_POINT)) : new Point();
         return new PointStamped(header, point);
     }
 
