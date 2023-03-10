@@ -8,7 +8,7 @@
     <artifactId>rosbridge</artifactId>
     <name>RosBridge</name>
     <description>RosBridge library for Java implementing ros bridge protocol</description>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
 
     <packaging>jar</packaging>
     <url>https://github.com/twinklekhj/RosBridge</url>
@@ -43,14 +43,13 @@
         <maven.compiler.target>8</maven.compiler.target>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jackson.version>2.14.2</jackson.version>
         <org.slf4j-version>1.7.36</org.slf4j-version>
         <org.log4j-version>2.19.0</org.log4j-version>
 
         <version.lombok>1.18.18</version.lombok>
         <version.mapstruct>1.4.2.Final</version.mapstruct>
         <version.mapstruct-lombok>0.2.0</version.mapstruct-lombok>
-
+        <version.vertx>4.4.0</version.vertx>
         <plugin.maven.javadoc.version>3.5.0</plugin.maven.javadoc.version>
         <plugin.maven.source.version>3.2.1</plugin.maven.source.version>
         <plugin.maven.gpg.version>3.0.1</plugin.maven.gpg.version>
@@ -107,18 +106,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Json -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-
         <!-- WebSocket -->
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
@@ -138,12 +125,12 @@
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-core</artifactId>
-            <version>4.4.0</version>
+            <version>${version.vertx}</version>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-junit5</artifactId>
-            <version>4.4.0</version>
+            <version>${version.vertx}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
