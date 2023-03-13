@@ -36,6 +36,8 @@ public class RosVerticle extends AbstractVerticle {
     protected Map<String, Set<String>> topicListeners = new HashMap<>();
     protected Set<String> serviceListeners = new HashSet<>();
 
+    protected Map<String, FragmentManager> fragmentManagers = new HashMap<>();
+
     protected boolean connected = false;
     protected boolean connectedError = false;
 
@@ -52,39 +54,42 @@ public class RosVerticle extends AbstractVerticle {
         return connectedError;
     }
 
+    public void onMessage(Buffer buffer){
+        String msg = buffer.toString();
+        if (this.props.isPrintReceivedMsg()) {
+            logger.info("[RESPONSE] msg: {}", msg);
+        }
+
+        JsonObject json = buffer.toJsonObject();
+        if (json.containsKey("op")) {
+            // publish
+            String op = json.getString("op");
+            switch (op) {
+                case "publish":
+                    String topic = json.getString("topic");
+
+                    Set<String> listeners = this.topicListeners.get(topic);
+                    listeners.forEach(listener -> {
+                        this.bus.publish(listener, json);
+                    });
+                    break;
+                case "service_response":
+                    RosResponse res = RosResponse.fromJsonObject(json);
+                    this.bus.publish(res.getId(), json);
+                    this.bus.consumer(res.getId()).unregister();
+                    this.serviceListeners.remove(res.getId());
+
+                    break;
+                case "fragment":
+                    processFragment(buffer);
+                    break;
+            }
+        }
+    }
+
     @Override
     public void start() {
         RosVerticle that = this;
-
-        Handler<Buffer> onMessage = buffer -> {
-            String msg = buffer.toString();
-            if (this.props.isPrintReceivedMsg()) {
-                logger.info("[RESPONSE] msg: {}", msg);
-            }
-
-            JsonObject json = buffer.toJsonObject();
-            if (json.containsKey("op")) {
-                // publish
-                String op = json.getString("op");
-                switch (op) {
-                    case "publish":
-                        String topic = json.getString("topic");
-
-                        Set<String> listeners = this.topicListeners.get(topic);
-                        listeners.forEach(listener -> {
-                            this.bus.publish(listener, json);
-                        });
-                        break;
-                    case "service_response":
-                        RosResponse res = RosResponse.fromJsonObject(json);
-                        this.bus.publish(res.getId(), json);
-                        this.bus.consumer(res.getId()).unregister();
-                        this.serviceListeners.remove(res.getId());
-
-                        break;
-                }
-            }
-        };
 
         Future<WebSocket> future = connect();
         future.onSuccess(socket -> {
@@ -93,7 +98,7 @@ public class RosVerticle extends AbstractVerticle {
                 this.socket = socket;
                 this.bus = vertx.eventBus();
                 this.connected = true;
-                socket.handler(onMessage);
+                socket.handler(this::onMessage);
                 notifyAll();
             }
         }).onFailure(throwable -> {
@@ -493,5 +498,81 @@ public class RosVerticle extends AbstractVerticle {
      */
     public Promise<RosService> getNodeDetails(String node, Handler<Message<JsonObject>> handler) {
         return callService("/rosapi/node_details", handler);
+    }
+
+    /**
+     * Fragment 처리하기
+     *
+     * @param buffer - 조각
+     */
+    protected void processFragment(Buffer buffer) {
+        JsonObject json = buffer.toJsonObject();
+        String id = json.getString("id");
+
+        FragmentManager manager = this.fragmentManagers.get(id);
+        if (manager == null) {
+            manager = new FragmentManager(json);
+            this.fragmentManagers.put(id, manager);
+        }
+
+        boolean complete = manager.updateFragment(buffer);
+        if (complete) {
+            Buffer fullMsg = manager.generateFullMessage();
+            this.fragmentManagers.remove(id);
+
+            onMessage(fullMsg);
+        }
+    }
+
+    /**
+     * Fragments 관리자
+     */
+    public static class FragmentManager {
+        protected String id;
+        protected Buffer[] fragments;
+        protected Set<Integer> completedFragments;
+
+        public FragmentManager(JsonObject json) {
+            int total = json.getInteger("total");
+
+            this.id = json.getString("id");
+            this.fragments = new Buffer[total];
+            this.completedFragments = new HashSet<>(total);
+        }
+
+        public boolean updateFragment(Buffer buffer) {
+            JsonObject json = buffer.toJsonObject();
+            String data = json.getString("data");
+            int num = json.getInteger("num");
+
+            this.fragments[num] = Buffer.buffer(data);
+            this.completedFragments.add(num);
+
+            return complete();
+        }
+
+        public boolean complete() {
+            return (this.completedFragments.size() == this.fragments.length);
+        }
+
+        public int numFragments() {
+            return this.fragments.length;
+        }
+
+        public int numCompletedFragments() {
+            return this.completedFragments.size();
+        }
+
+        public Buffer generateFullMessage() {
+            if (!complete()) {
+                throw new RuntimeException("Cannot generate full message from fragments, because not all fragments have arrived.");
+            }
+            Buffer result = Buffer.buffer();
+            for(Buffer fragment: this.fragments){
+                result.appendBuffer(fragment);
+            }
+
+            return result;
+        }
     }
 }
