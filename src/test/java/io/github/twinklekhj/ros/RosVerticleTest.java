@@ -1,6 +1,9 @@
 package io.github.twinklekhj.ros;
 
 import io.github.twinklekhj.ros.op.RosResponse;
+import io.github.twinklekhj.ros.op.RosTopic;
+import io.github.twinklekhj.ros.type.RosMessage;
+import io.github.twinklekhj.ros.type.std.Int32;
 import io.github.twinklekhj.ros.ws.ConnProps;
 import io.github.twinklekhj.ros.ws.RosVerticle;
 import io.github.twinklekhj.utils.PropertyUtil;
@@ -8,6 +11,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,15 +38,32 @@ public class RosVerticleTest {
         this.socket = new RosVerticle(vertx, props);
     }
 
-    public static void main(String[] args) {
+    @Test
+    @DisplayName("Ros Topic 테스트")
+    public void testTopic() throws InterruptedException {
+        VertxTestContext context = new VertxTestContext();
+        socket.start();
+
+        RosMessage message = new Int32(8);
+        RosTopic topic = RosTopic.builder("/test", message.getType(), message).build();
+        socket.subscribe(topic, response -> {
+            logger.info("Subscribed topic: {}", response.body());
+            context.completeNow();
+        });
+
+        socket.publish(topic).future().onComplete(ar -> {
+            Assertions.assertTrue(ar.succeeded(), ar.cause() != null ? ar.cause().getMessage(): "");
+        });
+
+        context.awaitCompletion(10, TimeUnit.SECONDS);
     }
 
     @Test
-    @DisplayName("Topics 테스트")
+    @DisplayName("Service 테스트")
     public void testService() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
+
         props.setPrintStackTrace(true);
-        props.setWait(true);
         props.setPrintSendMsg(true);
         props.setPrintReceivedMsg(true);
 
@@ -51,6 +72,9 @@ public class RosVerticleTest {
             RosResponse res = RosResponse.fromJsonObject(message.body());
             JsonArray topics = (JsonArray) res.getValues().get("topics");
             logger.info("topics: {}", topics);
+            context.completeNow();
+        }).future().onComplete(ar -> {
+            Assertions.assertTrue(ar.succeeded(), ar.cause() != null ? ar.cause().getMessage(): "");
         });
 
         context.awaitCompletion(10, TimeUnit.SECONDS);
