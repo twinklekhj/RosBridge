@@ -13,6 +13,7 @@ public interface RosOperation {
     }
 
     Type getOperation();
+    String toJson();
 
     /**
      * Operation 유형

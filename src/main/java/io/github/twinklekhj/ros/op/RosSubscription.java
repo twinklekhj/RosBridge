@@ -3,10 +3,7 @@ package io.github.twinklekhj.ros.op;
 
 import io.github.twinklekhj.ros.type.MessageType;
 import io.vertx.core.json.JsonObject;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 
 /**
@@ -23,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 @Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
+@ToString
 public class RosSubscription implements RosOperation {
     private final Type op = Type.SUBSCRIBE;
     @Builder.Default
@@ -84,7 +82,7 @@ public class RosSubscription implements RosOperation {
     }
 
     @Override
-    public String toString() {
+    public String toJson() {
         JsonObject json = new JsonObject()
                 .put("op", this.op.code)
                 .put("topic", this.topic)

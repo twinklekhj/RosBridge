@@ -5,6 +5,7 @@ import io.vertx.core.json.JsonObject;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 
 /**
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Builder
 @RequiredArgsConstructor
+@ToString
 public class RosUnadvertise implements RosOperation {
     private final Type op = Type.UNADVERTISE_TOPIC;
     @Builder.Default
@@ -37,11 +39,8 @@ public class RosUnadvertise implements RosOperation {
     }
 
     @Override
-    public String toString() {
-        return new JsonObject()
-                .put("op", this.op.code)
-                .put("topic", this.topic)
-                .put("id", this.id).toString();
+    public String toJson() {
+        return new JsonObject().put("op", this.op.code).put("topic", this.topic).put("id", this.id).toString();
     }
 
     @Override

@@ -5,6 +5,7 @@ import io.vertx.core.json.JsonObject;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 /**
  * Advertise Service
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Builder
 @RequiredArgsConstructor
+@ToString
 public class RosAdvertiseService implements RosOperation {
     private final Type op = Type.ADVERTISE_SERVICE;
     @Builder.Default
@@ -37,7 +39,7 @@ public class RosAdvertiseService implements RosOperation {
     }
 
     @Override
-    public String toString() {
+    public String toJson() {
         return new JsonObject().put("op", this.op.code).put("service", this.service).put("type", this.type).put("id", this.id).toString();
     }
 

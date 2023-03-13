@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Deprecated
 public class RosSubscribers {
     protected List<RosSubscribeDelegate> delegates = new ArrayList<>();
 

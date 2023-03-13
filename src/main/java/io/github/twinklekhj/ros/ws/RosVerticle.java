@@ -21,7 +21,7 @@ import java.util.*;
  * RosBridge 총괄 클래스
  *
  * @author khj
- * @since 2023.02.15
+ * @since 2023.03.10
  */
 public class RosVerticle extends AbstractVerticle {
     private static final Logger logger = LoggerFactory.getLogger(RosVerticle.class);
@@ -107,6 +107,7 @@ public class RosVerticle extends AbstractVerticle {
 
     /**
      * [Ros] WebSocket 연결
+     *
      * @return callback 함수
      */
     public Future<WebSocket> connect() {
@@ -117,6 +118,7 @@ public class RosVerticle extends AbstractVerticle {
         options.setConnectTimeout(props.getConnectTimeout());
 
         HttpClient client = this.vertx.createHttpClient();
+
         WebSocketConnectOptions wsOptions = new WebSocketConnectOptions();
         wsOptions.setHost(props.getHost());
         wsOptions.setPort(props.getPort());
@@ -126,7 +128,7 @@ public class RosVerticle extends AbstractVerticle {
     }
 
     private Future<Void> send(RosOperation support) {
-        String sendMsg = support.toString();
+        String sendMsg = support.toJson();
         return send(sendMsg);
     }
 
@@ -245,10 +247,20 @@ public class RosVerticle extends AbstractVerticle {
         return promise;
     }
 
+    /**
+     * [Topic] 발행한 토픽 목록
+     *
+     * @return 토픽 리스트
+     */
     public Set<String> getPublishedTopics() {
         return publishedTopics;
     }
 
+    /**
+     * [Topic] 구독한 토픽 목록
+     *
+     * @return 토픽 리스트
+     */
     public Set<String> getSubscribedTopics() {
         return topicListeners.keySet();
     }

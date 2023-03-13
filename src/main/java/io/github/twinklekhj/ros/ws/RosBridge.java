@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
  * @since 2023.02.15
  */
 @WebSocket
+@Deprecated
 public class RosBridge {
     private static final Logger logger = LoggerFactory.getLogger(RosBridge.class);
     protected final CountDownLatch closeLatch;
@@ -193,7 +194,7 @@ public class RosBridge {
     }
 
     /**
-     * WebSocket 연결 Event
+     * [WebSocket] 연결 Event
      *
      * @param session - 연결 세션
      */
@@ -209,7 +210,7 @@ public class RosBridge {
     }
 
     /**
-     * WebSocket 연결 종료 Event
+     * [WebSocket] 연결 종료 Event
      *
      * @param statusCode 상태코드
      * @param reason     종료 이유
@@ -238,14 +239,14 @@ public class RosBridge {
     }
 
     /**
-     * WebSocket 연결 해제
+     * [WebSocket] 연결 해제
      */
     public void close() {
         this.session.close();
     }
 
     /**
-     * WebSocket 재연결
+     * [WebSocket] 재연결
      *
      * @param flag 연결 기다림 여부
      */
@@ -255,7 +256,7 @@ public class RosBridge {
     }
 
     /**
-     * WebSocket 메세지 수신 Event
+     * [WebSocket] 메세지 수신 Event
      *
      * @param msg 수신받은 메세지
      */
@@ -291,8 +292,7 @@ public class RosBridge {
     }
 
     private boolean send(RosOperation support) {
-        String sendMsg = support.toString();
-        return send(sendMsg);
+        return send(support.toJson());
     }
 
     /**
@@ -406,6 +406,7 @@ public class RosBridge {
      *
      * @param op       토픽 구독
      * @param delegate 토픽 메세지 처리자
+     * @return 전송 성공여부
      */
     public boolean subscribe(RosSubscription op, RosSubscribeDelegate delegate) {
         String topic = op.getTopic();
@@ -417,6 +418,12 @@ public class RosBridge {
 
         this.topicListeners.put(topic, new RosSubscribers(delegate));
         return send(op);
+    }
+
+    public RosSubscription subscribe(RosTopic topic, RosSubscribeDelegate delegate) {
+        RosSubscription op = RosSubscription.builder(topic.getName(), topic.getType()).build();
+        subscribe(op, delegate);
+        return op;
     }
 
     public RosSubscription subscribe(String topic, String type, RosSubscribeDelegate delegate) {
@@ -435,6 +442,7 @@ public class RosBridge {
      * [Topic] 토픽 구독 해제
      *
      * @param topic 토픽명
+     * @return 전송 성공여부
      */
     public boolean unsubscribe(String topic) {
         RosUnsubscription op = RosUnsubscription.builder(topic).build();

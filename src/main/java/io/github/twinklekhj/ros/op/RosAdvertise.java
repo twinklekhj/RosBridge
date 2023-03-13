@@ -5,15 +5,18 @@ import io.vertx.core.json.JsonObject;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 
 /**
  * [RosOperation] 토픽 게시
+ *
  * @author khj
  */
 
 @Builder
 @RequiredArgsConstructor
+@ToString
 public class RosAdvertise implements RosOperation {
     private final Type op = Type.ADVERTISE_TOPIC;
     @Builder.Default
@@ -35,8 +38,16 @@ public class RosAdvertise implements RosOperation {
         return id;
     }
 
+    public String getTopic() {
+        return topic;
+    }
+
+    public String getType() {
+        return type;
+    }
+
     @Override
-    public String toString() {
+    public String toJson() {
         return new JsonObject().put("op", this.op.code).put("topic", this.topic).put("type", this.type).put("id", this.id).toString();
     }
 

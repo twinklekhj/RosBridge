@@ -2,10 +2,7 @@ package io.github.twinklekhj.ros.op;
 
 
 import io.vertx.core.json.JsonObject;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 /**
  * Unsubscribe topic
@@ -17,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
+@ToString
 public class RosUnsubscription implements RosOperation {
     private final Type op = Type.UNSUBSCRIBE;
 
@@ -41,8 +39,12 @@ public class RosUnsubscription implements RosOperation {
         this.id = id;
     }
 
+    public String getTopic() {
+        return topic;
+    }
+
     @Override
-    public String toString() {
+    public String toJson() {
         return new JsonObject().put("op", this.op.code).put("topic", this.topic).put("id", this.id).toString();
     }
 
