@@ -2,297 +2,143 @@ package io.github.twinklekhj.ros.ws;
 
 import io.github.twinklekhj.ros.op.*;
 import io.github.twinklekhj.ros.type.MessageType;
-import io.github.twinklekhj.ros.ws.listener.RosServiceDelegate;
-import io.github.twinklekhj.ros.ws.listener.RosSubscribeDelegate;
-import io.github.twinklekhj.ros.ws.listener.RosSubscribers;
+import io.vertx.core.*;
+import io.vertx.core.buffer.Buffer;
+import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.eventbus.Message;
+import io.vertx.core.http.HttpClient;
+import io.vertx.core.http.HttpClientOptions;
+import io.vertx.core.http.WebSocket;
+import io.vertx.core.http.WebSocketConnectOptions;
 import io.vertx.core.json.JsonObject;
-import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.*;
-import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
-import org.eclipse.jetty.websocket.client.WebSocketClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+
 
 /**
  * RosBridge 총괄 클래스
  *
  * @author khj
- * @since 2023.02.15
+ * @since 2023.03.10
  */
-@WebSocket
-@Deprecated
-public class RosBridge {
+public class RosBridge extends AbstractVerticle {
     private static final Logger logger = LoggerFactory.getLogger(RosBridge.class);
-    protected final CountDownLatch closeLatch;
-    protected ConnProps props;
 
-    protected Session session;
+    protected final Vertx vertx;
+    protected final ConnProps props;
+
+    protected WebSocket socket;
+    protected EventBus bus;
+
     protected Set<String> publishedTopics = new HashSet<>();
+    protected Map<String, Set<String>> topicListeners = new HashMap<>();
+    protected Set<String> serviceListeners = new HashSet<>();
+
     protected Map<String, FragmentManager> fragmentManagers = new HashMap<>();
-    protected Map<String, RosSubscribers> topicListeners = new HashMap<>();
-    protected Map<String, RosServiceDelegate> serviceListeners = new HashMap<>();
 
     protected boolean connected = false;
     protected boolean connectedError = false;
 
-
-    private RosBridge() {
-        this.closeLatch = new CountDownLatch(1);
-    }
-
-    /**
-     * RosBridge 객체 생성후 WebSocket 연결
-     *
-     * @param host              ROS BRIDGE HOST
-     * @param port              ROS BRIDGE PORT
-     * @param waitForConnection 기다림 여부
-     * @return RosBridge 객체
-     */
-    public static RosBridge createBridge(String host, int port, boolean waitForConnection) {
-        ConnProps props = ConnProps.builder(host, port, waitForConnection).build();
-        return createBridge(props);
-    }
-
-    /**
-     * Connection 객체로 RosBridge 객체 생성후 WebSocket 연결
-     *
-     * @param props 연결 옵션 객체
-     * @return RosBridge 객체
-     */
-    public static RosBridge createBridge(ConnProps props) {
-        RosBridge bridge = new RosBridge();
-        bridge.connect(props);
-        bridge.enablePrintMsgSend(props.printSendMsg);
-        bridge.enablePrintMsgReceived(props.printReceivedMsg);
-        bridge.enablePrintStackTrace(props.printStackTrace);
-
-        return bridge;
-    }
-
-
-    /**
-     * 메시지 송신시 로그 사용여부
-     *
-     * @param flag 로깅 활성 여부
-     */
-    public void enablePrintMsgSend(boolean flag) {
-        this.props.setPrintSendMsg(flag);
-    }
-
-    /**
-     * 메시지 수신시 로그 사용여부
-     *
-     * @param flag 로깅 활성여부
-     */
-    public void enablePrintMsgReceived(boolean flag) {
-        this.props.setPrintReceivedMsg(flag);
-    }
-
-    /**
-     * 에러 발생시 Stack Trace 출력여부
-     *
-     * @param flag 에러 출력여부
-     */
-    public void enablePrintStackTrace(boolean flag) {
-        this.props.setPrintStackTrace(flag);
-    }
-
-    /**
-     * WebSocket 연결
-     *
-     * @param props - 웹소켓 연결 정보
-     */
-    private void connect(ConnProps props) {
+    public RosBridge(Vertx vertx, ConnProps props) {
+        this.vertx = vertx;
         this.props = props;
-
-        WebSocketClient client = new WebSocketClient();
-
-        try {
-            if (props.idleTimeout != 0) {
-                client.setMaxIdleTimeout(props.idleTimeout);
-            }
-            if (props.connectTimeout != 0) {
-                client.setConnectTimeout(props.connectTimeout);
-            }
-            if (props.stopTimeout != 0) {
-                client.setStopTimeout(props.stopTimeout);
-            }
-            client.start();
-
-            String url = String.format("ws://%s:%s", props.host, props.port);
-            URI echoUri = new URI(url);
-
-            ClientUpgradeRequest request = new ClientUpgradeRequest();
-            client.connect(this, echoUri, request);
-            logger.info("Connecting to: {}", echoUri);
-            if (props.wait) {
-                waitForConnection();
-            }
-        } catch (Exception e) {
-            logger.error("Error! Message: {}", e.getMessage());
-            if (props.printStackTrace) {
-                e.printStackTrace();
-            }
-        }
     }
 
-    /**
-     * 연결될 때까지 기다린다
-     */
-    public void waitForConnection() {
-        if (this.connected || this.connectedError) {
-            return;
-        }
-
-        synchronized (this) {
-            while (!this.connected && !this.connectedError) {
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    logger.error("Error! Message: {}", e.getMessage());
-                    if (this.props.isPrintStackTrace()) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * 연결상태 여부
-     *
-     * @return 연결상태
-     */
     public boolean hasConnected() {
-        return this.connected;
+        return connected;
     }
 
-    public boolean awaitClose(int duration, TimeUnit unit) {
-        try {
-            return this.closeLatch.await(duration, unit);
-        } catch (InterruptedException e) {
-            logger.error("Error! message: {}", e.getMessage());
-            if (this.props.isPrintStackTrace()) {
-                e.printStackTrace();
-            }
-            return false;
-        }
+    public boolean hasConnectedError() {
+        return connectedError;
     }
 
-    public void countDownLatch() {
-        this.closeLatch.countDown();
-    }
-
-    public long getLatchCount() {
-        return closeLatch.getCount();
-    }
-
-    /**
-     * [WebSocket] 연결 Event
-     *
-     * @param session - 연결 세션
-     */
-    @OnWebSocketConnect
-    public void onConnect(Session session) {
-        logger.info("WebSocket Connected! Session: {}", session);
-
-        this.session = session;
-        this.connected = true;
-        synchronized (this) {
-            notifyAll();
-        }
-    }
-
-    /**
-     * [WebSocket] 연결 종료 Event
-     *
-     * @param statusCode 상태코드
-     * @param reason     종료 이유
-     */
-    @OnWebSocketClose
-    public void onClose(int statusCode, String reason) {
-        logger.info("Connection closed. code: {}, reason: {}", statusCode, reason);
-        this.session = null;
-        this.closeLatch.countDown();
-    }
-
-    @OnWebSocketError
-    public void onError(Session session, Throwable e) {
-        logger.warn("WebSocket Error! msg: {}", e.getMessage());
-        if (this.props.isPrintStackTrace()) {
-            e.printStackTrace();
-        }
-
-        synchronized (this) {
-            this.connectedError = true;
-            notifyAll();
-        }
-        if (this.session == null) {
-            this.closeLatch.countDown();
-        }
-    }
-
-    /**
-     * [WebSocket] 연결 해제
-     */
-    public void close() {
-        this.session.close();
-    }
-
-    /**
-     * [WebSocket] 재연결
-     *
-     * @param flag 연결 기다림 여부
-     */
-    public void reconnect(boolean flag) {
-        props.setWait(flag);
-        this.connect(props);
-    }
-
-    /**
-     * [WebSocket] 메세지 수신 Event
-     *
-     * @param msg 수신받은 메세지
-     */
-    @OnWebSocketMessage
-    public void onMessage(String msg) {
+    public void onMessage(Buffer buffer){
+        String msg = buffer.toString();
         if (this.props.isPrintReceivedMsg()) {
             logger.info("[RESPONSE] msg: {}", msg);
         }
-        JsonObject json = new JsonObject(msg);
+
+        JsonObject json = buffer.toJsonObject();
         if (json.containsKey("op")) {
             // publish
             String op = json.getString("op");
             switch (op) {
                 case "publish":
                     String topic = json.getString("topic");
-                    RosSubscribers subscriber = this.topicListeners.get(topic);
-                    if (subscriber != null) {
-                        subscriber.receive(json, msg);
-                    }
+
+                    Set<String> listeners = this.topicListeners.get(topic);
+                    listeners.forEach(listener -> {
+                        this.bus.publish(listener, json);
+                    });
                     break;
                 case "service_response":
                     RosResponse res = RosResponse.fromJsonObject(json);
-                    RosServiceDelegate delegate = serviceListeners.remove(res.getId());
-                    if (delegate != null) {
-                        delegate.receive(res);
-                    }
+                    this.bus.publish(res.getId(), json);
+                    this.bus.consumer(res.getId()).unregister();
+                    this.serviceListeners.remove(res.getId());
+
                     break;
                 case "fragment":
-                    processFragment(json);
+                    processFragment(buffer);
                     break;
             }
         }
     }
 
-    private boolean send(RosOperation support) {
-        return send(support.toJson());
+    @Override
+    public void start() {
+        RosBridge that = this;
+
+        Future<WebSocket> future = connect();
+        future.onSuccess(socket -> {
+            logger.info("WebSocket Connected! {}", socket);
+            synchronized (this) {
+                this.socket = socket;
+                this.bus = vertx.eventBus();
+                this.connected = true;
+                socket.handler(this::onMessage);
+                notifyAll();
+            }
+        }).onFailure(throwable -> {
+            logger.error("WebSocket Connect Error! {}", props);
+            synchronized (this) {
+                this.connectedError = true;
+                notifyAll();
+            }
+            if (props.isPrintStackTrace()) {
+                throwable.printStackTrace();
+            }
+        });
+    }
+
+
+    /**
+     * [Ros] WebSocket 연결
+     *
+     * @return callback 함수
+     */
+    public Future<WebSocket> connect() {
+        HttpClientOptions options = new HttpClientOptions();
+        if (props.getIdleTimeout() != 0) {
+            options.setIdleTimeout(props.getIdleTimeout());
+        }
+        options.setConnectTimeout(props.getConnectTimeout());
+
+        HttpClient client = this.vertx.createHttpClient();
+
+        WebSocketConnectOptions wsOptions = new WebSocketConnectOptions();
+        wsOptions.setHost(props.getHost());
+        wsOptions.setPort(props.getPort());
+        wsOptions.setTimeout(props.getConnectTimeout());
+
+        return client.webSocket(wsOptions);
+    }
+
+    private Future<Void> send(RosOperation support) {
+        String sendMsg = support.toJson();
+        return send(sendMsg);
     }
 
     /**
@@ -301,77 +147,97 @@ public class RosBridge {
      * @param message - 보낼 메세지
      * @return 메세지 전송 성공 여부
      */
-    private boolean send(String message) {
-        if (this.props.isPrintSendMsg()) {
-            logger.info("[REQUEST] msg: {}", message);
+    private Future<Void> send(String message) {
+        if (props.isPrintProcessMsg()) {
+            logger.info("ros:send message");
         }
-        try {
-            Future<Void> fut = this.session.getRemote().sendStringByFuture(message);
-            fut.get(2L, TimeUnit.SECONDS);
-            return true;
-        } catch (Exception e) {
-            logger.error("Error! Message: {}", message);
-            if (this.props.isPrintStackTrace()) {
-                e.printStackTrace();
+
+        synchronized (this) {
+            while (!this.connected || !this.connectedError) {
+                if (hasConnected()) {
+                    if (this.props.isPrintSendMsg()) {
+                        logger.info("[REQUEST] msg: {}", message);
+                    }
+                    return this.socket.writeTextMessage(message);
+                } else if (hasConnectedError()) {
+                    return Future.failedFuture("WebSocket not connected!");
+                } else {
+                    try {
+                        wait();
+                    } catch (Exception cause) {
+                        return Future.failedFuture(cause);
+                    }
+                }
             }
         }
-        return false;
+
+        return Future.failedFuture("unhandled error!");
     }
 
     /**
-     * [Topic] 토픽 발행 상태 알림
+     * [Topic] 토픽 발행 공고
      *
-     * @param topic 토픽명
-     * @param type  메세지 유형
-     * @return 전송 성공 여부
+     * @param op 발행정보
+     * @return 콜백함수
      */
-    public boolean advertise(String topic, String type) {
-        RosAdvertise op = RosAdvertise.builder(topic, type).build();
-
-        if (!this.publishedTopics.contains(topic)) {
-            if (send(op)) {
-                this.publishedTopics.add(topic);
-                return true;
-            }
+    public Promise<RosAdvertise> advertise(RosAdvertise op) {
+        if (props.isPrintProcessMsg()) {
+            logger.info("ros:advertise topic, {}", op.getTopic());
         }
-        return false;
+
+        Promise<RosAdvertise> promise = Promise.promise();
+
+        send(op).onSuccess(unused -> {
+            this.publishedTopics.add(op.getTopic());
+            promise.complete(op);
+        }).onFailure(promise::fail);
+
+        return promise;
     }
 
     /**
-     * [Topic] 토픽 발행 상태 알림
+     * [Topic] 토픽 발행 공고
      *
-     * @param topic 토픽명
-     * @param type  메세지 유형
-     * @return 전송 성공 여부
+     * @param topic 토픽정보
+     * @return 콜백함수
      */
-    public boolean advertise(String topic, MessageType type) {
-        return advertise(topic, type.getName());
+    public Promise<RosAdvertise> advertise(RosTopic topic) {
+        RosAdvertise op = RosAdvertise.builder(topic.getName(), topic.getType()).build();
+        return advertise(op);
+    }
+
+    /**
+     * [Topic] 토픽 발행 취소
+     *
+     * @param op 발행취소 정보
+     * @return 콜백함수
+     */
+    public Promise<RosUnadvertise> unadvertise(RosUnadvertise op) {
+        if (props.isPrintProcessMsg()) {
+            logger.info("ros:unadvertise, {}", op);
+        }
+
+        Promise<RosUnadvertise> promise = Promise.promise();
+
+        send(op).onSuccess(unused -> {
+            this.publishedTopics.remove(op.getTopic());
+            promise.complete(op);
+        }).onFailure(promise::fail);
+
+        return promise;
+    }
+
+    public Promise<RosUnadvertise> unadvertise(String topic) {
+        return unadvertise(RosUnadvertise.builder(topic).build());
     }
 
     /**
      * [Topic] 토픽 발행 취소
      *
      * @param topic 토픽명
-     * @return 전송 성공 여부
+     * @return 콜백함수
      */
-    public boolean unadvertise(String topic) {
-        RosUnadvertise op = RosUnadvertise.builder(topic).build();
-        if (this.publishedTopics.contains(topic)) {
-            if (send(op)) {
-                this.publishedTopics.remove(topic);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * [Topic] 토픽 발행 취소
-     *
-     * @param topic 토픽명
-     * @return 전송 성공 여부
-     */
-    public boolean unadvertise(RosTopic topic) {
+    public Promise<RosUnadvertise> unadvertise(RosTopic topic) {
         return unadvertise(topic.getName());
     }
 
@@ -381,22 +247,47 @@ public class RosBridge {
      * @param topic 토픽명
      * @param type  메시지 유형
      * @param msg   보낼 메세지
-     * @return 전송 성공 여부
+     * @return 콜백함수
      */
-    public boolean publish(String topic, String type, Object msg) {
-        RosTopic op = RosTopic.builder(topic, type).msg(msg).build();
-        return publish(op);
+    public Promise<RosTopic> publish(String topic, String type, Object msg) {
+        return publish(RosTopic.builder(topic, type).msg(msg).build());
     }
 
-    public boolean publish(RosTopic topic) {
-        advertise(topic.getName(), topic.getType());
-        return send(topic);
+    /**
+     * [Topic] 토픽 발행
+     *
+     * @param topic 토픽
+     * @return 콜백함수
+     */
+    public Promise<RosTopic> publish(RosTopic topic) {
+        if (props.isPrintProcessMsg()) {
+            logger.info("ros:publish, {}", topic);
+        }
+
+        Promise<RosTopic> promise = Promise.promise();
+        advertise(topic).future().onSuccess(advertise -> {
+            send(topic).onSuccess(unused -> {
+                promise.complete(topic);
+            }).onFailure(promise::fail);
+        }).onFailure(promise::fail);
+
+        return promise;
     }
 
+    /**
+     * [Topic] 발행한 토픽 목록
+     *
+     * @return 토픽 리스트
+     */
     public Set<String> getPublishedTopics() {
         return publishedTopics;
     }
 
+    /**
+     * [Topic] 구독한 토픽 목록
+     *
+     * @return 토픽 리스트
+     */
     public Set<String> getSubscribedTopics() {
         return topicListeners.keySet();
     }
@@ -404,151 +295,231 @@ public class RosBridge {
     /**
      * [Topic] 토픽 구독
      *
-     * @param op       토픽 구독
-     * @param delegate 토픽 메세지 처리자
-     * @return 전송 성공여부
+     * @param op      토픽 구독
+     * @param handler 토픽 메세지 처리자
+     * @return 콜백함수
      */
-    public boolean subscribe(RosSubscription op, RosSubscribeDelegate delegate) {
-        String topic = op.getTopic();
+    public Promise<RosSubscription> subscribe(RosSubscription op, Handler<Message<JsonObject>> handler) {
+        if (props.isPrintProcessMsg()) {
+            logger.info("ros:subscribe, {}", op);
+        }
+        Promise<RosSubscription> promise = Promise.promise();
 
-        if (this.topicListeners.containsKey(topic)) {
-            this.topicListeners.get(topic).addDelegate(delegate);
-            return false;
+        String topic = op.getTopic();
+        send(op).onSuccess(unused -> {
+            if (!this.topicListeners.containsKey(topic)) {
+                this.topicListeners.put(topic, new HashSet<>());
+            }
+            this.topicListeners.get(topic).add(op.getId());
+            this.bus.consumer(op.getId(), handler);
+
+            promise.complete(op);
+        }).onFailure(promise::fail);
+
+        return promise;
+    }
+
+    /**
+     * [Topic] 토픽 구독
+     *
+     * @param topic   토픽명
+     * @param type    토픽 메세지 유형
+     * @param handler 토픽 메세지 처리자
+     * @return 콜백함수
+     */
+    public Promise<RosSubscription> subscribe(String topic, String type, Handler<Message<JsonObject>> handler) {
+        return subscribe(RosSubscription.builder(topic, type).build(), handler);
+    }
+
+    /**
+     * [Topic] 토픽 구독
+     *
+     * @param topic   토픽명
+     * @param type    토픽 메세지 유형
+     * @param handler 토픽 메세지 처리자
+     * @return 콜백함수
+     */
+    public Promise<RosSubscription> subscribe(String topic, MessageType type, Handler<Message<JsonObject>> handler) {
+        return subscribe(RosSubscription.builder(topic, type).build(), handler);
+    }
+
+    /**
+     * [Topic] 토픽 구독
+     *
+     * @param topic   토픽 정보
+     * @param handler 토픽 메세지 처리자
+     * @return 콜백함수
+     */
+    public Promise<RosSubscription> subscribe(RosTopic topic, Handler<Message<JsonObject>> handler) {
+        return subscribe(RosSubscription.builder(topic.getName(), topic.getType()).build(), handler);
+    }
+
+    /**
+     * [Topic] 토픽 구독 해제
+     *
+     * @param op 구독해제 정보
+     * @return 콜백함수
+     */
+    public Promise<RosUnsubscription> unsubscribe(RosUnsubscription op) {
+        if (props.isPrintProcessMsg()) {
+            logger.info("ros:unsubscribe, {}", op);
         }
 
-        this.topicListeners.put(topic, new RosSubscribers(delegate));
-        return send(op);
-    }
+        Promise<RosUnsubscription> promise = Promise.promise();
 
-    public RosSubscription subscribe(RosTopic topic, RosSubscribeDelegate delegate) {
-        RosSubscription op = RosSubscription.builder(topic.getName(), topic.getType()).build();
-        subscribe(op, delegate);
-        return op;
-    }
+        send(op).onComplete(result -> {
+            if (result.succeeded()) {
+                Set<String> topics = this.topicListeners.get(op.getTopic());
 
-    public RosSubscription subscribe(String topic, String type, RosSubscribeDelegate delegate) {
-        RosSubscription op = RosSubscription.builder(topic, type).build();
-        subscribe(op, delegate);
-        return op;
-    }
+                // 선택 구독 해제
+                if (!op.getId().equals("")) {
+                    topics.remove(op.getId());
+                    this.bus.consumer(op.getId()).unregister();
+                }
+                // 전체 구독 해제
+                else if (topics != null && !topics.isEmpty()) {
+                    topics.forEach(name -> {
+                        this.bus.consumer(name).unregister();
+                    });
 
-    public RosSubscription subscribe(String topic, MessageType type, RosSubscribeDelegate delegate) {
-        RosSubscription op = RosSubscription.builder(topic, type).build();
-        subscribe(op, delegate);
-        return op;
+                    this.topicListeners.remove(op.getTopic());
+                }
+            }
+            promise.complete(op);
+        }).onComplete(AsyncResult::failed);
+
+        return promise;
     }
 
     /**
      * [Topic] 토픽 구독 해제
      *
      * @param topic 토픽명
-     * @return 전송 성공여부
+     * @return 콜백함수
      */
-    public boolean unsubscribe(String topic) {
+    public Promise<RosUnsubscription> unsubscribe(String topic) {
         RosUnsubscription op = RosUnsubscription.builder(topic).build();
-        boolean flag = send(op);
-        if (flag) {
-            this.topicListeners.remove(topic);
-        }
-        return flag;
+        return unsubscribe(op);
     }
 
-    public void removeListener(String topic, RosSubscribeDelegate delegate) {
-        RosSubscribers listeners = this.topicListeners.get(topic);
-        if (listeners != null) {
-            listeners.removeDelegate(delegate);
-
-            if (listeners.numDelegates() == 0) {
-                unsubscribe(topic);
-            }
-        }
+    /**
+     * [Topic] 토픽 구독 해제
+     *
+     * @param topic 토픽명
+     * @return 콜백함수
+     */
+    public Promise<RosUnsubscription> unsubscribe(String topic, String id) {
+        RosUnsubscription op = RosUnsubscription.builder(topic).id(id).build();
+        return unsubscribe(op);
     }
 
     /**
      * [Service] Service 요청
      *
-     * @param service  서비스명
-     * @param args     요청변수
-     * @param delegate 서비스 응답 처리 함수
-     * @return 서비스 전송 성공여부
+     * @param service 서비스명
+     * @param args    요청변수
+     * @param handler 서비스 응답 처리 함수
+     * @return 콜백함수
      */
-    public boolean callService(String service, List<?> args, RosServiceDelegate delegate) {
-        RosService op = RosService.builder(service).args(args).build();
-        return callService(op, delegate);
+    public Promise<RosService> callService(String service, List<?> args, Handler<Message<JsonObject>> handler) {
+        return callService(RosService.builder(service).args(args).build(), handler);
     }
 
     /**
      * [Service] Service 요청
      *
-     * @param op       요청할 서비스 정보 객체
-     * @param delegate 서비스 응답 처리 함수
-     * @return 서비스 전송 성공여부
+     * @param service 서비스명
+     * @param handler 서비스 응답 처리 함수
+     * @return 콜백함수
      */
-    public boolean callService(RosService op, RosServiceDelegate delegate) {
-        serviceListeners.put(op.getId(), delegate);
+    public Promise<RosService> callService(String service, Handler<Message<JsonObject>> handler) {
+        return callService(RosService.builder(service).build(), handler);
+    }
 
-        return send(op);
+    /**
+     * [Service] Service 요청
+     *
+     * @param op      요청할 서비스 정보 객체
+     * @param handler 서비스 응답 처리 함수
+     * @return 콜백함수
+     */
+    public Promise<RosService> callService(RosService op, Handler<Message<JsonObject>> handler) {
+        Promise<RosService> promise = Promise.promise();
+        if (props.isPrintProcessMsg()) {
+            logger.info("ros:callService, {}", op);
+        }
+
+        send(op).onSuccess(unused -> {
+            serviceListeners.add(op.getId());
+            this.bus.consumer(op.getId(), handler);
+
+            promise.complete(op);
+        }).onFailure(promise::fail);
+
+        return promise;
     }
 
     /**
      * [RosBridge] ROS Topic 목록 조회
      *
-     * @param delegate 서비스 응답 처리 함수
+     * @param handler 응답 처리 함수
+     * @return 콜백함수
      */
-    public void getTopics(RosServiceDelegate delegate) {
-        RosService service = RosService.builder("/rosapi/topics").build();
-        callService(service, delegate);
+    public Promise<RosService> getTopics(Handler<Message<JsonObject>> handler) {
+        return callService("/rosapi/topics", handler);
     }
 
     /**
      * [RosBridge] ROS Service 목록 조회
      *
-     * @param delegate 응답 처리 함수
+     * @param handler 응답 처리 함수
+     * @return 콜백함수
      */
-    public void getServices(RosServiceDelegate delegate) {
-        RosService service = RosService.builder("/rosapi/services").build();
-        callService(service, delegate);
+    public Promise<RosService> getServices(Handler<Message<JsonObject>> handler) {
+        return callService("/rosapi/services", handler);
     }
 
     /**
      * [RosBridge] ROS Node 목록 조회
      *
-     * @param delegate 응답 처리 함수
+     * @param handler 응답 처리 함수
+     * @return 콜백함수
      */
-    public void getNodes(RosServiceDelegate delegate) {
-        RosService service = RosService.builder("/rosapi/nodes").build();
-        callService(service, delegate);
+    public Promise<RosService> getNodes(Handler<Message<JsonObject>> handler) {
+        return callService("/rosapi/nodes", handler);
     }
 
     /**
      * [RosBridge] ROS Node 상세 정보 조회
      *
-     * @param node     찾을 노드명
-     * @param delegate 서비스 응답 처리 함수
+     * @param node    찾을 노드명
+     * @param handler 응답 처리 함수
+     * @return 콜백함수
      */
-    public void getNodeDetails(String node, RosServiceDelegate delegate) {
-        RosService service = RosService.builder("/rosapi/node_details").args(node).build();
-        callService(service, delegate);
+    public Promise<RosService> getNodeDetails(String node, Handler<Message<JsonObject>> handler) {
+        return callService("/rosapi/node_details", handler);
     }
 
     /**
      * Fragment 처리하기
      *
-     * @param node - 조각
+     * @param buffer - 조각
      */
-    protected void processFragment(JsonObject node) {
-        String id = node.getString("id");
+    protected void processFragment(Buffer buffer) {
+        JsonObject json = buffer.toJsonObject();
+        String id = json.getString("id");
 
         FragmentManager manager = this.fragmentManagers.get(id);
         if (manager == null) {
-            manager = new FragmentManager(node);
+            manager = new FragmentManager(json);
             this.fragmentManagers.put(id, manager);
         }
-        boolean complete = manager.updateFragment(node);
 
+        boolean complete = manager.updateFragment(buffer);
         if (complete) {
-            String fullMsg = manager.generateFullMessage();
+            Buffer fullMsg = manager.generateFullMessage();
             this.fragmentManagers.remove(id);
+
             onMessage(fullMsg);
         }
     }
@@ -558,21 +529,25 @@ public class RosBridge {
      */
     public static class FragmentManager {
         protected String id;
-        protected String[] fragments;
+        protected Buffer[] fragments;
         protected Set<Integer> completedFragments;
 
-        public FragmentManager(JsonObject fragmentJson) {
-            int total = fragmentJson.getInteger("total");
-            this.fragments = new String[total];
+        public FragmentManager(JsonObject json) {
+            int total = json.getInteger("total");
+
+            this.id = json.getString("id");
+            this.fragments = new Buffer[total];
             this.completedFragments = new HashSet<>(total);
-            this.id = fragmentJson.getString("id");
         }
 
-        public boolean updateFragment(JsonObject fragmentJson) {
-            String data = fragmentJson.getString("data");
-            int num = fragmentJson.getInteger("num");
-            this.fragments[num] = data;
+        public boolean updateFragment(Buffer buffer) {
+            JsonObject json = buffer.toJsonObject();
+            String data = json.getString("data");
+            int num = json.getInteger("num");
+
+            this.fragments[num] = Buffer.buffer(data);
             this.completedFragments.add(num);
+
             return complete();
         }
 
@@ -588,17 +563,16 @@ public class RosBridge {
             return this.completedFragments.size();
         }
 
-        public String generateFullMessage() {
+        public Buffer generateFullMessage() {
             if (!complete()) {
                 throw new RuntimeException("Cannot generate full message from fragments, because not all fragments have arrived.");
             }
-
-            StringBuilder buf = new StringBuilder(this.fragments[0].length() * this.fragments.length);
-            for (String frag : this.fragments) {
-                buf.append(frag);
+            Buffer result = Buffer.buffer();
+            for(Buffer fragment: this.fragments){
+                result.appendBuffer(fragment);
             }
 
-            return buf.toString();
+            return result;
         }
     }
 }
