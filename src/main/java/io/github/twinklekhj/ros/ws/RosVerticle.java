@@ -33,8 +33,8 @@ public class RosVerticle extends AbstractVerticle {
     protected EventBus bus;
 
     protected Set<String> publishedTopics = new HashSet<>();
-    protected Map<String, List<Handler<Message<JsonObject>>>> topicListeners = new HashMap<>();
-    protected Map<String, Handler<Message<JsonObject>>> serviceListeners = new HashMap<>();
+    protected Map<String, Set<String>> topicListeners = new HashMap<>();
+    protected Set<String> serviceListeners = new HashSet<>();
 
     protected boolean connected = false;
     protected boolean connectedError = false;
@@ -69,14 +69,18 @@ public class RosVerticle extends AbstractVerticle {
                 switch (op) {
                     case "publish":
                         String topic = json.getString("topic");
-                        this.topicListeners.get(topic).forEach(handler -> {
 
+                        Set<String> listeners = this.topicListeners.get(topic);
+                        listeners.forEach(listener -> {
+                            this.bus.publish(listener, json);
                         });
                         break;
                     case "service_response":
                         RosResponse res = RosResponse.fromJsonObject(json);
                         this.bus.publish(res.getId(), json);
                         this.bus.consumer(res.getId()).unregister();
+                        this.serviceListeners.remove(res.getId());
+
                         break;
                 }
             }
