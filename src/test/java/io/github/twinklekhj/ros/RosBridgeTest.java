@@ -8,7 +8,6 @@ import io.github.twinklekhj.ros.ws.ConnProps;
 import io.github.twinklekhj.ros.ws.RosBridge;
 import io.github.twinklekhj.utils.PropertyUtil;
 import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonArray;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import org.junit.jupiter.api.Assertions;
@@ -93,9 +92,8 @@ public class RosBridgeTest {
         socket.start();
         socket.getNodes(message -> {
             RosResponse res = message.body();
-            JsonArray nodes = (JsonArray) res.getValues().get("nodes");
+            List<?> nodes = (List<?>) res.getValues().get("nodes");
             logger.info("nodes: {}", nodes);
-            nodes.getList().forEach(System.err::println);
             context.completeNow();
         }).future().onComplete(ar -> {
             Assertions.assertTrue(ar.succeeded(), ar.cause() != null ? ar.cause().getMessage(): "");

@@ -40,6 +40,7 @@ public class RosBridge extends AbstractVerticle {
     protected Map<String, Set<String>> topicListeners = new HashMap<>();
     protected Set<String> serviceListeners = new HashSet<>();
 
+    protected Set<String> codecs = new HashSet<>();
     protected Map<String, FragmentManager> fragmentManagers = new HashMap<>();
 
     protected boolean connected = false;
@@ -101,7 +102,10 @@ public class RosBridge extends AbstractVerticle {
             synchronized (this) {
                 this.socket = socket;
                 this.bus = vertx.eventBus();
-                this.bus.registerCodec(rosResponseCodec);
+                if(!codecs.contains(rosResponseCodec.name())){
+                    this.bus.registerCodec(rosResponseCodec);
+                    codecs.add(rosResponseCodec.name());
+                }
                 this.connected = true;
                 socket.handler(this::onMessage);
                 notifyAll();
