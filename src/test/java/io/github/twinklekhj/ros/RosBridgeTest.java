@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+@Deprecated
 public class RosBridgeTest {
     private static final Logger logger = LoggerFactory.getLogger(RosBridgeTest.class);
     public final RosBridge bridge;
@@ -69,7 +70,7 @@ public class RosBridgeTest {
             RosTopic topic = RosTopic.builder("/test", message.getType(), message).build();
 
             // 토픽 구독
-            bridge.subscribe(topic.getName(), topic.getType(), (paramJsonNode, paramString) -> {
+            bridge.subscribe(topic, (paramJsonNode, paramString) -> {
                 logger.info("Subscribed Topic: [{}]", paramJsonNode);
 
                 Assertions.assertTrue(true);
