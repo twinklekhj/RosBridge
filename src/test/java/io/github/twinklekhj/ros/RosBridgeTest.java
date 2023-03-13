@@ -18,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @ExtendWith(VertxExtension.class)
@@ -69,9 +70,32 @@ public class RosBridgeTest {
 
         socket.start();
         socket.getTopics(message -> {
-            RosResponse res = RosResponse.fromJsonObject(message.body());
-            JsonArray topics = (JsonArray) res.getValues().get("topics");
+            RosResponse res = message.body();
+            List<?> topics = (List<?>) res.getValues().get("topics");
             logger.info("topics: {}", topics);
+            context.completeNow();
+        }).future().onComplete(ar -> {
+            Assertions.assertTrue(ar.succeeded(), ar.cause() != null ? ar.cause().getMessage(): "");
+        });
+
+        context.awaitCompletion(10, TimeUnit.SECONDS);
+    }
+
+    @Test
+    @DisplayName("Node 테스트")
+    public void testNodes() throws InterruptedException {
+        VertxTestContext context = new VertxTestContext();
+
+        props.setPrintStackTrace(true);
+        props.setPrintSendMsg(true);
+        props.setPrintReceivedMsg(true);
+
+        socket.start();
+        socket.getNodes(message -> {
+            RosResponse res = message.body();
+            JsonArray nodes = (JsonArray) res.getValues().get("nodes");
+            logger.info("nodes: {}", nodes);
+            nodes.getList().forEach(System.err::println);
             context.completeNow();
         }).future().onComplete(ar -> {
             Assertions.assertTrue(ar.succeeded(), ar.cause() != null ? ar.cause().getMessage(): "");

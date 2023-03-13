@@ -2,10 +2,13 @@ package io.github.twinklekhj.ros.ws;
 
 import io.github.twinklekhj.ros.op.*;
 import io.github.twinklekhj.ros.type.MessageType;
+import io.github.twinklekhj.ros.ws.codec.RosResponseCodec;
 import io.vertx.core.*;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
+import io.vertx.core.eventbus.MessageCodec;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.http.WebSocket;
@@ -25,6 +28,7 @@ import java.util.*;
  */
 public class RosBridge extends AbstractVerticle {
     private static final Logger logger = LoggerFactory.getLogger(RosBridge.class);
+    private static final MessageCodec rosResponseCodec = new RosResponseCodec();
 
     protected final Vertx vertx;
     protected final ConnProps props;
@@ -75,7 +79,7 @@ public class RosBridge extends AbstractVerticle {
                     break;
                 case "service_response":
                     RosResponse res = RosResponse.fromJsonObject(json);
-                    this.bus.publish(res.getId(), json);
+                    this.bus.publish(res.getId(), res, new DeliveryOptions().setCodecName(rosResponseCodec.name()));
                     this.bus.consumer(res.getId()).unregister();
                     this.serviceListeners.remove(res.getId());
 
@@ -97,6 +101,7 @@ public class RosBridge extends AbstractVerticle {
             synchronized (this) {
                 this.socket = socket;
                 this.bus = vertx.eventBus();
+                this.bus.registerCodec(rosResponseCodec);
                 this.connected = true;
                 socket.handler(this::onMessage);
                 notifyAll();
@@ -421,7 +426,7 @@ public class RosBridge extends AbstractVerticle {
      * @param handler 서비스 응답 처리 함수
      * @return 콜백함수
      */
-    public Promise<RosService> callService(String service, List<?> args, Handler<Message<JsonObject>> handler) {
+    public Promise<RosService> callService(String service, List<?> args, Handler<Message<RosResponse>> handler) {
         return callService(RosService.builder(service).args(args).build(), handler);
     }
 
@@ -432,7 +437,7 @@ public class RosBridge extends AbstractVerticle {
      * @param handler 서비스 응답 처리 함수
      * @return 콜백함수
      */
-    public Promise<RosService> callService(String service, Handler<Message<JsonObject>> handler) {
+    public Promise<RosService> callService(String service, Handler<Message<RosResponse>> handler) {
         return callService(RosService.builder(service).build(), handler);
     }
 
@@ -443,7 +448,7 @@ public class RosBridge extends AbstractVerticle {
      * @param handler 서비스 응답 처리 함수
      * @return 콜백함수
      */
-    public Promise<RosService> callService(RosService op, Handler<Message<JsonObject>> handler) {
+    public Promise<RosService> callService(RosService op, Handler<Message<RosResponse>> handler) {
         Promise<RosService> promise = Promise.promise();
         if (props.isPrintProcessMsg()) {
             logger.info("ros:callService, {}", op);
@@ -465,7 +470,7 @@ public class RosBridge extends AbstractVerticle {
      * @param handler 응답 처리 함수
      * @return 콜백함수
      */
-    public Promise<RosService> getTopics(Handler<Message<JsonObject>> handler) {
+    public Promise<RosService> getTopics(Handler<Message<RosResponse>> handler) {
         return callService("/rosapi/topics", handler);
     }
 
@@ -475,7 +480,7 @@ public class RosBridge extends AbstractVerticle {
      * @param handler 응답 처리 함수
      * @return 콜백함수
      */
-    public Promise<RosService> getServices(Handler<Message<JsonObject>> handler) {
+    public Promise<RosService> getServices(Handler<Message<RosResponse>> handler) {
         return callService("/rosapi/services", handler);
     }
 
@@ -485,7 +490,7 @@ public class RosBridge extends AbstractVerticle {
      * @param handler 응답 처리 함수
      * @return 콜백함수
      */
-    public Promise<RosService> getNodes(Handler<Message<JsonObject>> handler) {
+    public Promise<RosService> getNodes(Handler<Message<RosResponse>> handler) {
         return callService("/rosapi/nodes", handler);
     }
 
@@ -496,7 +501,7 @@ public class RosBridge extends AbstractVerticle {
      * @param handler 응답 처리 함수
      * @return 콜백함수
      */
-    public Promise<RosService> getNodeDetails(String node, Handler<Message<JsonObject>> handler) {
+    public Promise<RosService> getNodeDetails(String node, Handler<Message<RosResponse>> handler) {
         return callService("/rosapi/node_details", handler);
     }
 
