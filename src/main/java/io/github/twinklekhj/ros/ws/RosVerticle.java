@@ -139,9 +139,12 @@ public class RosVerticle extends AbstractVerticle {
      * @return 메세지 전송 성공 여부
      */
     private Future<Void> send(String message) {
-        logger.info("ros:send message");
-        synchronized (this){
-            while (!hasConnected() || !hasConnectedError()) {
+        if (props.isPrintProcessMsg()) {
+            logger.info("ros:send message");
+        }
+
+        synchronized (this) {
+            while (!this.connected || !this.connectedError) {
                 if (hasConnected()) {
                     if (this.props.isPrintSendMsg()) {
                         logger.info("[REQUEST] msg: {}", message);
@@ -161,20 +164,20 @@ public class RosVerticle extends AbstractVerticle {
     }
 
     /**
-     * [Topic] 토픽 발행 상태 알림
+     * [Topic] 토픽 발행 공고
      *
-     * @param topic 토픽명
-     * @param type  메세지 유형
-     * @return 전송 성공 여부
+     * @param op 발행정보
+     * @return 콜백함수
      */
-    public Promise<RosAdvertise> advertise(String topic, String type) {
-        logger.info("ros:advertise topic {}", topic);
+    public Promise<RosAdvertise> advertise(RosAdvertise op) {
+        if (props.isPrintProcessMsg()) {
+            logger.info("ros:advertise topic, {}", op.getTopic());
+        }
 
         Promise<RosAdvertise> promise = Promise.promise();
-        RosAdvertise op = RosAdvertise.builder(topic, type).build();
 
         send(op).onSuccess(unused -> {
-            this.publishedTopics.add(topic);
+            this.publishedTopics.add(op.getTopic());
             promise.complete(op);
         }).onFailure(promise::fail);
 
@@ -182,41 +185,46 @@ public class RosVerticle extends AbstractVerticle {
     }
 
     /**
-     * [Topic] 토픽 발행 상태 알림
+     * [Topic] 토픽 발행 공고
      *
-     * @param topic 토픽명
-     * @param type  메세지 유형
-     * @return 전송 성공 여부
+     * @param topic 토픽정보
+     * @return 콜백함수
      */
-    public Promise<RosAdvertise> advertise(String topic, MessageType type) {
-        return advertise(topic, type.getName());
+    public Promise<RosAdvertise> advertise(RosTopic topic) {
+        RosAdvertise op = RosAdvertise.builder(topic.getName(), topic.getType()).build();
+        return advertise(op);
     }
 
     /**
      * [Topic] 토픽 발행 취소
      *
-     * @param topic 토픽명
-     * @return 전송 성공 여부
+     * @param op 발행취소 정보
+     * @return 콜백함수
      */
-    public Promise<RosUnadvertise> unadvertise(String topic) {
-        logger.info("ros:unadvertise topic {}", topic);
+    public Promise<RosUnadvertise> unadvertise(RosUnadvertise op) {
+        if (props.isPrintProcessMsg()) {
+            logger.info("ros:unadvertise, {}", op);
+        }
 
         Promise<RosUnadvertise> promise = Promise.promise();
 
-        RosUnadvertise op = RosUnadvertise.builder(topic).build();
         send(op).onSuccess(unused -> {
-            this.publishedTopics.remove(topic);
+            this.publishedTopics.remove(op.getTopic());
             promise.complete(op);
         }).onFailure(promise::fail);
 
         return promise;
     }
 
+    public Promise<RosUnadvertise> unadvertise(String topic) {
+        return unadvertise(RosUnadvertise.builder(topic).build());
+    }
+
     /**
      * [Topic] 토픽 발행 취소
      *
      * @param topic 토픽명
-     * @return 전송 성공 여부
+     * @return 콜백함수
      */
     public Promise<RosUnadvertise> unadvertise(RosTopic topic) {
         return unadvertise(topic.getName());
@@ -228,19 +236,27 @@ public class RosVerticle extends AbstractVerticle {
      * @param topic 토픽명
      * @param type  메시지 유형
      * @param msg   보낼 메세지
-     * @return 전송 성공 여부
+     * @return 콜백함수
      */
     public Promise<RosTopic> publish(String topic, String type, Object msg) {
         return publish(RosTopic.builder(topic, type).msg(msg).build());
     }
 
+    /**
+     * [Topic] 토픽 발행
+     *
+     * @param topic 토픽
+     * @return 콜백함수
+     */
     public Promise<RosTopic> publish(RosTopic topic) {
-        logger.info("ros:publish topic {}", topic);
+        if (props.isPrintProcessMsg()) {
+            logger.info("ros:publish, {}", topic);
+        }
 
         Promise<RosTopic> promise = Promise.promise();
-        advertise(topic.getName(), topic.getType()).future().onSuccess(advertise -> {
+        advertise(topic).future().onSuccess(advertise -> {
             send(topic).onSuccess(unused -> {
-                promise.complete();
+                promise.complete(topic);
             }).onFailure(promise::fail);
         }).onFailure(promise::fail);
 
@@ -270,63 +286,120 @@ public class RosVerticle extends AbstractVerticle {
      *
      * @param op      토픽 구독
      * @param handler 토픽 메세지 처리자
-     * @return
+     * @return 콜백함수
      */
     public Promise<RosSubscription> subscribe(RosSubscription op, Handler<Message<JsonObject>> handler) {
-        logger.info("ros:subscribe topic {}", op.getTopic());
+        if (props.isPrintProcessMsg()) {
+            logger.info("ros:subscribe, {}", op);
+        }
         Promise<RosSubscription> promise = Promise.promise();
 
         String topic = op.getTopic();
         send(op).onSuccess(unused -> {
             if (!this.topicListeners.containsKey(topic)) {
-                this.topicListeners.put(topic, new ArrayList<>());
+                this.topicListeners.put(topic, new HashSet<>());
             }
-            this.topicListeners.get(topic).add(handler);
+            this.topicListeners.get(topic).add(op.getId());
+            this.bus.consumer(op.getId(), handler);
+
             promise.complete(op);
         }).onFailure(promise::fail);
 
         return promise;
     }
 
+    /**
+     * [Topic] 토픽 구독
+     *
+     * @param topic   토픽명
+     * @param type    토픽 메세지 유형
+     * @param handler 토픽 메세지 처리자
+     * @return 콜백함수
+     */
     public Promise<RosSubscription> subscribe(String topic, String type, Handler<Message<JsonObject>> handler) {
-        RosSubscription op = RosSubscription.builder(topic, type).build();
-        return subscribe(op, handler);
+        return subscribe(RosSubscription.builder(topic, type).build(), handler);
     }
 
+    /**
+     * [Topic] 토픽 구독
+     *
+     * @param topic   토픽명
+     * @param type    토픽 메세지 유형
+     * @param handler 토픽 메세지 처리자
+     * @return 콜백함수
+     */
     public Promise<RosSubscription> subscribe(String topic, MessageType type, Handler<Message<JsonObject>> handler) {
-        RosSubscription op = RosSubscription.builder(topic, type).build();
-        return subscribe(op, handler);
+        return subscribe(RosSubscription.builder(topic, type).build(), handler);
+    }
+
+    /**
+     * [Topic] 토픽 구독
+     *
+     * @param topic   토픽 정보
+     * @param handler 토픽 메세지 처리자
+     * @return 콜백함수
+     */
+    public Promise<RosSubscription> subscribe(RosTopic topic, Handler<Message<JsonObject>> handler) {
+        return subscribe(RosSubscription.builder(topic.getName(), topic.getType()).build(), handler);
+    }
+
+    /**
+     * [Topic] 토픽 구독 해제
+     *
+     * @param op 구독해제 정보
+     * @return 콜백함수
+     */
+    public Promise<RosUnsubscription> unsubscribe(RosUnsubscription op) {
+        if (props.isPrintProcessMsg()) {
+            logger.info("ros:unsubscribe, {}", op);
+        }
+
+        Promise<RosUnsubscription> promise = Promise.promise();
+
+        send(op).onComplete(result -> {
+            if (result.succeeded()) {
+                Set<String> topics = this.topicListeners.get(op.getTopic());
+
+                // 선택 구독 해제
+                if (!op.getId().equals("")) {
+                    topics.remove(op.getId());
+                    this.bus.consumer(op.getId()).unregister();
+                }
+                // 전체 구독 해제
+                else if (topics != null && !topics.isEmpty()) {
+                    topics.forEach(name -> {
+                        this.bus.consumer(name).unregister();
+                    });
+
+                    this.topicListeners.remove(op.getTopic());
+                }
+            }
+            promise.complete(op);
+        }).onComplete(AsyncResult::failed);
+
+        return promise;
     }
 
     /**
      * [Topic] 토픽 구독 해제
      *
      * @param topic 토픽명
+     * @return 콜백함수
      */
-    public Promise<Void> unsubscribe(String topic) {
-        logger.info("ros:unsubscribe topic {}", topic);
-        Promise<Void> promise = Promise.promise();
-
+    public Promise<RosUnsubscription> unsubscribe(String topic) {
         RosUnsubscription op = RosUnsubscription.builder(topic).build();
-        send(op).onComplete(result -> {
-            if (result.succeeded()) {
-                this.topicListeners.remove(topic);
-            }
-            promise.complete();
-        }).onComplete(AsyncResult::failed);
-
-        return promise;
+        return unsubscribe(op);
     }
 
-    public void removeListener(String topic, Handler<Message<JsonObject>> handler) {
-        List<Handler<Message<JsonObject>>> listeners = this.topicListeners.get(topic);
-        if (listeners != null) {
-            listeners.remove(handler);
-
-            if (listeners.size() == 0) {
-                unsubscribe(topic);
-            }
-        }
+    /**
+     * [Topic] 토픽 구독 해제
+     *
+     * @param topic 토픽명
+     * @return 콜백함수
+     */
+    public Promise<RosUnsubscription> unsubscribe(String topic, String id) {
+        RosUnsubscription op = RosUnsubscription.builder(topic).id(id).build();
+        return unsubscribe(op);
     }
 
     /**
@@ -338,8 +411,18 @@ public class RosVerticle extends AbstractVerticle {
      * @return 콜백함수
      */
     public Promise<RosService> callService(String service, List<?> args, Handler<Message<JsonObject>> handler) {
-        RosService op = RosService.builder(service).args(args).build();
-        return callService(op, handler);
+        return callService(RosService.builder(service).args(args).build(), handler);
+    }
+
+    /**
+     * [Service] Service 요청
+     *
+     * @param service 서비스명
+     * @param handler 서비스 응답 처리 함수
+     * @return 콜백함수
+     */
+    public Promise<RosService> callService(String service, Handler<Message<JsonObject>> handler) {
+        return callService(RosService.builder(service).build(), handler);
     }
 
     /**
@@ -351,11 +434,14 @@ public class RosVerticle extends AbstractVerticle {
      */
     public Promise<RosService> callService(RosService op, Handler<Message<JsonObject>> handler) {
         Promise<RosService> promise = Promise.promise();
-        logger.info("ros:callService");
+        if (props.isPrintProcessMsg()) {
+            logger.info("ros:callService, {}", op);
+        }
 
         send(op).onSuccess(unused -> {
-            serviceListeners.put(op.getId(), handler);
+            serviceListeners.add(op.getId());
             this.bus.consumer(op.getId(), handler);
+
             promise.complete(op);
         }).onFailure(promise::fail);
 
@@ -369,10 +455,7 @@ public class RosVerticle extends AbstractVerticle {
      * @return 콜백함수
      */
     public Promise<RosService> getTopics(Handler<Message<JsonObject>> handler) {
-        logger.info("ros:getTopics");
-
-        RosService service = RosService.builder("/rosapi/topics").build();
-        return callService(service, handler);
+        return callService("/rosapi/topics", handler);
     }
 
     /**
@@ -382,8 +465,7 @@ public class RosVerticle extends AbstractVerticle {
      * @return 콜백함수
      */
     public Promise<RosService> getServices(Handler<Message<JsonObject>> handler) {
-        RosService service = RosService.builder("/rosapi/services").build();
-        return callService(service, handler);
+        return callService("/rosapi/services", handler);
     }
 
     /**
@@ -393,19 +475,17 @@ public class RosVerticle extends AbstractVerticle {
      * @return 콜백함수
      */
     public Promise<RosService> getNodes(Handler<Message<JsonObject>> handler) {
-        RosService service = RosService.builder("/rosapi/nodes").build();
-        return callService(service, handler);
+        return callService("/rosapi/nodes", handler);
     }
 
     /**
      * [RosBridge] ROS Node 상세 정보 조회
      *
-     * @param node     찾을 노드명
+     * @param node    찾을 노드명
      * @param handler 응답 처리 함수
      * @return 콜백함수
      */
     public Promise<RosService> getNodeDetails(String node, Handler<Message<JsonObject>> handler) {
-        RosService service = RosService.builder("/rosapi/node_details").args(node).build();
-        return callService(service, handler);
+        return callService("/rosapi/node_details", handler);
     }
 }

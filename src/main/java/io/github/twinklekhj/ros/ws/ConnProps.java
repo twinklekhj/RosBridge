@@ -23,6 +23,9 @@ public class ConnProps {
     @Builder.Default
     boolean printStackTrace = false;
     @Builder.Default
+    boolean printProcessMsg = false;
+
+    @Builder.Default
     int idleTimeout = 0;
     @Builder.Default
     int connectTimeout = 10000;
