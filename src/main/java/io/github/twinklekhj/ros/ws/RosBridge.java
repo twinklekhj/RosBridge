@@ -33,7 +33,7 @@ public class RosBridge extends AbstractVerticle {
     protected final Vertx vertx;
     protected final ConnProps props;
 
-    protected WebSocket socket;
+    protected WebSocket webSocket;
     protected EventBus bus;
 
     protected Set<String> publishedTopics = new HashSet<>();
@@ -59,7 +59,7 @@ public class RosBridge extends AbstractVerticle {
         return connectedError;
     }
 
-    public void onMessage(Buffer buffer){
+    public void onMessage(Buffer buffer) {
         String msg = buffer.toString();
         if (this.props.isPrintReceivedMsg()) {
             logger.info("[RESPONSE] msg: {}", msg);
@@ -94,34 +94,8 @@ public class RosBridge extends AbstractVerticle {
 
     @Override
     public void start() {
-        RosBridge that = this;
-
         Future<WebSocket> future = connect();
-        future.onSuccess(socket -> {
-            logger.info("WebSocket Connected! {}", socket);
-            synchronized (this) {
-                this.socket = socket;
-                this.bus = vertx.eventBus();
-                if(!codecs.contains(rosResponseCodec.name())){
-                    this.bus.registerCodec(rosResponseCodec);
-                    codecs.add(rosResponseCodec.name());
-                }
-                this.connected = true;
-                socket.handler(this::onMessage);
-                notifyAll();
-            }
-        }).onFailure(throwable -> {
-            logger.error("WebSocket Connect Error! {}", props);
-            synchronized (this) {
-                this.connectedError = true;
-                notifyAll();
-            }
-            if (props.isPrintStackTrace()) {
-                throwable.printStackTrace();
-            }
-        });
     }
-
 
     /**
      * [Ros] WebSocket 연결
@@ -142,7 +116,32 @@ public class RosBridge extends AbstractVerticle {
         wsOptions.setPort(props.getPort());
         wsOptions.setTimeout(props.getConnectTimeout());
 
-        return client.webSocket(wsOptions);
+        Future<WebSocket> future = client.webSocket(wsOptions);
+        future.onSuccess(webSocket -> {
+            logger.info("WebSocket Connected! {}", webSocket);
+            synchronized (this) {
+                this.webSocket = webSocket;
+                this.bus = vertx.eventBus();
+                if (!codecs.contains(rosResponseCodec.name())) {
+                    this.bus.registerCodec(rosResponseCodec);
+                    codecs.add(rosResponseCodec.name());
+                }
+                this.connected = true;
+                webSocket.handler(this::onMessage);
+                notifyAll();
+            }
+        }).onFailure(throwable -> {
+            logger.error("WebSocket Connect Error! {}", props);
+            synchronized (this) {
+                this.connectedError = true;
+                notifyAll();
+            }
+            if (props.isPrintStackTrace()) {
+                throwable.printStackTrace();
+            }
+        });
+
+        return future;
     }
 
     private Future<Void> send(RosOperation support) {
@@ -167,7 +166,7 @@ public class RosBridge extends AbstractVerticle {
                     if (this.props.isPrintSendMsg()) {
                         logger.info("[REQUEST] msg: {}", message);
                     }
-                    return this.socket.writeTextMessage(message);
+                    return this.webSocket.writeTextMessage(message);
                 } else if (hasConnectedError()) {
                     return Future.failedFuture("WebSocket not connected!");
                 } else {
@@ -577,7 +576,7 @@ public class RosBridge extends AbstractVerticle {
                 throw new RuntimeException("Cannot generate full message from fragments, because not all fragments have arrived.");
             }
             Buffer result = Buffer.buffer();
-            for(Buffer fragment: this.fragments){
+            for (Buffer fragment : this.fragments) {
                 result.appendBuffer(fragment);
             }
 
