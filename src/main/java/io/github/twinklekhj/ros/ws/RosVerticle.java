@@ -150,6 +150,8 @@ public class RosVerticle extends AbstractVerticle {
                         logger.info("[REQUEST] msg: {}", message);
                     }
                     return this.socket.writeTextMessage(message);
+                } else if (hasConnectedError()) {
+                    return Future.failedFuture("WebSocket not connected!");
                 } else {
                     try {
                         wait();
@@ -160,7 +162,7 @@ public class RosVerticle extends AbstractVerticle {
             }
         }
 
-        return Future.failedFuture("WebSocket not connected!");
+        return Future.failedFuture("unhandled error!");
     }
 
     /**
