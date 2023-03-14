@@ -29,6 +29,7 @@ import java.util.*;
 public class RosBridge extends AbstractVerticle {
     private static final Logger logger = LoggerFactory.getLogger(RosBridge.class);
     private static final MessageCodec rosResponseCodec = new RosResponseCodec();
+    private static final DeliveryOptions rosResponseDelivery = new DeliveryOptions().setCodecName(rosResponseCodec.name());
 
     protected final Vertx vertx;
     protected final ConnProps props;
@@ -92,6 +93,10 @@ public class RosBridge extends AbstractVerticle {
         }
     }
 
+    public EventBus getBus() {
+        return bus;
+    }
+
     @Override
     public void start() {
         Future<WebSocket> future = connect();
@@ -142,6 +147,10 @@ public class RosBridge extends AbstractVerticle {
         });
 
         return future;
+    }
+
+    public Future<Void> close(){
+        return this.webSocket.close();
     }
 
     private Future<Void> send(RosOperation support) {
