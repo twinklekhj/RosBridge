@@ -93,12 +93,49 @@ public class RosBridge extends AbstractVerticle {
         }
     }
 
+    /**
+     * [Vertx] EventBus
+     *
+     * @return bus
+     */
     public EventBus getBus() {
         return bus;
     }
 
+    /**
+     * [RosBridge] 연결 객체
+     *
+     * @return props
+     */
     public ConnProps getProps() {
         return props;
+    }
+
+    /**
+     * [Service] 남아있는 서비스 목록
+     *
+     * @return 서비스 리스트
+     */
+    public Set<String> getServiceListeners() {
+        return serviceListeners;
+    }
+
+    /**
+     * [Topic] 발행한 토픽 목록
+     *
+     * @return 토픽 리스트
+     */
+    public Set<String> getPublishedTopics() {
+        return publishedTopics;
+    }
+
+    /**
+     * [Topic] 구독한 토픽 목록
+     *
+     * @return 토픽 리스트
+     */
+    public Set<String> getSubscribedTopics() {
+        return topicListeners.keySet();
     }
 
     @Override
@@ -295,23 +332,6 @@ public class RosBridge extends AbstractVerticle {
         return promise;
     }
 
-    /**
-     * [Topic] 발행한 토픽 목록
-     *
-     * @return 토픽 리스트
-     */
-    public Set<String> getPublishedTopics() {
-        return publishedTopics;
-    }
-
-    /**
-     * [Topic] 구독한 토픽 목록
-     *
-     * @return 토픽 리스트
-     */
-    public Set<String> getSubscribedTopics() {
-        return topicListeners.keySet();
-    }
 
     /**
      * [Topic] 토픽 구독
@@ -458,6 +478,9 @@ public class RosBridge extends AbstractVerticle {
         if (props.isPrintProcessMsg()) {
             logger.info("ros:callService, {}", op);
         }
+        while(serviceListeners.contains(op.getId())){
+            op.setId(op.getId()+"_");
+        }
 
         send(op).onSuccess(unused -> {
             serviceListeners.add(op.getId());
@@ -507,7 +530,7 @@ public class RosBridge extends AbstractVerticle {
         callService(api.serviceName, message -> {
             RosResponse res = message.body();
             List<String> result = (List<String>) res.getValues().get(api.propName);
-            if(result == null){
+            if (result == null) {
                 result = Collections.emptyList();
             }
 
@@ -528,29 +551,6 @@ public class RosBridge extends AbstractVerticle {
      */
     public Promise<RosService> getNodeDetails(String node, Handler<Message<RosResponse>> handler) {
         return callService("/rosapi/node_details", handler);
-    }
-
-    public static enum RosApi {
-        NODES("nodes", "/rosapi/nodes"),
-        TOPICS("topics", "/rosapi/topics"),
-        SERVICES("services", "/rosapi/services"),
-        ;
-
-        private final String propName;
-        private final String serviceName;
-
-        RosApi(String propName, String serviceName) {
-            this.propName = propName;
-            this.serviceName = serviceName;
-        }
-
-        public String getPropName() {
-            return propName;
-        }
-
-        public String getServiceName() {
-            return serviceName;
-        }
     }
 
     /**
@@ -577,7 +577,26 @@ public class RosBridge extends AbstractVerticle {
         }
     }
 
+    public enum RosApi {
+        NODES("nodes", "/rosapi/nodes"), TOPICS("topics", "/rosapi/topics"), SERVICES("services", "/rosapi/services"),
+        ;
 
+        private final String propName;
+        private final String serviceName;
+
+        RosApi(String propName, String serviceName) {
+            this.propName = propName;
+            this.serviceName = serviceName;
+        }
+
+        public String getPropName() {
+            return propName;
+        }
+
+        public String getServiceName() {
+            return serviceName;
+        }
+    }
 
     /**
      * Fragments 관리자

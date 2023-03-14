@@ -71,6 +71,11 @@ public class RosBridgeTest {
             context.completeNow();
         }).onFailure(Assertions::fail);
 
+        socket.getNodes().future().onSuccess(nodes -> {
+            logger.info("nodes: {}", nodes);
+            context.completeNow();
+        }).onFailure(Assertions::fail);
+
         context.awaitCompletion(10, TimeUnit.SECONDS);
     }
 

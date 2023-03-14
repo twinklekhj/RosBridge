@@ -14,13 +14,11 @@ import java.util.List;
 @ToString
 public class RosService implements RosOperation {
     private final Type op = Type.CALL_SERVICE;
-
-    @Builder.Default
-    private final String id = String.format("call_service_%s", RosOperation.current());
     @NonNull
     private final String name;
     private final String type;
-
+    @Builder.Default
+    private String id = String.format("call_service_%s", RosOperation.current());
     @Builder.Default
     private CompressionType compression = CompressionType.NONE;
 
@@ -47,8 +45,13 @@ public class RosService implements RosOperation {
         return builder().name(service).type(type).args(args);
     }
 
+
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -86,10 +89,7 @@ public class RosService implements RosOperation {
 
     @Override
     public String toJson() {
-        JsonObject json = new JsonObject()
-                .put("op", this.op.code)
-                .put("service", this.name)
-                .put("id", id);
+        JsonObject json = new JsonObject().put("op", this.op.code).put("service", this.name).put("id", id);
 
         if (this.args != null && !this.args.isEmpty()) {
             json.put("args", this.args);
