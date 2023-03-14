@@ -8,7 +8,7 @@
     <artifactId>rosbridge</artifactId>
     <name>RosBridge</name>
     <description>RosBridge library for Java implementing ros bridge protocol</description>
-    <version>1.2.4</version>
+    <version>1.2.5</version>
 
     <packaging>jar</packaging>
     <url>https://github.com/twinklekhj/RosBridge</url>

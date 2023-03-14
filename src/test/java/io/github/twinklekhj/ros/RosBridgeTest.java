@@ -1,6 +1,5 @@
 package io.github.twinklekhj.ros;
 
-import io.github.twinklekhj.ros.op.RosResponse;
 import io.github.twinklekhj.ros.op.RosTopic;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.std.Int32;
@@ -17,7 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @ExtendWith(VertxExtension.class)
@@ -68,14 +66,10 @@ public class RosBridgeTest {
         props.setPrintReceivedMsg(true);
 
         socket.start();
-        socket.getTopics(message -> {
-            RosResponse res = message.body();
-            List<?> topics = (List<?>) res.getValues().get("topics");
+        socket.getTopics().future().onSuccess(topics -> {
             logger.info("topics: {}", topics);
             context.completeNow();
-        }).future().onComplete(ar -> {
-            Assertions.assertTrue(ar.succeeded(), ar.cause() != null ? ar.cause().getMessage(): "");
-        });
+        }).onFailure(Assertions::fail);
 
         context.awaitCompletion(10, TimeUnit.SECONDS);
     }
@@ -90,14 +84,10 @@ public class RosBridgeTest {
         props.setPrintReceivedMsg(true);
 
         socket.start();
-        socket.getNodes(message -> {
-            RosResponse res = message.body();
-            List<?> nodes = (List<?>) res.getValues().get("nodes");
+        socket.getNodes().future().onSuccess(nodes -> {
             logger.info("nodes: {}", nodes);
             context.completeNow();
-        }).future().onComplete(ar -> {
-            Assertions.assertTrue(ar.succeeded(), ar.cause() != null ? ar.cause().getMessage(): "");
-        });
+        }).onFailure(Assertions::fail);
 
         context.awaitCompletion(10, TimeUnit.SECONDS);
     }

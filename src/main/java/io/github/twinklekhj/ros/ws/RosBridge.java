@@ -434,17 +434,6 @@ public class RosBridge extends AbstractVerticle {
         return unsubscribe(op);
     }
 
-    /**
-     * [Service] Service 요청
-     *
-     * @param service 서비스명
-     * @param args    요청변수
-     * @param handler 서비스 응답 처리 함수
-     * @return 콜백함수
-     */
-    public Promise<RosService> callService(String service, List<?> args, Handler<Message<RosResponse>> handler) {
-        return callService(RosService.builder(service).args(args).build(), handler);
-    }
 
     /**
      * [Service] Service 요청
@@ -483,31 +472,51 @@ public class RosBridge extends AbstractVerticle {
     /**
      * [RosBridge] ROS Topic 목록 조회
      *
-     * @param handler 응답 처리 함수
      * @return 콜백함수
      */
-    public Promise<RosService> getTopics(Handler<Message<RosResponse>> handler) {
-        return callService("/rosapi/topics", handler);
+    public Promise<List<String>> getTopics() {
+        return getRosApiSimpleList(RosApi.TOPICS);
     }
 
     /**
      * [RosBridge] ROS Service 목록 조회
      *
-     * @param handler 응답 처리 함수
-     * @return 콜백함수
+     * @return 결과
      */
-    public Promise<RosService> getServices(Handler<Message<RosResponse>> handler) {
-        return callService("/rosapi/services", handler);
+    public Promise<List<String>> getServices() {
+        return getRosApiSimpleList(RosApi.SERVICES);
     }
 
     /**
      * [RosBridge] ROS Node 목록 조회
      *
-     * @param handler 응답 처리 함수
-     * @return 콜백함수
+     * @return 결과
      */
-    public Promise<RosService> getNodes(Handler<Message<RosResponse>> handler) {
-        return callService("/rosapi/nodes", handler);
+    public Promise<List<String>> getNodes() {
+        return getRosApiSimpleList(RosApi.NODES);
+    }
+
+    /**
+     * [RosBridge] ROS API 목록 조회
+     *
+     * @return 결과
+     */
+    private Promise<List<String>> getRosApiSimpleList(RosApi api) {
+        Promise<List<String>> promise = Promise.promise();
+
+        callService(api.serviceName, message -> {
+            RosResponse res = message.body();
+            List<String> result = (List<String>) res.getValues().get(api.propName);
+            if(result == null){
+                result = Collections.emptyList();
+            }
+
+            if (!promise.future().isComplete()) {
+                promise.complete(result);
+            }
+        }).future().onFailure(promise::fail);
+
+        return promise;
     }
 
     /**
@@ -519,6 +528,29 @@ public class RosBridge extends AbstractVerticle {
      */
     public Promise<RosService> getNodeDetails(String node, Handler<Message<RosResponse>> handler) {
         return callService("/rosapi/node_details", handler);
+    }
+
+    public static enum RosApi {
+        NODES("nodes", "/rosapi/nodes"),
+        TOPICS("topics", "/rosapi/topics"),
+        SERVICES("services", "/rosapi/services"),
+        ;
+
+        private final String propName;
+        private final String serviceName;
+
+        RosApi(String propName, String serviceName) {
+            this.propName = propName;
+            this.serviceName = serviceName;
+        }
+
+        public String getPropName() {
+            return propName;
+        }
+
+        public String getServiceName() {
+            return serviceName;
+        }
     }
 
     /**
@@ -544,6 +576,8 @@ public class RosBridge extends AbstractVerticle {
             onMessage(fullMsg);
         }
     }
+
+
 
     /**
      * Fragments 관리자
