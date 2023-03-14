@@ -81,7 +81,7 @@ public class RosBridge extends AbstractVerticle {
                     break;
                 case "service_response":
                     RosResponse res = RosResponse.fromJsonObject(json);
-                    this.bus.publish(res.getId(), res, new DeliveryOptions().setCodecName(rosResponseCodec.name()));
+                    this.bus.send(res.getId(), res, rosResponseDelivery);
                     this.bus.consumer(res.getId()).unregister();
                     this.serviceListeners.remove(res.getId());
 
@@ -95,6 +95,10 @@ public class RosBridge extends AbstractVerticle {
 
     public EventBus getBus() {
         return bus;
+    }
+
+    public ConnProps getProps() {
+        return props;
     }
 
     @Override
@@ -149,7 +153,7 @@ public class RosBridge extends AbstractVerticle {
         return future;
     }
 
-    public Future<Void> close(){
+    public Future<Void> close() {
         return this.webSocket.close();
     }
 
