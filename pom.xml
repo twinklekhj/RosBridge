@@ -8,7 +8,7 @@
     <artifactId>rosbridge</artifactId>
     <name>RosBridge</name>
     <description>RosBridge library for Java implementing ros bridge protocol</description>
-    <version>1.2.6</version>
+    <version>1.2.7</version>
 
     <packaging>jar</packaging>
     <url>https://github.com/twinklekhj/RosBridge</url>
@@ -46,8 +46,8 @@
         <org.slf4j-version>1.7.36</org.slf4j-version>
         <org.log4j-version>2.19.0</org.log4j-version>
 
-        <version.lombok>1.18.18</version.lombok>
-        <version.mapstruct>1.4.2.Final</version.mapstruct>
+        <version.lombok>1.18.26</version.lombok>
+        <version.mapstruct>1.5.3.Final</version.mapstruct>
         <version.mapstruct-lombok>0.2.0</version.mapstruct-lombok>
         <version.vertx>4.4.0</version.vertx>
         <plugin.maven.javadoc.version>3.5.0</plugin.maven.javadoc.version>
