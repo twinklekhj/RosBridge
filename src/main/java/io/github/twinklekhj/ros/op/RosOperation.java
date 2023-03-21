@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 public interface RosOperation {
     static String current() {
         LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
 
         return now.format(dtf);
     }

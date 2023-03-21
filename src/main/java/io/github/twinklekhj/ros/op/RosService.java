@@ -16,12 +16,12 @@ public class RosService implements RosOperation {
     private final Type op = Type.CALL_SERVICE;
     @NonNull
     private final String name;
-    private final String type;
     @Builder.Default
     private String id = String.format("call_service_%s", RosOperation.current());
     @Builder.Default
     private CompressionType compression = CompressionType.NONE;
 
+    private final String type;
     private List<?> args;
     private int fragmentSize;
 
