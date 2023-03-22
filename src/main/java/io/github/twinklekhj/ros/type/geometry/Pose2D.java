@@ -3,8 +3,9 @@ package io.github.twinklekhj.ros.type.geometry;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
-
+@ToString
 public class Pose2D extends RosMessage {
     public static final String FIELD_X = "x";
     public static final String FIELD_Y = "y";
@@ -12,17 +13,21 @@ public class Pose2D extends RosMessage {
 
     public static final String TYPE = "geometry_msgs/Pose2D";
 
-    private final double x, y, theta;
+    private double x;
+    private double y;
+    private double theta;
 
     public Pose2D() {
         this(0, 0, 0);
     }
 
     public Pose2D(double x, double y, double theta) {
-        super(jsonBuilder().put(Pose2D.FIELD_X, x).put(Pose2D.FIELD_Y, y).put(Pose2D.FIELD_THETA, theta), Pose2D.TYPE);
         this.x = x;
         this.y = y;
         this.theta = theta;
+
+        super.setJsonObject(jsonBuilder().put(Pose2D.FIELD_X, x).put(Pose2D.FIELD_Y, y).put(Pose2D.FIELD_THETA, theta));
+        super.setType(TYPE);
     }
 
     public static Pose2D fromJsonString(String jsonString) {
@@ -35,7 +40,6 @@ public class Pose2D extends RosMessage {
     }
 
     public static Pose2D fromJsonObject(JsonObject jsonObject) {
-        // check the fields
         double x = jsonObject.containsKey(Pose2D.FIELD_X) ? jsonObject.getDouble(Pose2D.FIELD_X) : 0.0;
         double y = jsonObject.containsKey(Pose2D.FIELD_Y) ? jsonObject.getDouble(Pose2D.FIELD_Y) : 0.0;
         double theta = jsonObject.containsKey(Pose2D.FIELD_THETA) ? jsonObject.getDouble(Pose2D.FIELD_THETA) : 0.0;
@@ -46,12 +50,27 @@ public class Pose2D extends RosMessage {
         return this.x;
     }
 
+    public void setX(double x) {
+        this.x = x;
+        this.jsonObject.put(FIELD_X, x);
+    }
+
     public double getY() {
         return this.y;
     }
 
+    public void setY(double y) {
+        this.y = y;
+        this.jsonObject.put(FIELD_Y, y);
+    }
+
     public double getTheta() {
         return this.theta;
+    }
+
+    public void setTheta(double theta) {
+        this.theta = theta;
+        this.jsonObject.put(FIELD_THETA, theta);
     }
 
     @Override

@@ -3,12 +3,12 @@ package io.github.twinklekhj.ros.type.std;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.primitives.Primitive;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
-
+@ToString
 public class Char extends RosMessage {
-    public static final String FIELD_DATA = "data";
-
     public static final String TYPE = "std_msgs/Char";
+    public static final String FIELD_DATA = "data";
 
     private final byte data;
 

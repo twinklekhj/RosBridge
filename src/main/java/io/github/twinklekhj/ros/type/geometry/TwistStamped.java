@@ -4,26 +4,32 @@ package io.github.twinklekhj.ros.type.geometry;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.std.Header;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
-
+@ToString
 public class TwistStamped extends RosMessage {
+    public static final String TYPE = "geometry_msgs/TwistStamped";
+
     public static final String FIELD_HEADER = "header";
     public static final String FIELD_TWIST = "twist";
 
-    public static final String TYPE = "geometry_msgs/TwistStamped";
-
-    private final Header header;
-    private final Twist twist;
+    private Header header;
+    private Twist twist;
 
     public TwistStamped() {
         this(new Header(), new Twist());
     }
 
+    public TwistStamped(Twist twist) {
+        this(new Header(), twist);
+    }
+
     public TwistStamped(Header header, Twist twist) {
-        // build the JSON object
-        super(jsonBuilder().put(TwistStamped.FIELD_HEADER, header.getJsonObject()).put(TwistStamped.FIELD_TWIST, twist.getJsonObject()), TwistStamped.TYPE);
         this.header = header;
         this.twist = twist;
+
+        super.setJsonObject(jsonBuilder().put(TwistStamped.FIELD_HEADER, header.getJsonObject()).put(TwistStamped.FIELD_TWIST, twist.getJsonObject()));
+        super.setType(TYPE);
     }
 
     public static TwistStamped fromJsonString(String jsonString) {
@@ -44,8 +50,18 @@ public class TwistStamped extends RosMessage {
         return this.header;
     }
 
+    public void setHeader(Header header) {
+        this.header = header;
+        this.jsonObject.put(FIELD_HEADER, header.getJsonObject());
+    }
+
     public Twist getTwist() {
         return this.twist;
+    }
+
+    public void setTwist(Twist twist) {
+        this.twist = twist;
+        this.jsonObject.put(FIELD_TWIST, twist.getJsonObject());
     }
 
     @Override

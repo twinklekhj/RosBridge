@@ -2,21 +2,21 @@ package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
-
+@ToString
 public class Byte extends RosMessage {
+    public static final String TYPE = "std_msgs/Byte";
     public static final String FIELD_DATA = "data";
 
-    public static final String TYPE = "std_msgs/Byte";
-
-    private final byte data;
+    private byte data;
 
     public Byte() {
         this((byte) 0);
     }
 
     public Byte(byte data) {
-        super(jsonBuilder().put(Byte.FIELD_DATA, data), Byte.TYPE);
+        super(jsonBuilder().put(Byte.FIELD_DATA, data), TYPE);
         this.data = data;
     }
 
@@ -29,7 +29,7 @@ public class Byte extends RosMessage {
     }
 
     public static Byte fromJsonObject(JsonObject jsonObject) {
-        byte data = jsonObject.containsKey(Byte.FIELD_DATA) ? (byte) jsonObject.getInteger(Byte.FIELD_DATA).byteValue() : 0;
+        byte data = jsonObject.containsKey(Byte.FIELD_DATA) ? jsonObject.getInteger(Byte.FIELD_DATA).byteValue() : 0;
         return new Byte(data);
     }
 

@@ -2,12 +2,12 @@ package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
-
+@ToString
 public class Duration extends RosMessage {
-    public static final String FIELD_DATA = "data";
-
     public static final String TYPE = "std_msgs/Duration";
+    public static final String FIELD_DATA = "data";
 
     private final Duration data;
 
@@ -16,8 +16,9 @@ public class Duration extends RosMessage {
     }
 
     public Duration(Duration data) {
-        super(jsonBuilder().put(Duration.FIELD_DATA, data.getJsonObject()), Duration.TYPE);
         this.data = data;
+        super.setJsonObject(jsonBuilder().put(Duration.FIELD_DATA, data.getJsonObject()));
+        super.setType(TYPE);
     }
 
     public static Duration fromJsonString(String jsonString) {

@@ -3,32 +3,34 @@ package io.github.twinklekhj.ros.type.std;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
 import java.util.Arrays;
 
+@ToString
 public class ByteMultiArray extends RosMessage {
-    public static final java.lang.String FIELD_LAYOUT = "layout";
-    public static final java.lang.String FIELD_DATA = "data";
+    public static final String TYPE = "std_msgs/ByteMultiArray";
 
-    public static final java.lang.String TYPE = "std_msgs/ByteMultiArray";
+    public static final String FIELD_LAYOUT = "layout";
+    public static final String FIELD_DATA = "data";
 
-    private final MultiArrayLayout layout;
-    private final byte[] data;
+    private MultiArrayLayout layout;
+    private byte[] data;
 
     public ByteMultiArray() {
         this(new MultiArrayLayout(), new byte[]{});
     }
 
     public ByteMultiArray(MultiArrayLayout layout, byte[] data) {
-        super(jsonBuilder()
-                .put(ByteMultiArray.FIELD_LAYOUT, layout.getJsonObject())
-                .put(ByteMultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data))), ByteMultiArray.TYPE);
         this.layout = layout;
         this.data = new byte[data.length];
         System.arraycopy(data, 0, this.data, 0, data.length);
+
+        super.setJsonObject(jsonBuilder().put(ByteMultiArray.FIELD_LAYOUT, layout.getJsonObject()).put(ByteMultiArray.FIELD_DATA, Arrays.toString(data)));
+        super.setType(TYPE);
     }
 
-    public static ByteMultiArray fromJsonString(java.lang.String jsonString) {
+    public static ByteMultiArray fromJsonString(String jsonString) {
         return ByteMultiArray.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
@@ -54,6 +56,11 @@ public class ByteMultiArray extends RosMessage {
         return this.layout;
     }
 
+    public void setLayout(MultiArrayLayout layout) {
+        this.layout = layout;
+        this.jsonObject.put(FIELD_LAYOUT, layout.getJsonObject());
+    }
+
     public int size() {
         return this.data.length;
     }
@@ -64,6 +71,12 @@ public class ByteMultiArray extends RosMessage {
 
     public byte[] getData() {
         return this.data;
+    }
+
+    public void setData(byte ...data) {
+        this.data = data;
+        System.arraycopy(data, 0, this.data, 0, data.length);
+        this.jsonObject.put(FIELD_DATA, Arrays.toString(data));
     }
 
     @Override

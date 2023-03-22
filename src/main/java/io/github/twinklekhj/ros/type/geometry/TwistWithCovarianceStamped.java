@@ -4,25 +4,32 @@ package io.github.twinklekhj.ros.type.geometry;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.std.Header;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
-
+@ToString
 public class TwistWithCovarianceStamped extends RosMessage {
+    public static final String TYPE = "geometry_msgs/TwistWithCovarianceStamped";
+
     public static final String FIELD_HEADER = "header";
     public static final String FIELD_TWIST = "twist";
 
-    public static final String TYPE = "geometry_msgs/TwistWithCovarianceStamped";
-
-    private final Header header;
-    private final TwistWithCovariance twist;
+    private Header header;
+    private TwistWithCovariance twist;
 
     public TwistWithCovarianceStamped() {
         this(new Header(), new TwistWithCovariance());
     }
 
+    public TwistWithCovarianceStamped(TwistWithCovariance twist) {
+        this(new Header(), twist);
+    }
+
     public TwistWithCovarianceStamped(Header header, TwistWithCovariance twist) {
-        super(jsonBuilder().put(TwistWithCovarianceStamped.FIELD_HEADER, header.getJsonObject()).put(TwistWithCovarianceStamped.FIELD_TWIST, twist.getJsonObject()), TwistWithCovarianceStamped.TYPE);
         this.header = header;
         this.twist = twist;
+
+        super.setJsonObject(jsonBuilder().put(TwistWithCovarianceStamped.FIELD_HEADER, header.getJsonObject()).put(TwistWithCovarianceStamped.FIELD_TWIST, twist.getJsonObject()));
+        super.setType(TYPE);
     }
 
     public static TwistWithCovarianceStamped fromJsonString(String jsonString) {
@@ -43,8 +50,18 @@ public class TwistWithCovarianceStamped extends RosMessage {
         return this.header;
     }
 
+    public void setHeader(Header header) {
+        this.header = header;
+        this.jsonObject.put(FIELD_HEADER, header.getJsonObject());
+    }
+
     public TwistWithCovariance getTwist() {
         return this.twist;
+    }
+
+    public void setTwist(TwistWithCovariance twist) {
+        this.twist = twist;
+        this.jsonObject.put(FIELD_TWIST, twist.getJsonObject());
     }
 
     @Override

@@ -4,24 +4,28 @@ package io.github.twinklekhj.ros.type.geometry;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
 import java.util.Arrays;
 
+@ToString
 public class Polygon extends RosMessage {
-    public static final String FIELD_POINTS = "points";
     public static final String TYPE = "geometry_msgs/Polygon";
 
-    private final Point32[] points;
+    public static final String FIELD_POINTS = "points";
+
+    private Point32[] points;
 
     public Polygon() {
         this(new Point32[]{});
     }
 
     public Polygon(Point32[] points) {
-        super(jsonBuilder().put(Polygon.FIELD_POINTS, jsonBuilder(Arrays.deepToString(points))), Polygon.TYPE);
-
         this.points = new Point32[points.length];
         System.arraycopy(points, 0, this.points, 0, points.length);
+
+        super.setJsonObject(jsonBuilder().put(Polygon.FIELD_POINTS, jsonBuilder(Arrays.deepToString(points))));
+        super.setType(TYPE);
     }
 
     public static Polygon fromJsonString(String jsonString) {
@@ -36,7 +40,6 @@ public class Polygon extends RosMessage {
         JsonArray jsonPoints = jsonObject.getJsonArray(Polygon.FIELD_POINTS);
 
         if (jsonPoints != null) {
-            // convert each point
             Point32[] points = new Point32[jsonPoints.size()];
             for (int i = 0; i < points.length; i++) {
                 points[i] = Point32.fromJsonObject(jsonPoints.getJsonObject(i));
@@ -57,6 +60,13 @@ public class Polygon extends RosMessage {
 
     public Point32[] getPoints() {
         return this.points;
+    }
+
+    public void setPoints(Point32... points) {
+        this.points = new Point32[points.length];
+        System.arraycopy(points, 0, this.points, 0, points.length);
+
+        this.jsonObject.put(Polygon.FIELD_POINTS, jsonBuilder(Arrays.deepToString(points)));
     }
 
     @Override

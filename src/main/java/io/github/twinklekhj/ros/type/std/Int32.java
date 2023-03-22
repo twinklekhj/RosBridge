@@ -2,12 +2,12 @@ package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
-
+@ToString
 public class Int32 extends RosMessage {
-    public static final java.lang.String FIELD_DATA = "data";
-
-    public static final java.lang.String TYPE = "std_msgs/Int32";
+    public static final String TYPE = "std_msgs/Int32";
+    public static final String FIELD_DATA = "data";
 
     private final int data;
 
@@ -20,7 +20,7 @@ public class Int32 extends RosMessage {
         this.data = data;
     }
 
-    public static Int32 fromJsonString(java.lang.String jsonString) {
+    public static Int32 fromJsonString(String jsonString) {
         return Int32.fromMessage(new RosMessage(jsonString, TYPE));
     }
 

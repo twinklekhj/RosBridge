@@ -5,31 +5,32 @@ import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.primitives.Primitive;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
 import java.util.Arrays;
 
+@ToString
 public class UInt8MultiArray extends RosMessage {
+    public static final String TYPE = "std_msgs/UInt8MultiArray";
+
     public static final String FIELD_LAYOUT = "layout";
     public static final String FIELD_DATA = "data";
 
-    public static final String TYPE = "std_msgs/UInt8MultiArray";
 
-    private final MultiArrayLayout layout;
-    private final byte[] data;
+    private MultiArrayLayout layout;
+    private byte[] data;
 
     public UInt8MultiArray() {
         this(new MultiArrayLayout(), new byte[]{});
     }
 
     public UInt8MultiArray(MultiArrayLayout layout, byte[] data) {
-        super(jsonBuilder()
-                        .put(UInt8MultiArray.FIELD_LAYOUT, layout.getJsonObject())
-                        .put(UInt8MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(Primitive.fromUInt8(data))))
-                , UInt8MultiArray.TYPE);
-
         this.layout = layout;
         this.data = new byte[data.length];
         System.arraycopy(data, 0, this.data, 0, data.length);
+
+        super.setJsonObject(jsonBuilder().put(UInt8MultiArray.FIELD_LAYOUT, layout.getJsonObject()).put(UInt8MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(Primitive.fromUInt8(data)))));
+        super.setType(TYPE);
     }
 
     public static UInt8MultiArray fromJsonString(String jsonString) {
@@ -42,9 +43,7 @@ public class UInt8MultiArray extends RosMessage {
 
     public static UInt8MultiArray fromJsonObject(JsonObject jsonObject) {
         // check the layout
-        MultiArrayLayout layout = jsonObject.containsKey(UInt8MultiArray.FIELD_LAYOUT) ? MultiArrayLayout
-                .fromJsonObject(jsonObject.getJsonObject(UInt8MultiArray.FIELD_LAYOUT))
-                : new MultiArrayLayout();
+        MultiArrayLayout layout = jsonObject.containsKey(UInt8MultiArray.FIELD_LAYOUT) ? MultiArrayLayout.fromJsonObject(jsonObject.getJsonObject(UInt8MultiArray.FIELD_LAYOUT)) : new MultiArrayLayout();
 
         // check the array
         byte[] data = new byte[]{};
@@ -63,6 +62,11 @@ public class UInt8MultiArray extends RosMessage {
         return this.layout;
     }
 
+    public void setLayout(MultiArrayLayout layout) {
+        this.layout = layout;
+        this.jsonObject.put(FIELD_LAYOUT, layout.getJsonObject());
+    }
+
     public int size() {
         return this.data.length;
     }
@@ -73,6 +77,12 @@ public class UInt8MultiArray extends RosMessage {
 
     public byte[] getData() {
         return this.data;
+    }
+
+    public void setData(byte... data) {
+        this.data = data;
+        System.arraycopy(data, 0, this.data, 0, data.length);
+        this.jsonObject.put(FIELD_DATA, Arrays.toString(data));
     }
 
     @Override

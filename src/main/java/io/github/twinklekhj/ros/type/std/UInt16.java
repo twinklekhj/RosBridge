@@ -3,12 +3,12 @@ package io.github.twinklekhj.ros.type.std;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.primitives.Primitive;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
-
+@ToString
 public class UInt16 extends RosMessage {
-    public static final java.lang.String FIELD_DATA = "data";
-
-    public static final java.lang.String TYPE = "std_msgs/UInt16";
+    public static final String TYPE = "std_msgs/UInt16";
+    public static final String FIELD_DATA = "data";
 
     private final short data;
 
@@ -17,11 +17,11 @@ public class UInt16 extends RosMessage {
     }
 
     public UInt16(short data) {
-        super(jsonBuilder().put(UInt16.FIELD_DATA, Primitive.fromUInt16(data)), UInt16.TYPE);
+        super.setJsonObject(jsonBuilder().put(UInt16.FIELD_DATA, Primitive.fromUInt16(data))); super.setType(TYPE);
         this.data = data;
     }
 
-    public static UInt16 fromJsonString(java.lang.String jsonString) {
+    public static UInt16 fromJsonString(String jsonString) {
         return UInt16.fromMessage(new RosMessage(jsonString, TYPE));
     }
 

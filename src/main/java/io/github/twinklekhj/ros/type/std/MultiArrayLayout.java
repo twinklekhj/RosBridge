@@ -8,10 +8,10 @@ import io.vertx.core.json.JsonObject;
 import java.util.Arrays;
 
 public class MultiArrayLayout extends RosMessage {
+    public static final String TYPE = "std_msgs/MultiArrayLayout";
+
     public static final String FIELD_DIM = "dim";
     public static final String FIELD_DATA_OFFSET = "data_offset";
-
-    public static final String TYPE = "std_msgs/MultiArrayLayout";
 
     private final MultiArrayDimension[] dim;
     private final int dataOffset;
@@ -21,14 +21,13 @@ public class MultiArrayLayout extends RosMessage {
     }
 
     public MultiArrayLayout(MultiArrayDimension[] dim, int dataOffset) {
-        super(jsonBuilder()
-                .put(MultiArrayLayout.FIELD_DIM, jsonBuilder(Arrays.deepToString(dim)))
-                .put(MultiArrayLayout.FIELD_DATA_OFFSET, Primitive.fromUInt32(dataOffset)), MultiArrayLayout.TYPE);
-
         this.dim = new MultiArrayDimension[dim.length];
         this.dataOffset = dataOffset;
 
         System.arraycopy(dim, 0, this.dim, 0, dim.length);
+
+        super.setJsonObject(jsonBuilder().put(MultiArrayLayout.FIELD_DIM, jsonBuilder(Arrays.deepToString(dim))).put(MultiArrayLayout.FIELD_DATA_OFFSET, Primitive.fromUInt32(dataOffset)));
+        super.setType(TYPE);
     }
 
     public static MultiArrayLayout fromJsonString(String jsonString) {

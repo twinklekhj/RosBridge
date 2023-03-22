@@ -3,28 +3,34 @@ package io.github.twinklekhj.ros.type.geometry;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
-
+@ToString
 public class Quaternion extends RosMessage {
+    public static final String TYPE = "geometry_msgs/Quaternion";
+
     public static final String FIELD_X = "x";
     public static final String FIELD_Y = "y";
     public static final String FIELD_Z = "z";
     public static final String FIELD_W = "w";
 
-    public static final String TYPE = "geometry_msgs/Quaternion";
-
-    private final double x, y, z, w;
+    private double x;
+    private double y;
+    private double z;
+    private double w;
 
     public Quaternion() {
         this(0, 0, 0, 0);
     }
 
     public Quaternion(double x, double y, double z, double w) {
-        super(jsonBuilder().put(Quaternion.FIELD_X, x).put(Quaternion.FIELD_Y, y).put(Quaternion.FIELD_Z, z).put(Quaternion.FIELD_W, w), Quaternion.TYPE);
         this.x = x;
         this.y = y;
         this.z = z;
         this.w = w;
+
+        super.setJsonObject(jsonBuilder().put(Quaternion.FIELD_X, x).put(Quaternion.FIELD_Y, y).put(Quaternion.FIELD_Z, z).put(Quaternion.FIELD_W, w));
+        super.setType(TYPE);
     }
 
     public static Quaternion fromJsonString(String jsonString) {
@@ -47,16 +53,36 @@ public class Quaternion extends RosMessage {
         return this.x;
     }
 
+    public void setX(double x) {
+        this.x = x;
+        this.jsonObject.put(FIELD_X, x);
+    }
+
     public double getY() {
         return this.y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+        this.jsonObject.put(FIELD_Y, x);
     }
 
     public double getZ() {
         return this.z;
     }
 
+    public void setZ(double z) {
+        this.z = z;
+        this.jsonObject.put(FIELD_Z, x);
+    }
+
     public double getW() {
         return this.w;
+    }
+
+    public void setW(double w) {
+        this.w = w;
+        this.jsonObject.put(FIELD_W, w);
     }
 
     @Override

@@ -3,27 +3,31 @@ package io.github.twinklekhj.ros.type.std;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
 import java.util.Arrays;
 
+@ToString
 public class Int64MultiArray extends RosMessage {
+    public static final String TYPE = "std_msgs/Int64MultiArray";
+
     public static final String FIELD_LAYOUT = "layout";
     public static final String FIELD_DATA = "data";
 
-    public static final String TYPE = "std_msgs/Int64MultiArray";
-
-    private final MultiArrayLayout layout;
-    private final long[] data;
+    private MultiArrayLayout layout;
+    private long[] data;
 
     public Int64MultiArray() {
         this(new MultiArrayLayout(), new long[]{});
     }
 
     public Int64MultiArray(MultiArrayLayout layout, long[] data) {
-        super(jsonBuilder().put(Int64MultiArray.FIELD_LAYOUT, layout.getJsonObject()).put(Int64MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data))), Int64MultiArray.TYPE);
         this.layout = layout;
         this.data = new long[data.length];
         System.arraycopy(data, 0, this.data, 0, data.length);
+
+        super.setJsonObject(jsonBuilder().put(Int64MultiArray.FIELD_LAYOUT, layout.getJsonObject()).put(Int64MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data))));
+        super.setType(TYPE);
     }
 
     public static Int64MultiArray fromJsonString(String jsonString) {
@@ -52,6 +56,11 @@ public class Int64MultiArray extends RosMessage {
         return this.layout;
     }
 
+    public void setLayout(MultiArrayLayout layout) {
+        this.layout = layout;
+        this.jsonObject.put(FIELD_LAYOUT, layout.getJsonObject());
+    }
+
     public int size() {
         return this.data.length;
     }
@@ -62,6 +71,12 @@ public class Int64MultiArray extends RosMessage {
 
     public long[] getData() {
         return this.data;
+    }
+
+    public void setData(long... data) {
+        this.data = data;
+        System.arraycopy(data, 0, this.data, 0, data.length);
+        this.jsonObject.put(FIELD_DATA, Arrays.toString(data));
     }
 
     @Override

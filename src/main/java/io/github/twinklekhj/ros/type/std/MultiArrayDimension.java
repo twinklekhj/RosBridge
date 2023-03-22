@@ -3,17 +3,20 @@ package io.github.twinklekhj.ros.type.std;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.primitives.Primitive;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
-
+@ToString
 public class MultiArrayDimension extends RosMessage {
+    public static final String TYPE = "std_msgs/MultiArrayDimension";
+
     public static final String FIELD_LABEL = "label";
     public static final String FIELD_SIZE = "size";
     public static final String FIELD_STRIDE = "stride";
 
-    public static final String TYPE = "std_msgs/MultiArrayDimension";
 
-    private final String label;
-    private final int size, stride;
+    private String label;
+    private int size;
+    private int stride;
 
     public MultiArrayDimension() {
         this("", 0, 0);
@@ -29,13 +32,12 @@ public class MultiArrayDimension extends RosMessage {
      *               integer.
      */
     public MultiArrayDimension(String label, int size, int stride) {
-        super(jsonBuilder()
-                .put(MultiArrayDimension.FIELD_LABEL, label)
-                .put(MultiArrayDimension.FIELD_SIZE, Primitive.fromUInt32(size))
-                .put(MultiArrayDimension.FIELD_STRIDE, Primitive.fromUInt32(stride)), MultiArrayDimension.TYPE);
         this.label = label;
         this.size = size;
         this.stride = stride;
+
+        super.setJsonObject(jsonBuilder().put(MultiArrayDimension.FIELD_LABEL, label).put(MultiArrayDimension.FIELD_SIZE, Primitive.fromUInt32(size)).put(MultiArrayDimension.FIELD_STRIDE, Primitive.fromUInt32(stride)));
+        super.setType(TYPE);
     }
 
     public static MultiArrayDimension fromJsonString(String jsonString) {
@@ -60,12 +62,27 @@ public class MultiArrayDimension extends RosMessage {
         return this.label;
     }
 
+    public void setLabel(String label) {
+        this.label = label;
+        this.jsonObject.put(MultiArrayDimension.FIELD_LABEL, label);
+    }
+
     public int getSize() {
         return this.size;
     }
 
+    public void setSize(int size) {
+        this.size = size;
+        this.jsonObject.put(MultiArrayDimension.FIELD_SIZE, Primitive.fromUInt32(size));
+    }
+
     public int getStride() {
         return this.stride;
+    }
+
+    public void setStride(int stride) {
+        this.stride = stride;
+        this.jsonObject.put(MultiArrayDimension.FIELD_STRIDE, Primitive.fromUInt32(stride));
     }
 
     @Override

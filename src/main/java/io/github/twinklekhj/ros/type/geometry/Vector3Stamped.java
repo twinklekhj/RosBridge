@@ -3,25 +3,32 @@ package io.github.twinklekhj.ros.type.geometry;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.std.Header;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
-
+@ToString
 public class Vector3Stamped extends RosMessage {
+    public static final String TYPE = "geometry_msgs/Vector3Stamped";
+
     public static final String FIELD_HEADER = "header";
     public static final String FIELD_VECTOR = "vector";
 
-    public static final String TYPE = "geometry_msgs/Vector3Stamped";
-
-    private final Header header;
-    private final Vector3 vector;
+    private Header header;
+    private Vector3 vector;
 
     public Vector3Stamped() {
         this(new Header(), new Vector3());
     }
 
+    public Vector3Stamped(Vector3 vector) {
+        this(new Header(), vector);
+    }
+
     public Vector3Stamped(Header header, Vector3 vector) {
-        super(jsonBuilder().put(Vector3Stamped.FIELD_HEADER, header.getJsonObject()).put(Vector3Stamped.FIELD_VECTOR, vector.getJsonObject()), Vector3Stamped.TYPE);
         this.header = header;
         this.vector = vector;
+
+        super.setJsonObject(jsonBuilder().put(Vector3Stamped.FIELD_HEADER, header.getJsonObject()).put(Vector3Stamped.FIELD_VECTOR, vector.getJsonObject()));
+        super.setType(TYPE);
     }
 
     public static Vector3Stamped fromJsonString(String jsonString) {
@@ -42,8 +49,18 @@ public class Vector3Stamped extends RosMessage {
         return this.header;
     }
 
+    public void setHeader(Header header) {
+        this.header = header;
+        this.jsonObject.put(FIELD_HEADER, header.getJsonObject());
+    }
+
     public Vector3 getVector3() {
         return this.vector;
+    }
+
+    public void setVector(Vector3 vector) {
+        this.vector = vector;
+        this.jsonObject.put(FIELD_VECTOR, vector.getJsonObject());
     }
 
     @Override

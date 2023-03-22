@@ -2,16 +2,18 @@ package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
 import java.awt.*;
 
+@ToString
 public class ColorRGBA extends RosMessage {
+    public static final String TYPE = "std_msgs/ColorRGBA";
+
     public static final String FIELD_R = "r";
     public static final String FIELD_G = "g";
     public static final String FIELD_B = "b";
     public static final String FIELD_A = "a";
-
-    public static final String TYPE = "std_msgs/ColorRGBA";
 
     private final float r, g, b, a;
 
@@ -43,7 +45,7 @@ public class ColorRGBA extends RosMessage {
      */
     public ColorRGBA(float r, float g, float b, float a) {
         // build the JSON object
-        super(jsonBuilder().put(ColorRGBA.FIELD_R, r).put(ColorRGBA.FIELD_G, g).put(ColorRGBA.FIELD_B, b).put(ColorRGBA.FIELD_A, a), ColorRGBA.TYPE);
+        super.setJsonObject(jsonBuilder().put(ColorRGBA.FIELD_R, r).put(ColorRGBA.FIELD_G, g).put(ColorRGBA.FIELD_B, b).put(ColorRGBA.FIELD_A, a)); super.setType(TYPE);
         this.r = r;
         this.g = g;
         this.b = b;

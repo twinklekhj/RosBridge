@@ -3,25 +3,32 @@ package io.github.twinklekhj.ros.type.geometry;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.std.Header;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
-
+@ToString
 public class PoseStamped extends RosMessage {
+    public static final String TYPE = "geometry_msgs/PoseStamped";
+
     public static final String FIELD_HEADER = "header";
     public static final String FIELD_POSE = "pose";
 
-    public static final String TYPE = "geometry_msgs/PoseStamped";
-
-    private final Header header;
-    private final Pose pose;
+    private Header header;
+    private Pose pose;
 
     public PoseStamped() {
         this(new Header(), new Pose());
     }
 
+    public PoseStamped(Pose pose) {
+        this(new Header(), pose);
+    }
+
     public PoseStamped(Header header, Pose pose) {
-        super(jsonBuilder().put(PoseStamped.FIELD_HEADER, header.getJsonObject()).put(PoseStamped.FIELD_POSE, pose.getJsonObject()), PoseStamped.TYPE);
         this.header = header;
         this.pose = pose;
+
+        super.setJsonObject(jsonBuilder().put(PoseStamped.FIELD_HEADER, header.getJsonObject()).put(PoseStamped.FIELD_POSE, pose.getJsonObject()));
+        super.setType(TYPE);
     }
 
     public static PoseStamped fromJsonString(String jsonString) {
@@ -42,9 +49,18 @@ public class PoseStamped extends RosMessage {
         return this.header;
     }
 
+    public void setHeader(Header header) {
+        this.header = header;
+        this.jsonObject.put(FIELD_HEADER, header.getJsonObject());
+    }
 
     public Pose getPose() {
         return this.pose;
+    }
+
+    public void setPose(Pose pose) {
+        this.pose = pose;
+        this.jsonObject.put(FIELD_POSE, pose.getJsonObject());
     }
 
     @Override

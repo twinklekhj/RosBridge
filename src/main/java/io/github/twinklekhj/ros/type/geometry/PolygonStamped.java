@@ -4,32 +4,32 @@ package io.github.twinklekhj.ros.type.geometry;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.std.Header;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
-
+@ToString
 public class PolygonStamped extends RosMessage {
+    public static final String TYPE = "geometry_msgs/PolygonStamped";
+
     public static final String FIELD_HEADER = "header";
     public static final String FIELD_POLYGON = "polygon";
 
-    public static final String TYPE = "geometry_msgs/PolygonStamped";
-
-    private final Header header;
-    private final Polygon polygon;
+    private Header header;
+    private Polygon polygon;
 
     public PolygonStamped() {
         this(new Header(), new Polygon());
     }
 
-    /**
-     * Create a new PolygonStamped with the given values.
-     *
-     * @param header  The header value of the polygon.
-     * @param polygon The polygon value of the polygon.
-     */
+    public PolygonStamped(Polygon polygon) {
+        this(new Header(), polygon);
+    }
+
     public PolygonStamped(Header header, Polygon polygon) {
-        // build the JSON object
-        super(jsonBuilder().put(PolygonStamped.FIELD_HEADER, header.getJsonObject()).put(PolygonStamped.FIELD_POLYGON, polygon.getJsonObject()), PolygonStamped.TYPE);
         this.header = header;
         this.polygon = polygon;
+
+        super.setJsonObject(jsonBuilder().put(PolygonStamped.FIELD_HEADER, header.getJsonObject()).put(PolygonStamped.FIELD_POLYGON, polygon.getJsonObject()));
+        super.setType(TYPE);
     }
 
     public static PolygonStamped fromJsonString(String jsonString) {
@@ -50,8 +50,18 @@ public class PolygonStamped extends RosMessage {
         return this.header;
     }
 
+    public void setHeader(Header header) {
+        this.header = header;
+        this.jsonObject.put(FIELD_HEADER, header.getJsonObject());
+    }
+
     public Polygon getPolygon() {
         return this.polygon;
+    }
+
+    public void setPolygon(Polygon polygon) {
+        this.polygon = polygon;
+        this.jsonObject.put(FIELD_POLYGON, polygon.getJsonObject());
     }
 
     @Override

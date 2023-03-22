@@ -3,35 +3,28 @@ package io.github.twinklekhj.ros.type.geometry;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
-
+@ToString
 public class Pose extends RosMessage {
+    public static final String TYPE = "geometry_msgs/Pose";
+
     public static final String FIELD_POSITION = "position";
     public static final String FIELD_ORIENTATION = "orientation";
 
-    public static final String TYPE = "geometry_msgs/Pose";
+    private Point position;
+    private Quaternion orientation;
 
-    private final Point position;
-    private final Quaternion orientation;
-
-    /**
-     * Create a new Pose with all 0s.
-     */
     public Pose() {
         this(new Point(), new Quaternion());
     }
 
-    /**
-     * Create a new Pose with the given position and orientation values.
-     *
-     * @param position    The position value of the pose.
-     * @param orientation The orientation value of the pose.
-     */
     public Pose(Point position, Quaternion orientation) {
-        // build the JSON object
-        super(jsonBuilder().put(Pose.FIELD_POSITION, position.getJsonObject()).put(Pose.FIELD_ORIENTATION, orientation.getJsonObject()), Pose.TYPE);
         this.position = position;
         this.orientation = orientation;
+
+        super.setJsonObject(jsonBuilder().put(Pose.FIELD_POSITION, position.getJsonObject()).put(Pose.FIELD_ORIENTATION, orientation.getJsonObject()));
+        super.setType(TYPE);
     }
 
     public static Pose fromJsonString(String jsonString) {
@@ -52,8 +45,18 @@ public class Pose extends RosMessage {
         return this.position;
     }
 
+    public void setPosition(Point position) {
+        this.position = position;
+        this.jsonObject.put(Pose.FIELD_POSITION, position.getJsonObject());
+    }
+
     public Quaternion getOrientation() {
         return this.orientation;
+    }
+
+    public void setOrientation(Quaternion orientation) {
+        this.orientation = orientation;
+        this.jsonObject.put(Pose.FIELD_ORIENTATION, orientation.getJsonObject());
     }
 
     @Override

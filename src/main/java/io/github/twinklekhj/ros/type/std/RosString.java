@@ -2,23 +2,26 @@ package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
-
+@ToString
 public class RosString extends RosMessage {
-    public static final java.lang.String FIELD_DATA = "data";
-    public static final java.lang.String TYPE = "std_msgs/String";
+    public static final String TYPE = "std_msgs/String";
+    public static final String FIELD_DATA = "data";
+
     private final String data;
 
     public RosString() {
         this("");
     }
 
-    public RosString(java.lang.String data) {
-        super(jsonBuilder().put(FIELD_DATA, data), RosString.TYPE);
+    public RosString(String data) {
         this.data = data;
+        super.setJsonObject(jsonBuilder().put(FIELD_DATA, data));
+        super.setType(TYPE);
     }
 
-    public static RosString fromJsonString(java.lang.String jsonString) {
+    public static RosString fromJsonString(String jsonString) {
         return RosString.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
@@ -27,11 +30,11 @@ public class RosString extends RosMessage {
     }
 
     public static RosString fromJsonObject(JsonObject jsonObject) {
-        java.lang.String data = jsonObject.containsKey(RosString.FIELD_DATA) ? jsonObject.getString(RosString.FIELD_DATA) : "";
+        String data = jsonObject.containsKey(RosString.FIELD_DATA) ? jsonObject.getString(RosString.FIELD_DATA) : "";
         return new RosString(data);
     }
 
-    public java.lang.String getData() {
+    public String getData() {
         return this.data;
     }
 

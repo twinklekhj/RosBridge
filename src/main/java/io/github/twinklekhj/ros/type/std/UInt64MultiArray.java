@@ -4,17 +4,19 @@ import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.primitives.Primitive;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
 import java.util.Arrays;
 
+@ToString
 public class UInt64MultiArray extends RosMessage {
-    public static final java.lang.String FIELD_LAYOUT = "layout";
-    public static final java.lang.String FIELD_DATA = "data";
+    public static final String TYPE = "std_msgs/UInt64MultiArray";
 
-    public static final java.lang.String TYPE = "std_msgs/UInt64MultiArray";
+    public static final String FIELD_LAYOUT = "layout";
+    public static final String FIELD_DATA = "data";
 
-    private final MultiArrayLayout layout;
-    private final long[] data;
+    private MultiArrayLayout layout;
+    private long[] data;
 
 
     public UInt64MultiArray() {
@@ -22,16 +24,15 @@ public class UInt64MultiArray extends RosMessage {
     }
 
     public UInt64MultiArray(MultiArrayLayout layout, long[] data) {
-        super(new JsonObject()
-                .put(UInt64MultiArray.FIELD_LAYOUT, layout.getJsonObject())
-                .put(UInt64MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(Primitive.fromUInt64(data)))), UInt64MultiArray.TYPE);
-
         this.layout = layout;
         this.data = new long[data.length];
         System.arraycopy(data, 0, this.data, 0, data.length);
+
+        super.setJsonObject(new JsonObject().put(UInt64MultiArray.FIELD_LAYOUT, layout.getJsonObject()).put(UInt64MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(Primitive.fromUInt64(data)))));
+        super.setType(TYPE);
     }
 
-    public static UInt64MultiArray fromJsonString(java.lang.String jsonString) {
+    public static UInt64MultiArray fromJsonString(String jsonString) {
         return UInt64MultiArray.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
@@ -68,6 +69,16 @@ public class UInt64MultiArray extends RosMessage {
 
     public long[] getData() {
         return this.data;
+    }
+
+    public void setLayout(MultiArrayLayout layout) {
+        this.layout = layout;
+        this.jsonObject.put(FIELD_LAYOUT, layout.getJsonObject());
+    }
+    public void setData(long ...data) {
+        this.data = data;
+        System.arraycopy(data, 0, this.data, 0, data.length);
+        this.jsonObject.put(FIELD_DATA, Arrays.toString(data));
     }
 
     @Override

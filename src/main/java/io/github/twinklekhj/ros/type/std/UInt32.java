@@ -4,11 +4,12 @@ package io.github.twinklekhj.ros.type.std;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.primitives.Primitive;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
-
+@ToString
 public class UInt32 extends RosMessage {
-    public static final String FIELD_DATA = "data";
     public static final String TYPE = "std_msgs/UInt32";
+    public static final String FIELD_DATA = "data";
 
     private final int data;
 
@@ -17,7 +18,7 @@ public class UInt32 extends RosMessage {
     }
 
     public UInt32(int data) {
-        super(jsonBuilder().put(UInt32.FIELD_DATA, Primitive.fromUInt32(data)), UInt32.TYPE);
+        super.setJsonObject(jsonBuilder().put(UInt32.FIELD_DATA, Primitive.fromUInt32(data))); super.setType(TYPE);
         this.data = data;
     }
 

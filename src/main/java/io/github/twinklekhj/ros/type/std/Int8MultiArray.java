@@ -3,24 +3,26 @@ package io.github.twinklekhj.ros.type.std;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
 import java.util.Arrays;
 
+@ToString
 public class Int8MultiArray extends RosMessage {
+    public static final String TYPE = "std_msgs/Int8MultiArray";
+
     public static final String FIELD_LAYOUT = "layout";
     public static final String FIELD_DATA = "data";
 
-    public static final String TYPE = "std_msgs/Int8MultiArray";
-
-    private final MultiArrayLayout layout;
-    private final byte[] data;
+    private MultiArrayLayout layout;
+    private byte[] data;
 
     public Int8MultiArray() {
         this(new MultiArrayLayout(), new byte[]{});
     }
 
     public Int8MultiArray(MultiArrayLayout layout, byte[] data) {
-        super(jsonBuilder().put(Int8MultiArray.FIELD_LAYOUT, layout.getJsonObject()).put(Int8MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data))), Int8MultiArray.TYPE);
+        super.setJsonObject(jsonBuilder().put(Int8MultiArray.FIELD_LAYOUT, layout.getJsonObject()).put(Int8MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data)))); super.setType(TYPE);
         this.layout = layout;
         this.data = new byte[data.length];
         System.arraycopy(data, 0, this.data, 0, data.length);
@@ -62,6 +64,16 @@ public class Int8MultiArray extends RosMessage {
 
     public byte[] getData() {
         return this.data;
+    }
+
+    public void setLayout(MultiArrayLayout layout) {
+        this.layout = layout;
+        this.jsonObject.put(FIELD_LAYOUT, layout.getJsonObject());
+    }
+    public void setData(byte ...data) {
+        this.data = data;
+        System.arraycopy(data, 0, this.data, 0, data.length);
+        this.jsonObject.put(FIELD_DATA, Arrays.toString(data));
     }
 
     @Override

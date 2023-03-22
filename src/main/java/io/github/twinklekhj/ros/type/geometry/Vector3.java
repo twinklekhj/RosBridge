@@ -2,10 +2,10 @@ package io.github.twinklekhj.ros.type.geometry;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.vertx.core.json.JsonObject;
-import lombok.Builder;
+import lombok.ToString;
 
 
-@Builder
+@ToString
 public class Vector3 extends RosMessage {
     public static final String TYPE = "geometry_msgs/Vector3";
 
@@ -13,24 +13,21 @@ public class Vector3 extends RosMessage {
     public static final String FIELD_Y = "y";
     public static final String FIELD_Z = "z";
 
-    @Builder.Default
-    private double x = 0;
-
-    @Builder.Default
-    private double y = 0;
-
-    @Builder.Default
-    private double z = 0;
+    private double x;
+    private double y;
+    private double z;
 
     public Vector3() {
         this(0, 0, 0);
     }
 
     public Vector3(double x, double y, double z) {
-        super(jsonBuilder().put(Vector3.FIELD_X, x).put(Vector3.FIELD_Y, y).put(Vector3.FIELD_Z, z), Vector3.TYPE);
         this.x = x;
         this.y = y;
         this.z = z;
+
+        super.setJsonObject(jsonBuilder().put(Vector3.FIELD_X, x).put(Vector3.FIELD_Y, y).put(Vector3.FIELD_Z, z));
+        super.setType(TYPE);
     }
 
     public static Vector3 fromJsonObject(JsonObject jsonObject) {
@@ -44,12 +41,27 @@ public class Vector3 extends RosMessage {
         return this.x;
     }
 
+    public void setX(double x) {
+        this.x = x;
+        this.jsonObject.put(FIELD_X, x);
+    }
+
     public double getY() {
         return this.y;
     }
 
+    public void setY(double y) {
+        this.y = y;
+        this.jsonObject.put(FIELD_Y, x);
+    }
+
     public double getZ() {
         return this.z;
+    }
+
+    public void setZ(double z) {
+        this.z = z;
+        this.jsonObject.put(FIELD_Z, x);
     }
 
     @Override

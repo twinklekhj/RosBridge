@@ -3,26 +3,31 @@ package io.github.twinklekhj.ros.type.geometry;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
-
+@ToString
 public class Point32 extends RosMessage {
+    public static final String TYPE = "geometry_msgs/Point32";
+
     public static final String FIELD_X = "x";
     public static final String FIELD_Y = "y";
     public static final String FIELD_Z = "z";
 
-    public static final String TYPE = "geometry_msgs/Point32";
-
-    private final float x, y, z;
+    private float x;
+    private float y;
+    private float z;
 
     public Point32() {
         this(0, 0, 0);
     }
 
     public Point32(float x, float y, float z) {
-        super(jsonBuilder().put(Point32.FIELD_X, x).put(Point32.FIELD_Y, y).put(Point32.FIELD_Z, z), Point32.TYPE);
         this.x = x;
         this.y = y;
         this.z = z;
+
+        super.setJsonObject(jsonBuilder().put(Point.FIELD_X, x).put(Point.FIELD_Y, y).put(Point.FIELD_Z, z));
+        super.setType(TYPE);
     }
 
     public static Point32 fromJsonString(String jsonString) {
@@ -44,12 +49,27 @@ public class Point32 extends RosMessage {
         return this.x;
     }
 
+    public void setX(float x) {
+        this.x = x;
+        this.jsonObject.put(FIELD_X, x);
+    }
+
     public float getY() {
         return this.y;
     }
 
+    public void setY(float y) {
+        this.y = y;
+        this.jsonObject.put(FIELD_Y, x);
+    }
+
     public float getZ() {
         return this.z;
+    }
+
+    public void setZ(float z) {
+        this.z = z;
+        this.jsonObject.put(FIELD_Z, x);
     }
 
     @Override

@@ -2,12 +2,12 @@ package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
-
+@ToString
 public class Float64 extends RosMessage {
-    public static final String FIELD_DATA = "data";
-
     public static final String TYPE = "std_msgs/Float64";
+    public static final String FIELD_DATA = "data";
 
     private final double data;
 
