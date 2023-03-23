@@ -22,7 +22,7 @@ public class Twist extends RosMessage {
         this.linear = linear;
         this.angular = angular;
 
-        super.setJsonObject(jsonBuilder().put(Twist.FIELD_LINEAR, linear.getJsonObject()).put(Twist.FIELD_ANGULAR, angular.getJsonObject()));
+        super.setJsonObject(jsonBuilder().put(FIELD_LINEAR, linear.getJsonObject()).put(FIELD_ANGULAR, angular.getJsonObject()));
         super.setType(TYPE);
     }
 
@@ -35,8 +35,8 @@ public class Twist extends RosMessage {
     }
 
     public static Twist fromJsonObject(JsonObject jsonObject) {
-        Vector3 linear = jsonObject.containsKey(Twist.FIELD_LINEAR) ? Vector3.fromJsonObject(jsonObject.getJsonObject(Twist.FIELD_LINEAR)) : new Vector3();
-        Vector3 angular = jsonObject.containsKey(Twist.FIELD_ANGULAR) ? Vector3.fromJsonObject(jsonObject.getJsonObject(Twist.FIELD_ANGULAR)) : new Vector3();
+        Vector3 linear = jsonObject.containsKey(FIELD_LINEAR) ? Vector3.fromJsonObject(jsonObject.getJsonObject(FIELD_LINEAR)) : new Vector3();
+        Vector3 angular = jsonObject.containsKey(FIELD_ANGULAR) ? Vector3.fromJsonObject(jsonObject.getJsonObject(FIELD_ANGULAR)) : new Vector3();
         return new Twist(linear, angular);
     }
 

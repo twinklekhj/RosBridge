@@ -29,7 +29,7 @@ public class UInt8MultiArray extends RosMessage {
         this.data = new byte[data.length];
         System.arraycopy(data, 0, this.data, 0, data.length);
 
-        super.setJsonObject(jsonBuilder().put(UInt8MultiArray.FIELD_LAYOUT, layout.getJsonObject()).put(UInt8MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(Primitive.fromUInt8(data)))));
+        super.setJsonObject(jsonBuilder().put(FIELD_LAYOUT, layout.getJsonObject()).put(FIELD_DATA, jsonBuilder(Arrays.toString(Primitive.fromUInt8(data)))));
         super.setType(TYPE);
     }
 
@@ -43,11 +43,11 @@ public class UInt8MultiArray extends RosMessage {
 
     public static UInt8MultiArray fromJsonObject(JsonObject jsonObject) {
         // check the layout
-        MultiArrayLayout layout = jsonObject.containsKey(UInt8MultiArray.FIELD_LAYOUT) ? MultiArrayLayout.fromJsonObject(jsonObject.getJsonObject(UInt8MultiArray.FIELD_LAYOUT)) : new MultiArrayLayout();
+        MultiArrayLayout layout = jsonObject.containsKey(FIELD_LAYOUT) ? MultiArrayLayout.fromJsonObject(jsonObject.getJsonObject(FIELD_LAYOUT)) : new MultiArrayLayout();
 
         // check the array
         byte[] data = new byte[]{};
-        JsonArray jsonData = jsonObject.getJsonArray(UInt8MultiArray.FIELD_DATA);
+        JsonArray jsonData = jsonObject.getJsonArray(FIELD_DATA);
         if (jsonData != null) {
             // convert each data
             data = new byte[jsonData.size()];

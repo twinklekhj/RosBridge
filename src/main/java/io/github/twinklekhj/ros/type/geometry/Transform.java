@@ -23,7 +23,7 @@ public class Transform extends RosMessage {
         this.translation = translation;
         this.rotation = rotation;
 
-        super.setJsonObject(jsonBuilder().put(Transform.FIELD_TRANSLATION, translation.getJsonObject()).put(Transform.FIELD_ROTATION, rotation.getJsonObject()));
+        super.setJsonObject(jsonBuilder().put(FIELD_TRANSLATION, translation.getJsonObject()).put(FIELD_ROTATION, rotation.getJsonObject()));
         super.setType(TYPE);
     }
 
@@ -36,8 +36,8 @@ public class Transform extends RosMessage {
     }
 
     public static Transform fromJsonObject(JsonObject jsonObject) {
-        Vector3 translation = jsonObject.containsKey(Transform.FIELD_TRANSLATION) ? Vector3.fromJsonObject(jsonObject.getJsonObject(Transform.FIELD_TRANSLATION)) : new Vector3();
-        Quaternion rotation = jsonObject.containsKey(Transform.FIELD_ROTATION) ? Quaternion.fromJsonObject(jsonObject.getJsonObject(Transform.FIELD_ROTATION)) : new Quaternion();
+        Vector3 translation = jsonObject.containsKey(FIELD_TRANSLATION) ? Vector3.fromJsonObject(jsonObject.getJsonObject(FIELD_TRANSLATION)) : new Vector3();
+        Quaternion rotation = jsonObject.containsKey(FIELD_ROTATION) ? Quaternion.fromJsonObject(jsonObject.getJsonObject(FIELD_ROTATION)) : new Quaternion();
         return new Transform(translation, rotation);
     }
 

@@ -18,7 +18,7 @@ public class Char extends RosMessage {
 
     public Char(byte data) {
         // build the JSON object
-        super(jsonBuilder().put(Char.FIELD_DATA, Primitive.fromUInt8(data)), Char.TYPE);
+        super(jsonBuilder().put(FIELD_DATA, Primitive.fromUInt8(data)), Char.TYPE);
         this.data = data;
     }
 
@@ -31,7 +31,7 @@ public class Char extends RosMessage {
     }
 
     public static Char fromJsonObject(JsonObject jsonObject) {
-        short data16 = jsonObject.containsKey(Char.FIELD_DATA) ? jsonObject.getInteger(Char.FIELD_DATA).shortValue() : 0;
+        short data16 = jsonObject.containsKey(FIELD_DATA) ? jsonObject.getInteger(FIELD_DATA).shortValue() : 0;
         byte data8 = Primitive.toUInt8(data16);
         return new Char(data8);
     }

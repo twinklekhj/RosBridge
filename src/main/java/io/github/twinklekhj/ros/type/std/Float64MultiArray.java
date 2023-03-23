@@ -26,7 +26,7 @@ public class Float64MultiArray extends RosMessage {
         this.data = new double[data.length];
         System.arraycopy(data, 0, this.data, 0, data.length);
 
-        super.setJsonObject(jsonBuilder().put(Float64MultiArray.FIELD_LAYOUT, layout.getJsonObject()).put(Float64MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data))));
+        super.setJsonObject(jsonBuilder().put(FIELD_LAYOUT, layout.getJsonObject()).put(FIELD_DATA, jsonBuilder(Arrays.toString(data))));
         super.setType(TYPE);
     }
 
@@ -39,10 +39,10 @@ public class Float64MultiArray extends RosMessage {
     }
 
     public static Float64MultiArray fromJsonObject(JsonObject jsonObject) {
-        MultiArrayLayout layout = jsonObject.containsKey(Float64MultiArray.FIELD_LAYOUT) ? MultiArrayLayout.fromJsonObject(jsonObject.getJsonObject(Float64MultiArray.FIELD_LAYOUT)) : new MultiArrayLayout();
+        MultiArrayLayout layout = jsonObject.containsKey(FIELD_LAYOUT) ? MultiArrayLayout.fromJsonObject(jsonObject.getJsonObject(FIELD_LAYOUT)) : new MultiArrayLayout();
 
         double[] data = new double[]{};
-        JsonArray jsonData = jsonObject.getJsonArray(Float64MultiArray.FIELD_DATA);
+        JsonArray jsonData = jsonObject.getJsonArray(FIELD_DATA);
         if (jsonData != null) {
             data = new double[jsonData.size()];
             for (int i = 0; i < data.length; i++) {

@@ -114,8 +114,8 @@ public class Time extends TimeBase<Time> {
      */
     public static Time fromJsonObject(JsonObject jsonObject) {
         // check the fields
-        int secs = jsonObject.containsKey(Time.FIELD_SECS) ? jsonObject.getInteger(Time.FIELD_SECS) : 0;
-        int nsecs = jsonObject.containsKey(Time.FIELD_NSECS) ? jsonObject.getInteger(Time.FIELD_NSECS) : 0;
+        int secs = jsonObject.containsKey(FIELD_SECS) ? jsonObject.getInteger(FIELD_SECS) : 0;
+        int nsecs = jsonObject.containsKey(FIELD_NSECS) ? jsonObject.getInteger(FIELD_NSECS) : 0;
         return new Time(secs, nsecs);
     }
 

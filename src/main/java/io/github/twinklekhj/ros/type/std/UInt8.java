@@ -18,7 +18,7 @@ public class UInt8 extends RosMessage {
 
     public UInt8(byte data) {
         this.data = data;
-        super.setJsonObject(jsonBuilder().put(UInt8.FIELD_DATA, Primitive.fromUInt8(data)));
+        super.setJsonObject(jsonBuilder().put(FIELD_DATA, Primitive.fromUInt8(data)));
         super.setType(TYPE);
     }
 
@@ -31,7 +31,7 @@ public class UInt8 extends RosMessage {
     }
 
     public static UInt8 fromJsonObject(JsonObject jsonObject) {
-        byte data = jsonObject.containsKey(UInt8.FIELD_DATA) ? Primitive.toUInt8(jsonObject.getInteger(UInt8.FIELD_DATA).shortValue()) : 0;
+        byte data = jsonObject.containsKey(FIELD_DATA) ? Primitive.toUInt8(jsonObject.getInteger(FIELD_DATA).shortValue()) : 0;
         return new UInt8(data);
     }
 

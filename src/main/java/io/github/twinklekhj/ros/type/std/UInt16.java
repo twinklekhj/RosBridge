@@ -17,7 +17,7 @@ public class UInt16 extends RosMessage {
     }
 
     public UInt16(short data) {
-        super.setJsonObject(jsonBuilder().put(UInt16.FIELD_DATA, Primitive.fromUInt16(data))); super.setType(TYPE);
+        super.setJsonObject(jsonBuilder().put(FIELD_DATA, Primitive.fromUInt16(data))); super.setType(TYPE);
         this.data = data;
     }
 
@@ -32,7 +32,7 @@ public class UInt16 extends RosMessage {
 
     public static UInt16 fromJsonObject(JsonObject jsonObject) {
         // check the fields
-        short data = jsonObject.containsKey(UInt16.FIELD_DATA) ? Primitive.toUInt16(jsonObject.getInteger(UInt16.FIELD_DATA)) : 0;
+        short data = jsonObject.containsKey(FIELD_DATA) ? Primitive.toUInt16(jsonObject.getInteger(FIELD_DATA)) : 0;
         return new UInt16(data);
     }
 

@@ -28,7 +28,7 @@ public class TwistStamped extends RosMessage {
         this.header = header;
         this.twist = twist;
 
-        super.setJsonObject(jsonBuilder().put(TwistStamped.FIELD_HEADER, header.getJsonObject()).put(TwistStamped.FIELD_TWIST, twist.getJsonObject()));
+        super.setJsonObject(jsonBuilder().put(FIELD_HEADER, header.getJsonObject()).put(FIELD_TWIST, twist.getJsonObject()));
         super.setType(TYPE);
     }
 
@@ -41,8 +41,8 @@ public class TwistStamped extends RosMessage {
     }
 
     public static TwistStamped fromJsonObject(JsonObject jsonObject) {
-        Header header = jsonObject.containsKey(TwistStamped.FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(TwistStamped.FIELD_HEADER)) : new Header();
-        Twist twist = jsonObject.containsKey(TwistStamped.FIELD_TWIST) ? Twist.fromJsonObject(jsonObject.getJsonObject(TwistStamped.FIELD_TWIST)) : new Twist();
+        Header header = jsonObject.containsKey(FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(FIELD_HEADER)) : new Header();
+        Twist twist = jsonObject.containsKey(FIELD_TWIST) ? Twist.fromJsonObject(jsonObject.getJsonObject(FIELD_TWIST)) : new Twist();
         return new TwistStamped(header, twist);
     }
 

@@ -28,7 +28,7 @@ public class QuaternionStamped extends RosMessage {
         this.header = header;
         this.quaternion = quaternion;
 
-        super.setJsonObject(jsonBuilder().put(QuaternionStamped.FIELD_HEADER, header.getJsonObject()).put(QuaternionStamped.FIELD_QUATERNION, quaternion.getJsonObject()));
+        super.setJsonObject(jsonBuilder().put(FIELD_HEADER, header.getJsonObject()).put(FIELD_QUATERNION, quaternion.getJsonObject()));
         super.setType(TYPE);
     }
 
@@ -41,8 +41,8 @@ public class QuaternionStamped extends RosMessage {
     }
 
     public static QuaternionStamped fromJsonObject(JsonObject jsonObject) {
-        Header header = jsonObject.containsKey(QuaternionStamped.FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(QuaternionStamped.FIELD_HEADER)) : new Header();
-        Quaternion quaternion = jsonObject.containsKey(QuaternionStamped.FIELD_QUATERNION) ? Quaternion.fromJsonObject(jsonObject.getJsonObject(QuaternionStamped.FIELD_QUATERNION)) : new Quaternion();
+        Header header = jsonObject.containsKey(FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(FIELD_HEADER)) : new Header();
+        Quaternion quaternion = jsonObject.containsKey(FIELD_QUATERNION) ? Quaternion.fromJsonObject(jsonObject.getJsonObject(FIELD_QUATERNION)) : new Quaternion();
         return new QuaternionStamped(header, quaternion);
     }
 

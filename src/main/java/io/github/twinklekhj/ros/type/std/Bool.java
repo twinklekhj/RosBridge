@@ -30,7 +30,7 @@ public class Bool extends RosMessage {
     }
 
     public static Bool fromJsonObject(JsonObject jsonObject) {
-        boolean data = jsonObject.containsKey(Bool.FIELD_DATA) && jsonObject.getBoolean(Bool.FIELD_DATA);
+        boolean data = jsonObject.containsKey(FIELD_DATA) && jsonObject.getBoolean(FIELD_DATA);
         return new Bool(data);
     }
 

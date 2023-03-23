@@ -16,7 +16,7 @@ public class Int64 extends RosMessage {
     }
 
     public Int64(long data) {
-        super(jsonBuilder().put(Int64.FIELD_DATA, data), Int64.TYPE);
+        super(jsonBuilder().put(FIELD_DATA, data), Int64.TYPE);
         this.data = data;
     }
 
@@ -29,7 +29,7 @@ public class Int64 extends RosMessage {
     }
 
     public static Int64 fromJsonObject(JsonObject jsonObject) {
-        long data = jsonObject.containsKey(Int64.FIELD_DATA) ? jsonObject.getLong(Int64.FIELD_DATA) : 0L;
+        long data = jsonObject.containsKey(FIELD_DATA) ? jsonObject.getLong(FIELD_DATA) : 0L;
         return new Int64(data);
     }
 

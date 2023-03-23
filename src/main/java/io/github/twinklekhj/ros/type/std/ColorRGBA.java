@@ -45,7 +45,7 @@ public class ColorRGBA extends RosMessage {
      */
     public ColorRGBA(float r, float g, float b, float a) {
         // build the JSON object
-        super.setJsonObject(jsonBuilder().put(ColorRGBA.FIELD_R, r).put(ColorRGBA.FIELD_G, g).put(ColorRGBA.FIELD_B, b).put(ColorRGBA.FIELD_A, a)); super.setType(TYPE);
+        super.setJsonObject(jsonBuilder().put(FIELD_R, r).put(FIELD_G, g).put(FIELD_B, b).put(FIELD_A, a)); super.setType(TYPE);
         this.r = r;
         this.g = g;
         this.b = b;
@@ -76,10 +76,10 @@ public class ColorRGBA extends RosMessage {
     }
 
     public static ColorRGBA fromJsonObject(JsonObject jsonObject) {
-        float r = jsonObject.containsKey(ColorRGBA.FIELD_R) ? jsonObject.getDouble(ColorRGBA.FIELD_R).floatValue() : 0f;
-        float g = jsonObject.containsKey(ColorRGBA.FIELD_G) ? jsonObject.getDouble(ColorRGBA.FIELD_G).floatValue() : 0f;
-        float b = jsonObject.containsKey(ColorRGBA.FIELD_B) ? jsonObject.getDouble(ColorRGBA.FIELD_B).floatValue() : 0f;
-        float a = jsonObject.containsKey(ColorRGBA.FIELD_A) ? jsonObject.getDouble(ColorRGBA.FIELD_A).floatValue() : 0f;
+        float r = jsonObject.containsKey(FIELD_R) ? jsonObject.getDouble(FIELD_R).floatValue() : 0f;
+        float g = jsonObject.containsKey(FIELD_G) ? jsonObject.getDouble(FIELD_G).floatValue() : 0f;
+        float b = jsonObject.containsKey(FIELD_B) ? jsonObject.getDouble(FIELD_B).floatValue() : 0f;
+        float a = jsonObject.containsKey(FIELD_A) ? jsonObject.getDouble(FIELD_A).floatValue() : 0f;
 
         return new ColorRGBA(r, g, b, a);
     }

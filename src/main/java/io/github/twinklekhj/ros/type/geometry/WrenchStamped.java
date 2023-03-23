@@ -27,7 +27,7 @@ public class WrenchStamped extends RosMessage {
         this.header = header;
         this.wrench = wrench;
 
-        super.setJsonObject(jsonBuilder().put(WrenchStamped.FIELD_HEADER, header.getJsonObject()).put(WrenchStamped.FIELD_WRENCH, wrench.getJsonObject()));
+        super.setJsonObject(jsonBuilder().put(FIELD_HEADER, header.getJsonObject()).put(FIELD_WRENCH, wrench.getJsonObject()));
         super.setType(TYPE);
     }
 
@@ -40,8 +40,8 @@ public class WrenchStamped extends RosMessage {
     }
 
     public static WrenchStamped fromJsonObject(JsonObject jsonObject) {
-        Header header = jsonObject.containsKey(WrenchStamped.FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(WrenchStamped.FIELD_HEADER)) : new Header();
-        Wrench wrench = jsonObject.containsKey(WrenchStamped.FIELD_WRENCH) ? Wrench.fromJsonObject(jsonObject.getJsonObject(WrenchStamped.FIELD_WRENCH)) : new Wrench();
+        Header header = jsonObject.containsKey(FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(FIELD_HEADER)) : new Header();
+        Wrench wrench = jsonObject.containsKey(FIELD_WRENCH) ? Wrench.fromJsonObject(jsonObject.getJsonObject(FIELD_WRENCH)) : new Wrench();
         return new WrenchStamped(header, wrench);
     }
 

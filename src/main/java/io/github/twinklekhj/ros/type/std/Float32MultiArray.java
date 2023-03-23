@@ -22,7 +22,7 @@ public class Float32MultiArray extends RosMessage {
     }
 
     public Float32MultiArray(MultiArrayLayout layout, float[] data) {
-        super.setJsonObject(jsonBuilder().put(Float32MultiArray.FIELD_LAYOUT, layout.getJsonObject()).put(Float32MultiArray.FIELD_DATA, Arrays.toString(data)));
+        super.setJsonObject(jsonBuilder().put(FIELD_LAYOUT, layout.getJsonObject()).put(FIELD_DATA, Arrays.toString(data)));
         super.setType(TYPE);
 
         this.layout = layout;
@@ -40,10 +40,10 @@ public class Float32MultiArray extends RosMessage {
     }
 
     public static Float32MultiArray fromJsonObject(JsonObject jsonObject) {
-        MultiArrayLayout layout = jsonObject.containsKey(Float32MultiArray.FIELD_LAYOUT) ? MultiArrayLayout.fromJsonObject(jsonObject.getJsonObject(Float32MultiArray.FIELD_LAYOUT)) : new MultiArrayLayout();
+        MultiArrayLayout layout = jsonObject.containsKey(FIELD_LAYOUT) ? MultiArrayLayout.fromJsonObject(jsonObject.getJsonObject(FIELD_LAYOUT)) : new MultiArrayLayout();
 
         float[] data = new float[]{};
-        JsonArray jsonData = jsonObject.getJsonArray(Float32MultiArray.FIELD_DATA);
+        JsonArray jsonData = jsonObject.getJsonArray(FIELD_DATA);
         if (jsonData != null) {
             data = new float[jsonData.size()];
             for (int i = 0; i < data.length; i++) {

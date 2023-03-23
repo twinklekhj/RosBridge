@@ -26,7 +26,7 @@ public class ByteMultiArray extends RosMessage {
         this.data = new byte[data.length];
         System.arraycopy(data, 0, this.data, 0, data.length);
 
-        super.setJsonObject(jsonBuilder().put(ByteMultiArray.FIELD_LAYOUT, layout.getJsonObject()).put(ByteMultiArray.FIELD_DATA, Arrays.toString(data)));
+        super.setJsonObject(jsonBuilder().put(FIELD_LAYOUT, layout.getJsonObject()).put(FIELD_DATA, Arrays.toString(data)));
         super.setType(TYPE);
     }
 
@@ -39,10 +39,10 @@ public class ByteMultiArray extends RosMessage {
     }
 
     public static ByteMultiArray fromJsonObject(JsonObject jsonObject) {
-        MultiArrayLayout layout = jsonObject.containsKey(ByteMultiArray.FIELD_LAYOUT) ? MultiArrayLayout.fromJsonObject(jsonObject.getJsonObject(ByteMultiArray.FIELD_LAYOUT)) : new MultiArrayLayout();
+        MultiArrayLayout layout = jsonObject.containsKey(FIELD_LAYOUT) ? MultiArrayLayout.fromJsonObject(jsonObject.getJsonObject(FIELD_LAYOUT)) : new MultiArrayLayout();
 
         byte[] data = new byte[]{};
-        JsonArray jsonData = jsonObject.getJsonArray(ByteMultiArray.FIELD_DATA);
+        JsonArray jsonData = jsonObject.getJsonArray(FIELD_DATA);
         if (jsonData != null) {
             data = new byte[jsonData.size()];
             for (int i = 0; i < data.length; i++) {

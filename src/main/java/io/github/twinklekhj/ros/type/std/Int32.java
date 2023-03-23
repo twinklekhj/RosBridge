@@ -16,7 +16,7 @@ public class Int32 extends RosMessage {
     }
 
     public Int32(int data) {
-        super(jsonBuilder().put(Int32.FIELD_DATA, data), Int32.TYPE);
+        super(jsonBuilder().put(FIELD_DATA, data), Int32.TYPE);
         this.data = data;
     }
 
@@ -29,7 +29,7 @@ public class Int32 extends RosMessage {
     }
 
     public static Int32 fromJsonObject(JsonObject jsonObject) {
-        int data = jsonObject.containsKey(Int32.FIELD_DATA) ? jsonObject.getInteger(Int32.FIELD_DATA) : 0;
+        int data = jsonObject.containsKey(FIELD_DATA) ? jsonObject.getInteger(FIELD_DATA) : 0;
         return new Int32(data);
     }
 

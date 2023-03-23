@@ -38,7 +38,7 @@ public class Header extends RosMessage {
         this.stamp = stamp;
         this.frameID = frameID;
 
-        super.setJsonObject(jsonBuilder().put(Header.FIELD_SEQ, Primitive.fromUInt32(seq)).put(Header.FIELD_STAMP, stamp.getJsonObject()).put(Header.FIELD_FRAME_ID, frameID));
+        super.setJsonObject(jsonBuilder().put(FIELD_SEQ, Primitive.fromUInt32(seq)).put(FIELD_STAMP, stamp.getJsonObject()).put(FIELD_FRAME_ID, frameID));
         super.setType(TYPE);
     }
 
@@ -51,9 +51,9 @@ public class Header extends RosMessage {
     }
 
     public static Header fromJsonObject(JsonObject jsonObject) {
-        long seq64 = jsonObject.containsKey(Header.FIELD_SEQ) ? jsonObject.getLong(Header.FIELD_SEQ) : 0;
-        Time stamp = jsonObject.containsKey(Header.FIELD_STAMP) ? Time.fromJsonObject(jsonObject.getJsonObject(Header.FIELD_SEQ)) : new Time();
-        String frameID = jsonObject.containsKey(Header.FIELD_FRAME_ID) ? jsonObject.getString(Header.FIELD_FRAME_ID) : "";
+        long seq64 = jsonObject.containsKey(FIELD_SEQ) ? jsonObject.getLong(FIELD_SEQ) : 0;
+        Time stamp = jsonObject.containsKey(FIELD_STAMP) ? Time.fromJsonObject(jsonObject.getJsonObject(FIELD_SEQ)) : new Time();
+        String frameID = jsonObject.containsKey(FIELD_FRAME_ID) ? jsonObject.getString(FIELD_FRAME_ID) : "";
 
         // convert to a 32-bit number
         int seq32 = Primitive.toUInt32(seq64);
@@ -66,7 +66,7 @@ public class Header extends RosMessage {
 
     public void setSeq(int seq) {
         this.seq = seq;
-        this.jsonObject.put(Header.FIELD_SEQ, Primitive.fromUInt32(seq));
+        this.jsonObject.put(FIELD_SEQ, Primitive.fromUInt32(seq));
     }
 
     public Time getStamp() {
@@ -75,7 +75,7 @@ public class Header extends RosMessage {
 
     public void setStamp(Time stamp) {
         this.stamp = stamp;
-        this.jsonObject.put(Header.FIELD_STAMP, stamp.getJsonObject());
+        this.jsonObject.put(FIELD_STAMP, stamp.getJsonObject());
     }
 
     public String getFrameID() {
@@ -84,7 +84,7 @@ public class Header extends RosMessage {
 
     public void setFrameID(String frameID) {
         this.frameID = frameID;
-        this.jsonObject.put(Header.FIELD_FRAME_ID, frameID);
+        this.jsonObject.put(FIELD_FRAME_ID, frameID);
     }
 
     @Override

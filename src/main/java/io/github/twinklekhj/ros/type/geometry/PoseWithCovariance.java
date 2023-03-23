@@ -41,8 +41,8 @@ public class PoseWithCovariance extends RosMessage {
         }
 
         super.setJsonObject(jsonBuilder()
-                .put(PoseWithCovariance.FIELD_POSE, pose.getJsonObject())
-                .put(PoseWithCovariance.FIELD_COVARIANCE, covariance.length == PoseWithCovariance.COVARIANCE_SIZE ? covariance : new double[PoseWithCovariance.COVARIANCE_SIZE]));
+                .put(FIELD_POSE, pose.getJsonObject())
+                .put(FIELD_COVARIANCE, covariance.length == PoseWithCovariance.COVARIANCE_SIZE ? covariance : new double[PoseWithCovariance.COVARIANCE_SIZE]));
         super.setType(TYPE);
     }
 
@@ -56,9 +56,9 @@ public class PoseWithCovariance extends RosMessage {
     }
 
     public static PoseWithCovariance fromJsonObject(JsonObject jsonObject) {
-        Pose pose = jsonObject.containsKey(PoseWithCovariance.FIELD_POSE) ? Pose.fromJsonObject(jsonObject.getJsonObject(PoseWithCovariance.FIELD_POSE)) : new Pose();
+        Pose pose = jsonObject.containsKey(FIELD_POSE) ? Pose.fromJsonObject(jsonObject.getJsonObject(FIELD_POSE)) : new Pose();
 
-        JsonArray jsonArray = jsonObject.getJsonArray(PoseWithCovariance.FIELD_COVARIANCE);
+        JsonArray jsonArray = jsonObject.getJsonArray(FIELD_COVARIANCE);
         if (jsonArray != null) {
             double[] poses = new double[jsonArray.size()];
             for (int i = 0; i < poses.length; i++) {
@@ -88,7 +88,7 @@ public class PoseWithCovariance extends RosMessage {
             }
         }
 
-        this.jsonObject.put(PoseWithCovariance.FIELD_COVARIANCE, covariance.length == PoseWithCovariance.COVARIANCE_SIZE ? covariance : new double[PoseWithCovariance.COVARIANCE_SIZE]);
+        this.jsonObject.put(FIELD_COVARIANCE, covariance.length == PoseWithCovariance.COVARIANCE_SIZE ? covariance : new double[PoseWithCovariance.COVARIANCE_SIZE]);
     }
 
     @Override

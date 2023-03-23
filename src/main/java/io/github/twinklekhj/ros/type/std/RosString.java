@@ -30,7 +30,7 @@ public class RosString extends RosMessage {
     }
 
     public static RosString fromJsonObject(JsonObject jsonObject) {
-        String data = jsonObject.containsKey(RosString.FIELD_DATA) ? jsonObject.getString(RosString.FIELD_DATA) : "";
+        String data = jsonObject.containsKey(FIELD_DATA) ? jsonObject.getString(FIELD_DATA) : "";
         return new RosString(data);
     }
 

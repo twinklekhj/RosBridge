@@ -28,7 +28,7 @@ public class PointStamped extends RosMessage {
         this.header = header;
         this.point = point;
 
-        super.setJsonObject(jsonBuilder().put(PointStamped.FIELD_HEADER, header.getJsonObject()).put(PointStamped.FIELD_POINT, point.getJsonObject()));
+        super.setJsonObject(jsonBuilder().put(FIELD_HEADER, header.getJsonObject()).put(FIELD_POINT, point.getJsonObject()));
         super.setType(TYPE);
     }
 
@@ -41,8 +41,8 @@ public class PointStamped extends RosMessage {
     }
 
     public static PointStamped fromJsonObject(JsonObject jsonObject) {
-        Header header = jsonObject.containsKey(PointStamped.FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(PointStamped.FIELD_HEADER)) : new Header();
-        Point point = jsonObject.containsKey(PointStamped.FIELD_POINT) ? Point.fromJsonObject(jsonObject.getJsonObject(PointStamped.FIELD_POINT)) : new Point();
+        Header header = jsonObject.containsKey(FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(FIELD_HEADER)) : new Header();
+        Point point = jsonObject.containsKey(FIELD_POINT) ? Point.fromJsonObject(jsonObject.getJsonObject(FIELD_POINT)) : new Point();
         return new PointStamped(header, point);
     }
 

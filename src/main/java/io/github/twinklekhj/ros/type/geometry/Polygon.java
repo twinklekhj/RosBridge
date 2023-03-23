@@ -24,7 +24,7 @@ public class Polygon extends RosMessage {
         this.points = new Point32[points.length];
         System.arraycopy(points, 0, this.points, 0, points.length);
 
-        super.setJsonObject(jsonBuilder().put(Polygon.FIELD_POINTS, jsonBuilder(Arrays.deepToString(points))));
+        super.setJsonObject(jsonBuilder().put(FIELD_POINTS, jsonBuilder(Arrays.deepToString(points))));
         super.setType(TYPE);
     }
 
@@ -37,7 +37,7 @@ public class Polygon extends RosMessage {
     }
 
     public static Polygon fromJsonObject(JsonObject jsonObject) {
-        JsonArray jsonPoints = jsonObject.getJsonArray(Polygon.FIELD_POINTS);
+        JsonArray jsonPoints = jsonObject.getJsonArray(FIELD_POINTS);
 
         if (jsonPoints != null) {
             Point32[] points = new Point32[jsonPoints.size()];
@@ -66,7 +66,7 @@ public class Polygon extends RosMessage {
         this.points = new Point32[points.length];
         System.arraycopy(points, 0, this.points, 0, points.length);
 
-        this.jsonObject.put(Polygon.FIELD_POINTS, jsonBuilder(Arrays.deepToString(points)));
+        this.jsonObject.put(FIELD_POINTS, jsonBuilder(Arrays.deepToString(points)));
     }
 
     @Override

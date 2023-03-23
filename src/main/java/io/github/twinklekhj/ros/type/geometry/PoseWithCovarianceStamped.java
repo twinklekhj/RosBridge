@@ -29,7 +29,7 @@ public class PoseWithCovarianceStamped extends RosMessage {
         this.header = header;
         this.pose = pose;
 
-        super.setJsonObject(jsonBuilder().put(PoseWithCovarianceStamped.FIELD_HEADER, header.getJsonObject()).put(PoseWithCovarianceStamped.FIELD_POSE, pose.getJsonObject()));
+        super.setJsonObject(jsonBuilder().put(FIELD_HEADER, header.getJsonObject()).put(FIELD_POSE, pose.getJsonObject()));
         super.setType(TYPE);
     }
 
@@ -43,8 +43,8 @@ public class PoseWithCovarianceStamped extends RosMessage {
 
 
     public static PoseWithCovarianceStamped fromJsonObject(JsonObject jsonObject) {
-        Header header = jsonObject.containsKey(PoseWithCovarianceStamped.FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(PoseWithCovarianceStamped.FIELD_HEADER)) : new Header();
-        PoseWithCovariance pose = jsonObject.containsKey(PoseWithCovarianceStamped.FIELD_POSE) ? PoseWithCovariance.fromJsonObject(jsonObject.getJsonObject(PoseWithCovarianceStamped.FIELD_POSE)) : new PoseWithCovariance();
+        Header header = jsonObject.containsKey(FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(FIELD_HEADER)) : new Header();
+        PoseWithCovariance pose = jsonObject.containsKey(FIELD_POSE) ? PoseWithCovariance.fromJsonObject(jsonObject.getJsonObject(FIELD_POSE)) : new PoseWithCovariance();
         return new PoseWithCovarianceStamped(header, pose);
     }
 

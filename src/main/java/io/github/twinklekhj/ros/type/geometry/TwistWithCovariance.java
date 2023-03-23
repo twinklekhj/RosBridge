@@ -42,7 +42,7 @@ public class TwistWithCovariance extends RosMessage {
             }
         }
 
-        super.setJsonObject(jsonBuilder().put(TwistWithCovariance.FIELD_TWIST, twist.getJsonObject()).put(TwistWithCovariance.FIELD_COVARIANCE, covariance.length == TwistWithCovariance.COVARIANCE_SIZE ? Arrays.toString(covariance) : Arrays.toString(new double[TwistWithCovariance.COVARIANCE_SIZE])));
+        super.setJsonObject(jsonBuilder().put(FIELD_TWIST, twist.getJsonObject()).put(FIELD_COVARIANCE, covariance.length == TwistWithCovariance.COVARIANCE_SIZE ? Arrays.toString(covariance) : Arrays.toString(new double[TwistWithCovariance.COVARIANCE_SIZE])));
         super.setType(TYPE);
     }
 
@@ -55,9 +55,9 @@ public class TwistWithCovariance extends RosMessage {
     }
 
     public static TwistWithCovariance fromJsonObject(JsonObject jsonObject) {
-        Twist twist = jsonObject.containsKey(TwistWithCovariance.FIELD_TWIST) ? Twist.fromJsonObject(jsonObject.getJsonObject(TwistWithCovariance.FIELD_TWIST)) : new Twist();
+        Twist twist = jsonObject.containsKey(FIELD_TWIST) ? Twist.fromJsonObject(jsonObject.getJsonObject(FIELD_TWIST)) : new Twist();
 
-        JsonArray jsonArray = jsonObject.getJsonArray(TwistWithCovariance.FIELD_COVARIANCE);
+        JsonArray jsonArray = jsonObject.getJsonArray(FIELD_COVARIANCE);
         if (jsonArray != null) {
             double[] twists = new double[jsonArray.size()];
             for (int i = 0; i < twists.length; i++) {
@@ -84,7 +84,7 @@ public class TwistWithCovariance extends RosMessage {
 
     public void setCovariance(double... covariance) {
         this.covariance = covariance;
-        this.jsonObject.put(TwistWithCovariance.FIELD_COVARIANCE, jsonBuilder(covariance.length == TwistWithCovariance.COVARIANCE_SIZE ? Arrays.toString(covariance) : Arrays.toString(new double[TwistWithCovariance.COVARIANCE_SIZE])));
+        this.jsonObject.put(FIELD_COVARIANCE, jsonBuilder(covariance.length == TwistWithCovariance.COVARIANCE_SIZE ? Arrays.toString(covariance) : Arrays.toString(new double[TwistWithCovariance.COVARIANCE_SIZE])));
     }
 
     public double[][] getCovarianceMatrix() {

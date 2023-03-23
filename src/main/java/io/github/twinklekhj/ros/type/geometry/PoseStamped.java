@@ -27,7 +27,7 @@ public class PoseStamped extends RosMessage {
         this.header = header;
         this.pose = pose;
 
-        super.setJsonObject(jsonBuilder().put(PoseStamped.FIELD_HEADER, header.getJsonObject()).put(PoseStamped.FIELD_POSE, pose.getJsonObject()));
+        super.setJsonObject(jsonBuilder().put(FIELD_HEADER, header.getJsonObject()).put(FIELD_POSE, pose.getJsonObject()));
         super.setType(TYPE);
     }
 
@@ -40,8 +40,8 @@ public class PoseStamped extends RosMessage {
     }
 
     public static PoseStamped fromJsonObject(JsonObject jsonObject) {
-        Header header = jsonObject.containsKey(PoseStamped.FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(PoseStamped.FIELD_HEADER)) : new Header();
-        Pose pose = jsonObject.containsKey(PoseStamped.FIELD_POSE) ? Pose.fromJsonObject(jsonObject.getJsonObject(PoseStamped.FIELD_POSE)) : new Pose();
+        Header header = jsonObject.containsKey(FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(FIELD_HEADER)) : new Header();
+        Pose pose = jsonObject.containsKey(FIELD_POSE) ? Pose.fromJsonObject(jsonObject.getJsonObject(FIELD_POSE)) : new Pose();
         return new PoseStamped(header, pose);
     }
 

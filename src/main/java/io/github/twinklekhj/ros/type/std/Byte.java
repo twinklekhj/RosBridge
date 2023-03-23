@@ -16,7 +16,7 @@ public class Byte extends RosMessage {
     }
 
     public Byte(byte data) {
-        super(jsonBuilder().put(Byte.FIELD_DATA, data), TYPE);
+        super(jsonBuilder().put(FIELD_DATA, data), TYPE);
         this.data = data;
     }
 
@@ -29,7 +29,7 @@ public class Byte extends RosMessage {
     }
 
     public static Byte fromJsonObject(JsonObject jsonObject) {
-        byte data = jsonObject.containsKey(Byte.FIELD_DATA) ? jsonObject.getInteger(Byte.FIELD_DATA).byteValue() : 0;
+        byte data = jsonObject.containsKey(FIELD_DATA) ? jsonObject.getInteger(FIELD_DATA).byteValue() : 0;
         return new Byte(data);
     }
 

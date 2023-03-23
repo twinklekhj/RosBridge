@@ -25,7 +25,7 @@ public class Point extends RosMessage {
         this.y = y;
         this.z = z;
 
-        super.setJsonObject(jsonBuilder().put(Point.FIELD_X, x).put(Point.FIELD_Y, y).put(Point.FIELD_Z, z));
+        super.setJsonObject(jsonBuilder().put(FIELD_X, x).put(FIELD_Y, y).put(FIELD_Z, z));
         super.setType(TYPE);
     }
 
@@ -38,9 +38,9 @@ public class Point extends RosMessage {
     }
 
     public static Point fromJsonObject(JsonObject jsonObject) {
-        double x = jsonObject.containsKey(Point.FIELD_X) ? jsonObject.getDouble(Point.FIELD_X) : 0.0;
-        double y = jsonObject.containsKey(Point.FIELD_Y) ? jsonObject.getDouble(Point.FIELD_Y) : 0.0;
-        double z = jsonObject.containsKey(Point.FIELD_Z) ? jsonObject.getDouble(Point.FIELD_Z) : 0.0;
+        double x = jsonObject.containsKey(FIELD_X) ? jsonObject.getDouble(FIELD_X) : 0.0;
+        double y = jsonObject.containsKey(FIELD_Y) ? jsonObject.getDouble(FIELD_Y) : 0.0;
+        double z = jsonObject.containsKey(FIELD_Z) ? jsonObject.getDouble(FIELD_Z) : 0.0;
         return new Point(x, y, z);
     }
 

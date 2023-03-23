@@ -26,7 +26,7 @@ public class Int32MultiArray extends RosMessage {
         this.data = new int[data.length];
         System.arraycopy(data, 0, this.data, 0, data.length);
 
-        super.setJsonObject(jsonBuilder().put(Int32MultiArray.FIELD_LAYOUT, layout.getJsonObject()).put(Int32MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data))));
+        super.setJsonObject(jsonBuilder().put(FIELD_LAYOUT, layout.getJsonObject()).put(FIELD_DATA, jsonBuilder(Arrays.toString(data))));
         super.setType(TYPE);
     }
 
@@ -39,10 +39,10 @@ public class Int32MultiArray extends RosMessage {
     }
 
     public static Int32MultiArray fromJsonObject(JsonObject jsonObject) {
-        MultiArrayLayout layout = jsonObject.containsKey(Int32MultiArray.FIELD_LAYOUT) ? MultiArrayLayout.fromJsonObject(jsonObject.getJsonObject(Int32MultiArray.FIELD_LAYOUT)) : new MultiArrayLayout();
+        MultiArrayLayout layout = jsonObject.containsKey(FIELD_LAYOUT) ? MultiArrayLayout.fromJsonObject(jsonObject.getJsonObject(FIELD_LAYOUT)) : new MultiArrayLayout();
 
         int[] data = new int[]{};
-        JsonArray jsonData = jsonObject.getJsonArray(Int32MultiArray.FIELD_DATA);
+        JsonArray jsonData = jsonObject.getJsonArray(FIELD_DATA);
         if (jsonData != null) {
             data = new int[jsonData.size()];
             for (int i = 0; i < data.length; i++) {

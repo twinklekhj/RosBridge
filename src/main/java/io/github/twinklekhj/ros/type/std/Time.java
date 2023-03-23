@@ -9,15 +9,16 @@ public class Time extends RosMessage {
     public static final String TYPE = "std_msgs/Time";
     public static final String FIELD_DATA = "data";
 
-    private final Time data;
+    private final io.github.twinklekhj.ros.type.primitives.Time data;
 
     public Time() {
-        this(new Time());
+        this(new io.github.twinklekhj.ros.type.primitives.Time());
     }
 
-    public Time(Time data) {
-        super.setJsonObject(jsonBuilder().put(Time.FIELD_DATA, data.getJsonObject())); super.setType(TYPE);
+    public Time(io.github.twinklekhj.ros.type.primitives.Time data) {
         this.data = data;
+        super.setJsonObject(jsonBuilder().put(FIELD_DATA, data.toJsonObject()));
+        super.setType(TYPE);
     }
 
     public static Time fromJsonString(String jsonString) {
@@ -29,11 +30,11 @@ public class Time extends RosMessage {
     }
 
     public static Time fromJsonObject(JsonObject jsonObject) {
-        Time data = jsonObject.containsKey(Time.FIELD_DATA) ? Time.fromJsonObject(jsonObject) : new Time();
+        io.github.twinklekhj.ros.type.primitives.Time data = jsonObject.containsKey(FIELD_DATA) ? io.github.twinklekhj.ros.type.primitives.Time.fromJsonObject(jsonObject) : new io.github.twinklekhj.ros.type.primitives.Time();
         return new Time(data);
     }
 
-    public Time getData() {
+    public io.github.twinklekhj.ros.type.primitives.Time getData() {
         return this.data;
     }
 

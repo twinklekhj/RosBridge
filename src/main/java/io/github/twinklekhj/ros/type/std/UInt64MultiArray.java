@@ -28,7 +28,7 @@ public class UInt64MultiArray extends RosMessage {
         this.data = new long[data.length];
         System.arraycopy(data, 0, this.data, 0, data.length);
 
-        super.setJsonObject(new JsonObject().put(UInt64MultiArray.FIELD_LAYOUT, layout.getJsonObject()).put(UInt64MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(Primitive.fromUInt64(data)))));
+        super.setJsonObject(new JsonObject().put(FIELD_LAYOUT, layout.getJsonObject()).put(FIELD_DATA, jsonBuilder(Arrays.toString(Primitive.fromUInt64(data)))));
         super.setType(TYPE);
     }
 
@@ -42,10 +42,10 @@ public class UInt64MultiArray extends RosMessage {
     }
 
     public static UInt64MultiArray fromJsonObject(JsonObject jsonObject) {
-        MultiArrayLayout layout = jsonObject.containsKey(UInt64MultiArray.FIELD_LAYOUT) ? MultiArrayLayout.fromJsonObject(jsonObject.getJsonObject(UInt64MultiArray.FIELD_LAYOUT)) : new MultiArrayLayout();
+        MultiArrayLayout layout = jsonObject.containsKey(FIELD_LAYOUT) ? MultiArrayLayout.fromJsonObject(jsonObject.getJsonObject(FIELD_LAYOUT)) : new MultiArrayLayout();
 
         long[] data = new long[]{};
-        JsonArray jsonData = jsonObject.getJsonArray(UInt64MultiArray.FIELD_DATA);
+        JsonArray jsonData = jsonObject.getJsonArray(FIELD_DATA);
         if (jsonData != null) {
             data = new long[jsonData.size()];
             for (int i = 0; i < data.length; i++) {

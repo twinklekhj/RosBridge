@@ -16,7 +16,7 @@ public class Float64 extends RosMessage {
     }
 
     public Float64(double data) {
-        super(jsonBuilder().put(Float64.FIELD_DATA, data), Float64.TYPE);
+        super(jsonBuilder().put(FIELD_DATA, data), Float64.TYPE);
         this.data = data;
     }
 
@@ -29,7 +29,7 @@ public class Float64 extends RosMessage {
     }
 
     public static Float64 fromJsonObject(JsonObject jsonObject) {
-        double data = jsonObject.containsKey(Float64.FIELD_DATA) ? jsonObject.getDouble(Float64.FIELD_DATA) : 0;
+        double data = jsonObject.containsKey(FIELD_DATA) ? jsonObject.getDouble(FIELD_DATA) : 0;
         return new Float64(data);
     }
 

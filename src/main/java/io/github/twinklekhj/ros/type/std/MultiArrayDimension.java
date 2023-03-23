@@ -36,7 +36,7 @@ public class MultiArrayDimension extends RosMessage {
         this.size = size;
         this.stride = stride;
 
-        super.setJsonObject(jsonBuilder().put(MultiArrayDimension.FIELD_LABEL, label).put(MultiArrayDimension.FIELD_SIZE, Primitive.fromUInt32(size)).put(MultiArrayDimension.FIELD_STRIDE, Primitive.fromUInt32(stride)));
+        super.setJsonObject(jsonBuilder().put(FIELD_LABEL, label).put(FIELD_SIZE, Primitive.fromUInt32(size)).put(FIELD_STRIDE, Primitive.fromUInt32(stride)));
         super.setType(TYPE);
     }
 
@@ -49,9 +49,9 @@ public class MultiArrayDimension extends RosMessage {
     }
 
     public static MultiArrayDimension fromJsonObject(JsonObject jsonObject) {
-        String label = jsonObject.containsKey(MultiArrayDimension.FIELD_LABEL) ? jsonObject.getString(MultiArrayDimension.FIELD_LABEL) : "";
-        long size64 = jsonObject.containsKey(MultiArrayDimension.FIELD_SIZE) ? jsonObject.getLong(MultiArrayDimension.FIELD_SIZE) : 0L;
-        long stride64 = jsonObject.containsKey(MultiArrayDimension.FIELD_STRIDE) ? jsonObject.getLong(MultiArrayDimension.FIELD_STRIDE) : 0L;
+        String label = jsonObject.containsKey(FIELD_LABEL) ? jsonObject.getString(FIELD_LABEL) : "";
+        long size64 = jsonObject.containsKey(FIELD_SIZE) ? jsonObject.getLong(FIELD_SIZE) : 0L;
+        long stride64 = jsonObject.containsKey(FIELD_STRIDE) ? jsonObject.getLong(FIELD_STRIDE) : 0L;
 
         int size32 = Primitive.toUInt32(size64);
         int stride32 = Primitive.toUInt32(stride64);
@@ -64,7 +64,7 @@ public class MultiArrayDimension extends RosMessage {
 
     public void setLabel(String label) {
         this.label = label;
-        this.jsonObject.put(MultiArrayDimension.FIELD_LABEL, label);
+        this.jsonObject.put(FIELD_LABEL, label);
     }
 
     public int getSize() {
@@ -73,7 +73,7 @@ public class MultiArrayDimension extends RosMessage {
 
     public void setSize(int size) {
         this.size = size;
-        this.jsonObject.put(MultiArrayDimension.FIELD_SIZE, Primitive.fromUInt32(size));
+        this.jsonObject.put(FIELD_SIZE, Primitive.fromUInt32(size));
     }
 
     public int getStride() {
@@ -82,7 +82,7 @@ public class MultiArrayDimension extends RosMessage {
 
     public void setStride(int stride) {
         this.stride = stride;
-        this.jsonObject.put(MultiArrayDimension.FIELD_STRIDE, Primitive.fromUInt32(stride));
+        this.jsonObject.put(FIELD_STRIDE, Primitive.fromUInt32(stride));
     }
 
     @Override

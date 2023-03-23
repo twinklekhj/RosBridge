@@ -22,7 +22,7 @@ public class Wrench extends RosMessage {
         this.force = force;
         this.torque = torque;
 
-        super.setJsonObject(jsonBuilder().put(Wrench.FIELD_FORCE, force.getJsonObject()).put(Wrench.FIELD_TORQUE, torque.getJsonObject()));
+        super.setJsonObject(jsonBuilder().put(FIELD_FORCE, force.getJsonObject()).put(FIELD_TORQUE, torque.getJsonObject()));
         super.setType(TYPE);
     }
 
@@ -35,8 +35,8 @@ public class Wrench extends RosMessage {
     }
 
     public static Wrench fromJsonObject(JsonObject jsonObject) {
-        Vector3 force = jsonObject.containsKey(Wrench.FIELD_FORCE) ? Vector3.fromJsonObject(jsonObject.getJsonObject(Wrench.FIELD_FORCE)) : new Vector3();
-        Vector3 torque = jsonObject.containsKey(Wrench.FIELD_TORQUE) ? Vector3.fromJsonObject(jsonObject.getJsonObject(Wrench.FIELD_TORQUE)) : new Vector3();
+        Vector3 force = jsonObject.containsKey(FIELD_FORCE) ? Vector3.fromJsonObject(jsonObject.getJsonObject(FIELD_FORCE)) : new Vector3();
+        Vector3 torque = jsonObject.containsKey(FIELD_TORQUE) ? Vector3.fromJsonObject(jsonObject.getJsonObject(FIELD_TORQUE)) : new Vector3();
         return new Wrench(force, torque);
     }
 

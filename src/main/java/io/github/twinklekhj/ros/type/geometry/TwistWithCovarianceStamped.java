@@ -28,7 +28,7 @@ public class TwistWithCovarianceStamped extends RosMessage {
         this.header = header;
         this.twist = twist;
 
-        super.setJsonObject(jsonBuilder().put(TwistWithCovarianceStamped.FIELD_HEADER, header.getJsonObject()).put(TwistWithCovarianceStamped.FIELD_TWIST, twist.getJsonObject()));
+        super.setJsonObject(jsonBuilder().put(FIELD_HEADER, header.getJsonObject()).put(FIELD_TWIST, twist.getJsonObject()));
         super.setType(TYPE);
     }
 
@@ -41,8 +41,8 @@ public class TwistWithCovarianceStamped extends RosMessage {
     }
 
     public static TwistWithCovarianceStamped fromJsonObject(JsonObject jsonObject) {
-        Header header = jsonObject.containsKey(TwistWithCovarianceStamped.FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(TwistWithCovarianceStamped.FIELD_HEADER)) : new Header();
-        TwistWithCovariance twist = jsonObject.containsKey(TwistWithCovarianceStamped.FIELD_TWIST) ? TwistWithCovariance.fromJsonObject(jsonObject.getJsonObject(TwistWithCovarianceStamped.FIELD_TWIST)) : new TwistWithCovariance();
+        Header header = jsonObject.containsKey(FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(FIELD_HEADER)) : new Header();
+        TwistWithCovariance twist = jsonObject.containsKey(FIELD_TWIST) ? TwistWithCovariance.fromJsonObject(jsonObject.getJsonObject(FIELD_TWIST)) : new TwistWithCovariance();
         return new TwistWithCovarianceStamped(header, twist);
     }
 

@@ -17,7 +17,7 @@ public class UInt64 extends RosMessage {
     }
 
     public UInt64(long data) {
-        super.setJsonObject(jsonBuilder().put(UInt64.FIELD_DATA, Primitive.fromUInt64(data))); super.setType(TYPE);
+        super.setJsonObject(jsonBuilder().put(FIELD_DATA, Primitive.fromUInt64(data))); super.setType(TYPE);
         this.data = data;
     }
 
@@ -30,7 +30,7 @@ public class UInt64 extends RosMessage {
     }
 
     public static UInt64 fromJsonObject(JsonObject jsonObject) {
-        long data = jsonObject.containsKey(UInt64.FIELD_DATA) ? Primitive.toUInt64(jsonObject.getLong(UInt64.FIELD_DATA)) : 0L;
+        long data = jsonObject.containsKey(FIELD_DATA) ? Primitive.toUInt64(jsonObject.getLong(FIELD_DATA)) : 0L;
         return new UInt64(data);
     }
 

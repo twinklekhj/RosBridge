@@ -26,7 +26,7 @@ public class Pose2D extends RosMessage {
         this.y = y;
         this.theta = theta;
 
-        super.setJsonObject(jsonBuilder().put(Pose2D.FIELD_X, x).put(Pose2D.FIELD_Y, y).put(Pose2D.FIELD_THETA, theta));
+        super.setJsonObject(jsonBuilder().put(FIELD_X, x).put(FIELD_Y, y).put(FIELD_THETA, theta));
         super.setType(TYPE);
     }
 
@@ -40,9 +40,9 @@ public class Pose2D extends RosMessage {
     }
 
     public static Pose2D fromJsonObject(JsonObject jsonObject) {
-        double x = jsonObject.containsKey(Pose2D.FIELD_X) ? jsonObject.getDouble(Pose2D.FIELD_X) : 0.0;
-        double y = jsonObject.containsKey(Pose2D.FIELD_Y) ? jsonObject.getDouble(Pose2D.FIELD_Y) : 0.0;
-        double theta = jsonObject.containsKey(Pose2D.FIELD_THETA) ? jsonObject.getDouble(Pose2D.FIELD_THETA) : 0.0;
+        double x = jsonObject.containsKey(FIELD_X) ? jsonObject.getDouble(FIELD_X) : 0.0;
+        double y = jsonObject.containsKey(FIELD_Y) ? jsonObject.getDouble(FIELD_Y) : 0.0;
+        double theta = jsonObject.containsKey(FIELD_THETA) ? jsonObject.getDouble(FIELD_THETA) : 0.0;
         return new Pose2D(x, y, theta);
     }
 

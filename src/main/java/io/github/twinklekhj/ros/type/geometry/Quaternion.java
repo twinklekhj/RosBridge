@@ -29,7 +29,7 @@ public class Quaternion extends RosMessage {
         this.z = z;
         this.w = w;
 
-        super.setJsonObject(jsonBuilder().put(Quaternion.FIELD_X, x).put(Quaternion.FIELD_Y, y).put(Quaternion.FIELD_Z, z).put(Quaternion.FIELD_W, w));
+        super.setJsonObject(jsonBuilder().put(FIELD_X, x).put(FIELD_Y, y).put(FIELD_Z, z).put(FIELD_W, w));
         super.setType(TYPE);
     }
 
@@ -42,10 +42,10 @@ public class Quaternion extends RosMessage {
     }
 
     public static Quaternion fromJsonObject(JsonObject jsonObject) {
-        double x = jsonObject.containsKey(Quaternion.FIELD_X) ? jsonObject.getDouble(Quaternion.FIELD_X) : 0.0;
-        double y = jsonObject.containsKey(Quaternion.FIELD_Y) ? jsonObject.getDouble(Quaternion.FIELD_Y) : 0.0;
-        double z = jsonObject.containsKey(Quaternion.FIELD_Z) ? jsonObject.getDouble(Quaternion.FIELD_Z) : 0.0;
-        double w = jsonObject.containsKey(Quaternion.FIELD_W) ? jsonObject.getDouble(Quaternion.FIELD_W) : 0.0;
+        double x = jsonObject.containsKey(FIELD_X) ? jsonObject.getDouble(FIELD_X) : 0.0;
+        double y = jsonObject.containsKey(FIELD_Y) ? jsonObject.getDouble(FIELD_Y) : 0.0;
+        double z = jsonObject.containsKey(FIELD_Z) ? jsonObject.getDouble(FIELD_Z) : 0.0;
+        double w = jsonObject.containsKey(FIELD_W) ? jsonObject.getDouble(FIELD_W) : 0.0;
         return new Quaternion(x, y, z, w);
     }
 

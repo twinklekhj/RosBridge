@@ -23,7 +23,7 @@ public class Pose extends RosMessage {
         this.position = position;
         this.orientation = orientation;
 
-        super.setJsonObject(jsonBuilder().put(Pose.FIELD_POSITION, position.getJsonObject()).put(Pose.FIELD_ORIENTATION, orientation.getJsonObject()));
+        super.setJsonObject(jsonBuilder().put(FIELD_POSITION, position.getJsonObject()).put(FIELD_ORIENTATION, orientation.getJsonObject()));
         super.setType(TYPE);
     }
 
@@ -36,8 +36,8 @@ public class Pose extends RosMessage {
     }
 
     public static Pose fromJsonObject(JsonObject jsonObject) {
-        Point position = jsonObject.containsKey(Pose.FIELD_POSITION) ? Point.fromJsonObject(jsonObject.getJsonObject(Pose.FIELD_POSITION)) : new Point();
-        Quaternion orientation = jsonObject.containsKey(Pose.FIELD_ORIENTATION) ? Quaternion.fromJsonObject(jsonObject.getJsonObject(Pose.FIELD_ORIENTATION)) : new Quaternion();
+        Point position = jsonObject.containsKey(FIELD_POSITION) ? Point.fromJsonObject(jsonObject.getJsonObject(FIELD_POSITION)) : new Point();
+        Quaternion orientation = jsonObject.containsKey(FIELD_ORIENTATION) ? Quaternion.fromJsonObject(jsonObject.getJsonObject(FIELD_ORIENTATION)) : new Quaternion();
         return new Pose(position, orientation);
     }
 
@@ -47,7 +47,7 @@ public class Pose extends RosMessage {
 
     public void setPosition(Point position) {
         this.position = position;
-        this.jsonObject.put(Pose.FIELD_POSITION, position.getJsonObject());
+        this.jsonObject.put(FIELD_POSITION, position.getJsonObject());
     }
 
     public Quaternion getOrientation() {
@@ -56,7 +56,7 @@ public class Pose extends RosMessage {
 
     public void setOrientation(Quaternion orientation) {
         this.orientation = orientation;
-        this.jsonObject.put(Pose.FIELD_ORIENTATION, orientation.getJsonObject());
+        this.jsonObject.put(FIELD_ORIENTATION, orientation.getJsonObject());
     }
 
     @Override

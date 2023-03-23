@@ -16,7 +16,7 @@ public class Int16 extends RosMessage {
     }
 
     public Int16(short data) {
-        super(jsonBuilder().put(Int16.FIELD_DATA, data), Int16.TYPE);
+        super(jsonBuilder().put(FIELD_DATA, data), Int16.TYPE);
         this.data = data;
     }
 
@@ -29,7 +29,7 @@ public class Int16 extends RosMessage {
     }
 
     public static Int16 fromJsonObject(JsonObject jsonObject) {
-        short data = jsonObject.containsKey(Int16.FIELD_DATA) ? jsonObject.getInteger(Int16.FIELD_DATA).shortValue() : 0;
+        short data = jsonObject.containsKey(FIELD_DATA) ? jsonObject.getInteger(FIELD_DATA).shortValue() : 0;
         return new Int16(data);
     }
 

@@ -26,7 +26,7 @@ public class MultiArrayLayout extends RosMessage {
 
         System.arraycopy(dim, 0, this.dim, 0, dim.length);
 
-        super.setJsonObject(jsonBuilder().put(MultiArrayLayout.FIELD_DIM, jsonBuilder(Arrays.deepToString(dim))).put(MultiArrayLayout.FIELD_DATA_OFFSET, Primitive.fromUInt32(dataOffset)));
+        super.setJsonObject(jsonBuilder().put(FIELD_DIM, jsonBuilder(Arrays.deepToString(dim))).put(FIELD_DATA_OFFSET, Primitive.fromUInt32(dataOffset)));
         super.setType(TYPE);
     }
 
@@ -40,7 +40,7 @@ public class MultiArrayLayout extends RosMessage {
 
     public static MultiArrayLayout fromJsonObject(JsonObject jsonObject) {
         MultiArrayDimension[] dim = new MultiArrayDimension[]{};
-        JsonArray jsonDim = jsonObject.getJsonArray(MultiArrayLayout.FIELD_DIM);
+        JsonArray jsonDim = jsonObject.getJsonArray(FIELD_DIM);
         if (jsonDim != null) {
             // convert each property
             dim = new MultiArrayDimension[jsonDim.size()];
@@ -50,7 +50,7 @@ public class MultiArrayLayout extends RosMessage {
         }
 
         // check the offset
-        int dataOffset = jsonObject.containsKey(MultiArrayLayout.FIELD_DATA_OFFSET) ? Primitive.toUInt32(jsonObject.getLong(MultiArrayLayout.FIELD_DATA_OFFSET)) : 0;
+        int dataOffset = jsonObject.containsKey(FIELD_DATA_OFFSET) ? Primitive.toUInt32(jsonObject.getLong(FIELD_DATA_OFFSET)) : 0;
 
         return new MultiArrayLayout(dim, dataOffset);
     }

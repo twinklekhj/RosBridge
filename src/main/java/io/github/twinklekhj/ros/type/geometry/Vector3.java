@@ -26,14 +26,14 @@ public class Vector3 extends RosMessage {
         this.y = y;
         this.z = z;
 
-        super.setJsonObject(jsonBuilder().put(Vector3.FIELD_X, x).put(Vector3.FIELD_Y, y).put(Vector3.FIELD_Z, z));
+        super.setJsonObject(jsonBuilder().put(FIELD_X, x).put(FIELD_Y, y).put(FIELD_Z, z));
         super.setType(TYPE);
     }
 
     public static Vector3 fromJsonObject(JsonObject jsonObject) {
-        double x = jsonObject.containsKey(Vector3.FIELD_X) ? jsonObject.getDouble(Vector3.FIELD_X) : 0.0;
-        double y = jsonObject.containsKey(Vector3.FIELD_Y) ? jsonObject.getDouble(Vector3.FIELD_Y) : 0.0;
-        double z = jsonObject.containsKey(Vector3.FIELD_Z) ? jsonObject.getDouble(Vector3.FIELD_Z) : 0.0;
+        double x = jsonObject.containsKey(FIELD_X) ? jsonObject.getDouble(FIELD_X) : 0.0;
+        double y = jsonObject.containsKey(FIELD_Y) ? jsonObject.getDouble(FIELD_Y) : 0.0;
+        double z = jsonObject.containsKey(FIELD_Z) ? jsonObject.getDouble(FIELD_Z) : 0.0;
         return new Vector3(x, y, z);
     }
 

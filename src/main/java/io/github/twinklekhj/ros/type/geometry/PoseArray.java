@@ -28,7 +28,7 @@ public class PoseArray extends RosMessage {
         this.poses = new Pose[poses.length];
         System.arraycopy(poses, 0, this.poses, 0, poses.length);
 
-        super.setJsonObject(jsonBuilder().put(PoseArray.FIELD_HEADER, header.getJsonObject()).put(PoseArray.FIELD_POSES, jsonBuilder(Arrays.deepToString(poses))));
+        super.setJsonObject(jsonBuilder().put(FIELD_HEADER, header.getJsonObject()).put(FIELD_POSES, jsonBuilder(Arrays.deepToString(poses))));
         super.setType(TYPE);
     }
 
@@ -41,9 +41,9 @@ public class PoseArray extends RosMessage {
     }
 
     public static PoseArray fromJsonObject(JsonObject jsonObject) {
-        Header header = jsonObject.containsKey(PoseArray.FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(PoseArray.FIELD_HEADER)) : new Header();
+        Header header = jsonObject.containsKey(FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(FIELD_HEADER)) : new Header();
 
-        JsonArray jsonPoses = jsonObject.getJsonArray(PoseArray.FIELD_POSES);
+        JsonArray jsonPoses = jsonObject.getJsonArray(FIELD_POSES);
         if (jsonPoses != null) {
             // convert each pose
             Pose[] poses = new Pose[jsonPoses.size()];
@@ -72,7 +72,7 @@ public class PoseArray extends RosMessage {
         this.poses = new Pose[poses.length];
         System.arraycopy(poses, 0, this.poses, 0, poses.length);
 
-        this.jsonObject.put(PoseArray.FIELD_POSES, jsonBuilder(Arrays.deepToString(poses)));
+        this.jsonObject.put(FIELD_POSES, jsonBuilder(Arrays.deepToString(poses)));
     }
 
     public Header getHeader() {

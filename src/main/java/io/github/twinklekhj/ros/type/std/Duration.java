@@ -17,7 +17,7 @@ public class Duration extends RosMessage {
 
     public Duration(Duration data) {
         this.data = data;
-        super.setJsonObject(jsonBuilder().put(Duration.FIELD_DATA, data.getJsonObject()));
+        super.setJsonObject(jsonBuilder().put(FIELD_DATA, data.getJsonObject()));
         super.setType(TYPE);
     }
 
@@ -30,7 +30,7 @@ public class Duration extends RosMessage {
     }
 
     public static Duration fromJsonObject(JsonObject jsonObject) {
-        Duration data = jsonObject.containsKey(Duration.FIELD_DATA) ? Duration.fromJsonObject(jsonObject.getJsonObject(Duration.FIELD_DATA)) : new Duration();
+        Duration data = jsonObject.containsKey(FIELD_DATA) ? Duration.fromJsonObject(jsonObject.getJsonObject(FIELD_DATA)) : new Duration();
         return new Duration(data);
     }
 

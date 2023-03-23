@@ -22,7 +22,7 @@ public class Int8MultiArray extends RosMessage {
     }
 
     public Int8MultiArray(MultiArrayLayout layout, byte[] data) {
-        super.setJsonObject(jsonBuilder().put(Int8MultiArray.FIELD_LAYOUT, layout.getJsonObject()).put(Int8MultiArray.FIELD_DATA, jsonBuilder(Arrays.toString(data)))); super.setType(TYPE);
+        super.setJsonObject(jsonBuilder().put(FIELD_LAYOUT, layout.getJsonObject()).put(FIELD_DATA, jsonBuilder(Arrays.toString(data)))); super.setType(TYPE);
         this.layout = layout;
         this.data = new byte[data.length];
         System.arraycopy(data, 0, this.data, 0, data.length);
@@ -37,10 +37,10 @@ public class Int8MultiArray extends RosMessage {
     }
 
     public static Int8MultiArray fromJsonObject(JsonObject jsonObject) {
-        MultiArrayLayout layout = jsonObject.containsKey(Int8MultiArray.FIELD_LAYOUT) ? MultiArrayLayout.fromJsonObject(jsonObject.getJsonObject(Int8MultiArray.FIELD_LAYOUT)) : new MultiArrayLayout();
+        MultiArrayLayout layout = jsonObject.containsKey(FIELD_LAYOUT) ? MultiArrayLayout.fromJsonObject(jsonObject.getJsonObject(FIELD_LAYOUT)) : new MultiArrayLayout();
 
         byte[] data = new byte[]{};
-        JsonArray jsonData = jsonObject.getJsonArray(Int8MultiArray.FIELD_DATA);
+        JsonArray jsonData = jsonObject.getJsonArray(FIELD_DATA);
         if (jsonData != null) {
             data = new byte[jsonData.size()];
             for (int i = 0; i < data.length; i++) {

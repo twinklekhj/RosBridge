@@ -27,7 +27,7 @@ public class Vector3Stamped extends RosMessage {
         this.header = header;
         this.vector = vector;
 
-        super.setJsonObject(jsonBuilder().put(Vector3Stamped.FIELD_HEADER, header.getJsonObject()).put(Vector3Stamped.FIELD_VECTOR, vector.getJsonObject()));
+        super.setJsonObject(jsonBuilder().put(FIELD_HEADER, header.getJsonObject()).put(FIELD_VECTOR, vector.getJsonObject()));
         super.setType(TYPE);
     }
 
@@ -40,8 +40,8 @@ public class Vector3Stamped extends RosMessage {
     }
 
     public static Vector3Stamped fromJsonObject(JsonObject jsonObject) {
-        Header header = jsonObject.containsKey(Vector3Stamped.FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(Vector3Stamped.FIELD_HEADER)) : new Header();
-        Vector3 vector = jsonObject.containsKey(Vector3Stamped.FIELD_VECTOR) ? Vector3.fromJsonObject(jsonObject.getJsonObject(Vector3Stamped.FIELD_VECTOR)) : new Vector3();
+        Header header = jsonObject.containsKey(FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(FIELD_HEADER)) : new Header();
+        Vector3 vector = jsonObject.containsKey(FIELD_VECTOR) ? Vector3.fromJsonObject(jsonObject.getJsonObject(FIELD_VECTOR)) : new Vector3();
         return new Vector3Stamped(header, vector);
     }
 

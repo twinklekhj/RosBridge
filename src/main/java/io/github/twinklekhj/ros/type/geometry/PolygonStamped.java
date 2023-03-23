@@ -28,7 +28,7 @@ public class PolygonStamped extends RosMessage {
         this.header = header;
         this.polygon = polygon;
 
-        super.setJsonObject(jsonBuilder().put(PolygonStamped.FIELD_HEADER, header.getJsonObject()).put(PolygonStamped.FIELD_POLYGON, polygon.getJsonObject()));
+        super.setJsonObject(jsonBuilder().put(FIELD_HEADER, header.getJsonObject()).put(FIELD_POLYGON, polygon.getJsonObject()));
         super.setType(TYPE);
     }
 
@@ -41,8 +41,8 @@ public class PolygonStamped extends RosMessage {
     }
 
     public static PolygonStamped fromJsonObject(JsonObject jsonObject) {
-        Header header = jsonObject.containsKey(PolygonStamped.FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(PolygonStamped.FIELD_HEADER)) : new Header();
-        Polygon polygon = jsonObject.containsKey(PolygonStamped.FIELD_POLYGON) ? Polygon.fromJsonObject(jsonObject.getJsonObject(PolygonStamped.FIELD_POLYGON)) : new Polygon();
+        Header header = jsonObject.containsKey(FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(FIELD_HEADER)) : new Header();
+        Polygon polygon = jsonObject.containsKey(FIELD_POLYGON) ? Polygon.fromJsonObject(jsonObject.getJsonObject(FIELD_POLYGON)) : new Polygon();
         return new PolygonStamped(header, polygon);
     }
 

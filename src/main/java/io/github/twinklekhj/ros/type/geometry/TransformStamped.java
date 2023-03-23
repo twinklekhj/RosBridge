@@ -31,7 +31,7 @@ public class TransformStamped extends RosMessage {
         this.childFrameID = childFrameID;
         this.transform = transform;
 
-        super.setJsonObject(jsonBuilder().put(TransformStamped.FIELD_HEADER, header.getJsonObject()).put(TransformStamped.FIELD_CHILD_FRAME_ID, childFrameID).put(TransformStamped.FIELD_TRANSFORM, transform.getJsonObject()));
+        super.setJsonObject(jsonBuilder().put(FIELD_HEADER, header.getJsonObject()).put(FIELD_CHILD_FRAME_ID, childFrameID).put(FIELD_TRANSFORM, transform.getJsonObject()));
         super.setType(TYPE);
     }
 
@@ -44,9 +44,9 @@ public class TransformStamped extends RosMessage {
     }
 
     public static TransformStamped fromJsonObject(JsonObject jsonObject) {
-        Header header = jsonObject.containsKey(TransformStamped.FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(TransformStamped.FIELD_HEADER)) : new Header();
-        String childFrameID = jsonObject.containsKey(TransformStamped.FIELD_CHILD_FRAME_ID) ? jsonObject.getString(TransformStamped.FIELD_CHILD_FRAME_ID) : "";
-        Transform transform = jsonObject.containsKey(TransformStamped.FIELD_TRANSFORM) ? Transform.fromJsonObject(jsonObject.getJsonObject(TransformStamped.FIELD_TRANSFORM)) : new Transform();
+        Header header = jsonObject.containsKey(FIELD_HEADER) ? Header.fromJsonObject(jsonObject.getJsonObject(FIELD_HEADER)) : new Header();
+        String childFrameID = jsonObject.containsKey(FIELD_CHILD_FRAME_ID) ? jsonObject.getString(FIELD_CHILD_FRAME_ID) : "";
+        Transform transform = jsonObject.containsKey(FIELD_TRANSFORM) ? Transform.fromJsonObject(jsonObject.getJsonObject(FIELD_TRANSFORM)) : new Transform();
         return new TransformStamped(header, childFrameID, transform);
     }
 
