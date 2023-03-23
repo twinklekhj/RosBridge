@@ -124,7 +124,7 @@ public class RosMessage {
             }
         }
 
-        enum Sensor implements MessageType {
+        enum Sensor implements Type {
             BatteryState("sensor_msgs/BatteryState"),
             CameraInfo("sensor_msgs/CameraInfo"),
             ChannelFloat32("sensor_msgs/ChannelFloat32"),
@@ -165,7 +165,7 @@ public class RosMessage {
             }
         }
 
-        enum Geometry implements MessageType {
+        enum Geometry implements Type {
             Accel("geometry_msgs/Accel"),
             AccelStamped("geometry_msgs/AccelStamped"),
             AccelWithCovariance("geometry_msgs/AccelWithCovariance"),
@@ -207,7 +207,7 @@ public class RosMessage {
             }
         }
 
-        enum Navigation implements MessageType {
+        enum Navigation implements Type {
             GridCells("nav_msgs/GridCells"),
             MapMetaData("nav_msgs/MapMetaData"),
             OccupancyGrid("nav_msgs/OccupancyGrid"),
@@ -225,7 +225,7 @@ public class RosMessage {
             }
         }
 
-        enum RosGraph implements MessageType {
+        enum RosGraph implements Type {
             Log("rosgraph_msgs/Log"),
             Clock("rosgraph_msgs/Clock"),
             ;
