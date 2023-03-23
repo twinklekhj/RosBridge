@@ -358,7 +358,7 @@ public class RosBridge extends AbstractVerticle {
      * @param handler 토픽 메세지 처리자
      * @return 콜백함수
      */
-    private Promise<RosSubscription> subscribe(RosSubscription op, Handler<Message<JsonObject>> handler) {
+    public Promise<RosSubscription> subscribe(RosSubscription op, Handler<Message<JsonObject>> handler) {
         if (props.isPrintProcessMsg()) {
             logger.info("ros:subscribe, {}", op);
         }
