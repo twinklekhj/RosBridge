@@ -43,7 +43,7 @@ public class RosBridgeTest {
         socket.start();
 
         RosMessage message = new Int32(8);
-        RosTopic topic = RosTopic.builder("/test", message.getType(), message).build();
+        RosTopic topic = RosTopic.builder("/test", RosMessage.Type.Primitive.Int32, message).build();
         socket.subscribe(topic, response -> {
             logger.info("Subscribed topic: {}", response.body());
             context.completeNow();

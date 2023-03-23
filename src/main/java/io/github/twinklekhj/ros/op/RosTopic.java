@@ -1,7 +1,6 @@
 package io.github.twinklekhj.ros.op;
 
 
-import io.github.twinklekhj.ros.type.MessageType;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.vertx.core.json.JsonObject;
 import lombok.*;
@@ -36,7 +35,7 @@ public class RosTopic implements RosOperation {
         return builder().name(name).type(type);
     }
 
-    public static RosTopicBuilder builder(String topic, MessageType type) {
+    public static RosTopicBuilder builder(String topic, RosMessage.Type type) {
         return builder(topic, type.getName());
     }
 
@@ -44,7 +43,7 @@ public class RosTopic implements RosOperation {
         return builder(topic, type).msg(msg.getJsonObject());
     }
 
-    public static RosTopicBuilder builder(String topic, MessageType type, RosMessage msg) {
+    public static RosTopicBuilder builder(String topic, RosMessage.Type type, RosMessage msg) {
         return builder(topic, type.getName()).msg(msg.getJsonObject());
     }
 
