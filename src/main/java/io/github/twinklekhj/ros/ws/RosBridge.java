@@ -1,7 +1,7 @@
 package io.github.twinklekhj.ros.ws;
 
 import io.github.twinklekhj.ros.op.*;
-import io.github.twinklekhj.ros.type.MessageType;
+import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.ws.codec.RosResponseCodec;
 import io.vertx.core.*;
 import io.vertx.core.buffer.Buffer;
@@ -138,6 +138,24 @@ public class RosBridge extends AbstractVerticle {
         return topicListeners.keySet();
     }
 
+    /**
+     * [Topic] 토픽 구독 여부 확인
+     * @param topic 토픽명
+     * @return 토픽 구독 여부
+     */
+    public boolean isSubscribed(String topic){
+        return topicListeners.containsKey(topic);
+    }
+
+    /**
+     * [Topic] 토픽 구독 여부 확인
+     * @param topic 토픽
+     * @return 토픽 구독 여부
+     */
+    public boolean isSubscribed(RosTopic topic){
+        return topicListeners.containsKey(topic.getName());
+    }
+
     @Override
     public void start() {
         Future<WebSocket> future = connect();
@@ -270,7 +288,7 @@ public class RosBridge extends AbstractVerticle {
      * @param op 발행취소 정보
      * @return 콜백함수
      */
-    public Promise<RosUnadvertise> unadvertise(RosUnadvertise op) {
+    private Promise<RosUnadvertise> unadvertise(RosUnadvertise op) {
         if (props.isPrintProcessMsg()) {
             logger.info("ros:unadvertise, {}", op);
         }
@@ -340,7 +358,7 @@ public class RosBridge extends AbstractVerticle {
      * @param handler 토픽 메세지 처리자
      * @return 콜백함수
      */
-    public Promise<RosSubscription> subscribe(RosSubscription op, Handler<Message<JsonObject>> handler) {
+    private Promise<RosSubscription> subscribe(RosSubscription op, Handler<Message<JsonObject>> handler) {
         if (props.isPrintProcessMsg()) {
             logger.info("ros:subscribe, {}", op);
         }
@@ -380,7 +398,7 @@ public class RosBridge extends AbstractVerticle {
      * @param handler 토픽 메세지 처리자
      * @return 콜백함수
      */
-    public Promise<RosSubscription> subscribe(String topic, MessageType type, Handler<Message<JsonObject>> handler) {
+    public Promise<RosSubscription> subscribe(String topic, RosMessage.Type type, Handler<Message<JsonObject>> handler) {
         return subscribe(RosSubscription.builder(topic, type).build(), handler);
     }
 
@@ -401,7 +419,7 @@ public class RosBridge extends AbstractVerticle {
      * @param op 구독해제 정보
      * @return 콜백함수
      */
-    public Promise<RosUnsubscription> unsubscribe(RosUnsubscription op) {
+    private Promise<RosUnsubscription> unsubscribe(RosUnsubscription op) {
         if (props.isPrintProcessMsg()) {
             logger.info("ros:unsubscribe, {}", op);
         }
@@ -440,6 +458,17 @@ public class RosBridge extends AbstractVerticle {
      */
     public Promise<RosUnsubscription> unsubscribe(String topic) {
         RosUnsubscription op = RosUnsubscription.builder(topic).build();
+        return unsubscribe(op);
+    }
+
+    /**
+     * [Topic] 토픽 구독 해제
+     *
+     * @param topic 토픽명
+     * @return 콜백함수
+     */
+    public Promise<RosUnsubscription> unsubscribe(RosTopic topic) {
+        RosUnsubscription op = RosUnsubscription.builder(topic.getName()).build();
         return unsubscribe(op);
     }
 
@@ -578,7 +607,9 @@ public class RosBridge extends AbstractVerticle {
     }
 
     public enum RosApi {
-        NODES("nodes", "/rosapi/nodes"), TOPICS("topics", "/rosapi/topics"), SERVICES("services", "/rosapi/services"),
+        NODES("nodes", "/rosapi/nodes"),
+        TOPICS("topics", "/rosapi/topics"),
+        SERVICES("services", "/rosapi/services"),
         ;
 
         private final String propName;
