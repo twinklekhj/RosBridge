@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @ExtendWith(VertxExtension.class)
@@ -92,6 +93,26 @@ public class RosBridgeTest {
         socket.getNodes().future().onSuccess(nodes -> {
             logger.info("nodes: {}", nodes);
             context.completeNow();
+        }).onFailure(Assertions::fail);
+
+        context.awaitCompletion(10, TimeUnit.SECONDS);
+    }
+
+    @Test
+    @DisplayName("Node Details 테스트")
+    public void testNodeDetails() throws InterruptedException {
+        VertxTestContext context = new VertxTestContext();
+
+        props.setPrintStackTrace(true);
+        props.setPrintSendMsg(true);
+        props.setPrintReceivedMsg(true);
+
+        socket.start();
+        socket.getNodeDetails("/TE2216001/tetraDS").future().onSuccess(response -> {
+            Map<String, Object> values = response.getValues();
+            logger.info("node details - {}", values);
+            logger.info("services - {}", values.get("services"));
+
         }).onFailure(Assertions::fail);
 
         context.awaitCompletion(10, TimeUnit.SECONDS);

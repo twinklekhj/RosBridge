@@ -115,8 +115,8 @@ public class RosService implements RosOperation {
             return this;
         }
 
-        public RosServiceBuilder args(String... arg) {
-            List<String> args = new ArrayList<>();
+        public RosServiceBuilder args(Object... arg) {
+            List<Object> args = new ArrayList<>();
             Collections.addAll(args, arg);
             this.args(args);
 

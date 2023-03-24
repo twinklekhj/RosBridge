@@ -140,19 +140,21 @@ public class RosBridge extends AbstractVerticle {
 
     /**
      * [Topic] 토픽 구독 여부 확인
+     *
      * @param topic 토픽명
      * @return 토픽 구독 여부
      */
-    public boolean isSubscribed(String topic){
+    public boolean isSubscribed(String topic) {
         return topicListeners.containsKey(topic);
     }
 
     /**
      * [Topic] 토픽 구독 여부 확인
+     *
      * @param topic 토픽
      * @return 토픽 구독 여부
      */
-    public boolean isSubscribed(RosTopic topic){
+    public boolean isSubscribed(RosTopic topic) {
         return topicListeners.containsKey(topic.getName());
     }
 
@@ -489,10 +491,34 @@ public class RosBridge extends AbstractVerticle {
      *
      * @param service 서비스명
      * @param handler 서비스 응답 처리 함수
-     * @return 콜백함수
+     * @return 요청 콜백함수
      */
     public Promise<RosService> callService(String service, Handler<Message<RosResponse>> handler) {
         return callService(RosService.builder(service).build(), handler);
+    }
+
+    /**
+     * [Service] Service 요청
+     *
+     * @param service 서비스명
+     * @return 응답 콜백함수
+     */
+    public Promise<RosResponse> callService(String service) {
+        return callService(RosService.builder(service).build());
+    }
+
+    /**
+     * [Service] Service 요청
+     *
+     * @param service 서비스명
+     * @return 응답 콜백함수
+     */
+    public Promise<RosResponse> callService(RosService service) {
+        Promise<RosResponse> promise = Promise.promise();
+        callService(service, message -> {
+            promise.complete(message.body());
+        }).future().onFailure(promise::fail);
+        return promise;
     }
 
     /**
@@ -507,8 +533,8 @@ public class RosBridge extends AbstractVerticle {
         if (props.isPrintProcessMsg()) {
             logger.info("ros:callService, {}", op);
         }
-        while(serviceListeners.contains(op.getId())){
-            op.setId(op.getId()+"_");
+        while (serviceListeners.contains(op.getId())) {
+            op.setId(op.getId() + "_");
         }
 
         send(op).onSuccess(unused -> {
@@ -574,12 +600,12 @@ public class RosBridge extends AbstractVerticle {
     /**
      * [RosBridge] ROS Node 상세 정보 조회
      *
-     * @param node    찾을 노드명
-     * @param handler 응답 처리 함수
+     * @param node 찾을 노드명
      * @return 콜백함수
      */
-    public Promise<RosService> getNodeDetails(String node, Handler<Message<RosResponse>> handler) {
-        return callService("/rosapi/node_details", handler);
+    public Promise<RosResponse> getNodeDetails(String node) {
+        RosService service = RosService.builder("/rosapi/node_details").args(node).build();
+        return callService(service);
     }
 
     /**
@@ -607,9 +633,7 @@ public class RosBridge extends AbstractVerticle {
     }
 
     public enum RosApi {
-        NODES("nodes", "/rosapi/nodes"),
-        TOPICS("topics", "/rosapi/topics"),
-        SERVICES("services", "/rosapi/services"),
+        NODES("nodes", "/rosapi/nodes"), TOPICS("topics", "/rosapi/topics"), SERVICES("services", "/rosapi/services"),
         ;
 
         private final String propName;
