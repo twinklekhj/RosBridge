@@ -9,7 +9,7 @@ public class Empty extends RosMessage {
     public static final String TYPE = "std_msgs/Empty";
 
     public Empty() {
-        super(RosMessage.EMPTY_MESSAGE, Empty.TYPE);
+        super(RosMessage.EMPTY_MESSAGE, TYPE);
     }
 
     public static Empty fromJsonString(String jsonString) {

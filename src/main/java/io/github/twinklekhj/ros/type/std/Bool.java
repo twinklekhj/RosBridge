@@ -17,7 +17,7 @@ public class Bool extends RosMessage {
 
     public Bool(boolean data) {
         // build the JSON object
-        super(jsonBuilder().put(FIELD_DATA, data), Bool.TYPE);
+        super(jsonBuilder().put(FIELD_DATA, data), TYPE);
         this.data = data;
     }
 

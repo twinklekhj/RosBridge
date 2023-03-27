@@ -23,7 +23,10 @@ public class Pose extends RosMessage {
         this.position = position;
         this.orientation = orientation;
 
-        super.setJsonObject(jsonBuilder().put(FIELD_POSITION, position.getJsonObject()).put(FIELD_ORIENTATION, orientation.getJsonObject()));
+        JsonObject json = jsonBuilder()
+                .put(FIELD_POSITION, position.getJsonObject())
+                .put(FIELD_ORIENTATION, orientation.getJsonObject());
+        super.setJsonObject(json);
         super.setType(TYPE);
     }
 

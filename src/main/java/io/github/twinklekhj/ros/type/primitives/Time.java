@@ -21,7 +21,7 @@ public class Time extends TimeBase<Time> {
      * @param nsecs The nanoseconds value of this time.
      */
     public Time(int secs, int nsecs) {
-        super(secs, nsecs, Time.TYPE);
+        super(secs, nsecs, TYPE);
     }
 
     /**
@@ -30,7 +30,7 @@ public class Time extends TimeBase<Time> {
      * @param sec The time in seconds.
      */
     public Time(double sec) {
-        super(sec, Time.TYPE);
+        super(sec, TYPE);
     }
 
     /**
@@ -39,7 +39,7 @@ public class Time extends TimeBase<Time> {
      * @param nano The time in nanoseconds.
      */
     public Time(long nano) {
-        super(nano, Time.TYPE);
+        super(nano, TYPE);
     }
 
     /**

@@ -32,7 +32,11 @@ public class Path extends RosMessage {
         this.poses = new PoseStamped[poses.length];
         System.arraycopy(poses, 0, this.poses, 0, poses.length);
 
-        super.setJsonObject(jsonBuilder().put(FIELD_POSES, jsonBuilder(Arrays.deepToString(poses))));
+        JsonObject json = jsonBuilder()
+                .put(FIELD_HEADER, header.getJsonObject())
+                .put(FIELD_POSES, jsonBuilder(Arrays.deepToString(poses)));
+
+        super.setJsonObject(json);
         super.setType(TYPE);
     }
 

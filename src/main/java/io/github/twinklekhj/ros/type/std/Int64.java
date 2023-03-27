@@ -16,7 +16,7 @@ public class Int64 extends RosMessage {
     }
 
     public Int64(long data) {
-        super(jsonBuilder().put(FIELD_DATA, data), Int64.TYPE);
+        super(jsonBuilder().put(FIELD_DATA, data), TYPE);
         this.data = data;
     }
 

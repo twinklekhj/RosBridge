@@ -11,15 +11,15 @@ public class Duration extends TimeBase<Duration> {
     }
 
     public Duration(int secs, int nsecs) {
-        super(secs, nsecs, Duration.TYPE);
+        super(secs, nsecs, TYPE);
     }
 
     public Duration(double sec) {
-        super(sec, Duration.TYPE);
+        super(sec, TYPE);
     }
 
     public Duration(long nano) {
-        super(nano, Duration.TYPE);
+        super(nano, TYPE);
     }
 
     public static Duration fromSec(double sec) {
