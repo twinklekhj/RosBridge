@@ -27,7 +27,7 @@ public class UInt32MultiArray extends RosMessage {
         this.data = new int[data.length];
         System.arraycopy(data, 0, this.data, 0, data.length);
 
-        super.setJsonObject(jsonBuilder().put(FIELD_LAYOUT, layout.getJsonObject()).put(FIELD_DATA, jsonBuilder(Arrays.toString(Primitive.fromUInt32(data)))));
+        super.setJsonObject(jsonBuilder().put(FIELD_LAYOUT, layout.getJsonObject()).put(FIELD_DATA, Arrays.toString(Primitive.fromUInt32(data))));
         super.setType(TYPE);
     }
 

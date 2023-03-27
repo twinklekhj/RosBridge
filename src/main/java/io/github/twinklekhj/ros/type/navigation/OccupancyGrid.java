@@ -5,11 +5,14 @@ import io.github.twinklekhj.ros.type.std.Header;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import lombok.ToString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
 @ToString
 public class OccupancyGrid extends RosMessage {
+    private static final Logger logger = LoggerFactory.getLogger(OccupancyGrid.class);
     public static final String TYPE = "nav_msgs/OccupancyGrid";
 
     public static final String FIELD_HEADER = "header";
@@ -31,7 +34,7 @@ public class OccupancyGrid extends RosMessage {
         System.arraycopy(data, 0, this.data, 0, data.length);
 
         JsonObject obj = jsonBuilder().put(FIELD_HEADER, header.getJsonObject())
-                .put(FIELD_DATA, jsonBuilder(Arrays.toString(data)))
+                .put(FIELD_DATA, Arrays.toString(data))
                 .put(FIELD_INFO, info.getJsonObject());
 
         super.setJsonObject(obj);
