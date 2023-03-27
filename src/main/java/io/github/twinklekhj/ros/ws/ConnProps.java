@@ -26,6 +26,10 @@ public class ConnProps {
     boolean printProcessMsg = false;
 
     @Builder.Default
+    int maxFrameSize = 65536;
+    @Builder.Default
+    int maxMessageSize = 262144;
+    @Builder.Default
     int idleTimeout = 0;
     @Builder.Default
     int connectTimeout = 10000;

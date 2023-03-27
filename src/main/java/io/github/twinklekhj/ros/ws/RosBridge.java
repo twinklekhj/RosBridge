@@ -175,13 +175,21 @@ public class RosBridge extends AbstractVerticle {
         }
         options.setConnectTimeout(props.getConnectTimeout());
 
-        HttpClient client = this.vertx.createHttpClient();
+        // HttpClient 생성 Option
+        HttpClientOptions httpOptions = new HttpClientOptions();
+        httpOptions.setMaxWebSocketFrameSize(props.getMaxFrameSize());
+        httpOptions.setMaxWebSocketMessageSize(props.getMaxMessageSize());
 
+        // HttpClient 생성
+        HttpClient client = this.vertx.createHttpClient(httpOptions);
+
+        // WebSocketClient 생성 Option
         WebSocketConnectOptions wsOptions = new WebSocketConnectOptions();
         wsOptions.setHost(props.getHost());
         wsOptions.setPort(props.getPort());
         wsOptions.setTimeout(props.getConnectTimeout());
 
+        // WebSocketClient 생성
         Future<WebSocket> future = client.webSocket(wsOptions);
         future.onSuccess(webSocket -> {
             logger.info("WebSocket Connected! {}", webSocket);
