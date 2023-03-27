@@ -6,7 +6,7 @@ import lombok.ToString;
 import java.util.Calendar;
 import java.util.Date;
 
-@ToString
+@ToString(callSuper = true)
 public class Time extends TimeBase<Time> {
     public static final String TYPE = "time";
 

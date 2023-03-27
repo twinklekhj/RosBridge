@@ -2,7 +2,7 @@ package io.github.twinklekhj.ros.type.navigation;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.geometry.Pose;
-import io.github.twinklekhj.ros.type.std.Time;
+import io.github.twinklekhj.ros.type.primitives.Time;
 import io.vertx.core.json.JsonObject;
 import lombok.ToString;
 
@@ -33,7 +33,12 @@ public class MapMetaData extends RosMessage {
         this.height = height;
         this.origin = origin;
 
-        JsonObject obj = jsonBuilder().put(FIELD_STAMP, stamp).put(FIELD_WIDTH, width).put(FIELD_HEIGHT, height).put(FIELD_RESOLUTION, resolution).put(FIELD_ORIGIN, origin);
+        JsonObject obj = jsonBuilder()
+                .put(FIELD_STAMP, stamp)
+                .put(FIELD_WIDTH, width)
+                .put(FIELD_HEIGHT, height)
+                .put(FIELD_RESOLUTION, resolution)
+                .put(FIELD_ORIGIN, origin);
         super.setJsonObject(obj);
         super.setType(TYPE);
     }
@@ -62,7 +67,7 @@ public class MapMetaData extends RosMessage {
 
     public void setStamp(Time stamp) {
         this.stamp = stamp;
-        this.jsonObject.put(FIELD_STAMP, stamp.getJsonObject());
+        this.jsonObject.put(FIELD_STAMP, stamp.toJsonObject());
     }
 
     public Pose getOrigin() {

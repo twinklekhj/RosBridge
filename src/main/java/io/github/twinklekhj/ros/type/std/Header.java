@@ -2,6 +2,7 @@ package io.github.twinklekhj.ros.type.std;
 
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.primitives.Primitive;
+import io.github.twinklekhj.ros.type.primitives.Time;
 import io.vertx.core.json.JsonObject;
 import lombok.ToString;
 
@@ -38,7 +39,7 @@ public class Header extends RosMessage {
         this.stamp = stamp;
         this.frameID = frameID;
 
-        super.setJsonObject(jsonBuilder().put(FIELD_SEQ, Primitive.fromUInt32(seq)).put(FIELD_STAMP, stamp.getJsonObject()).put(FIELD_FRAME_ID, frameID));
+        super.setJsonObject(jsonBuilder().put(FIELD_SEQ, Primitive.fromUInt32(seq)).put(FIELD_STAMP, stamp.toJsonObject()).put(FIELD_FRAME_ID, frameID));
         super.setType(TYPE);
     }
 
@@ -52,7 +53,7 @@ public class Header extends RosMessage {
 
     public static Header fromJsonObject(JsonObject jsonObject) {
         long seq64 = jsonObject.containsKey(FIELD_SEQ) ? jsonObject.getLong(FIELD_SEQ) : 0;
-        Time stamp = jsonObject.containsKey(FIELD_STAMP) ? Time.fromJsonObject(jsonObject.getJsonObject(FIELD_SEQ)) : new Time();
+        Time stamp = jsonObject.containsKey(FIELD_STAMP) ? Time.fromJsonObject(jsonObject.getJsonObject(FIELD_STAMP)) : new Time();
         String frameID = jsonObject.containsKey(FIELD_FRAME_ID) ? jsonObject.getString(FIELD_FRAME_ID) : "";
 
         // convert to a 32-bit number
@@ -75,7 +76,7 @@ public class Header extends RosMessage {
 
     public void setStamp(Time stamp) {
         this.stamp = stamp;
-        this.jsonObject.put(FIELD_STAMP, stamp.getJsonObject());
+        this.jsonObject.put(FIELD_STAMP, stamp.toJsonObject());
     }
 
     public String getFrameID() {

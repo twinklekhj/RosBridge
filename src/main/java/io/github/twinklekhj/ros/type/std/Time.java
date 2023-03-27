@@ -30,7 +30,8 @@ public class Time extends RosMessage {
     }
 
     public static Time fromJsonObject(JsonObject jsonObject) {
-        io.github.twinklekhj.ros.type.primitives.Time data = jsonObject.containsKey(FIELD_DATA) ? io.github.twinklekhj.ros.type.primitives.Time.fromJsonObject(jsonObject) : new io.github.twinklekhj.ros.type.primitives.Time();
+        io.github.twinklekhj.ros.type.primitives.Time data = jsonObject.containsKey(FIELD_DATA) ?
+                io.github.twinklekhj.ros.type.primitives.Time.fromJsonObject(jsonObject) : new io.github.twinklekhj.ros.type.primitives.Time();
         return new Time(data);
     }
 
