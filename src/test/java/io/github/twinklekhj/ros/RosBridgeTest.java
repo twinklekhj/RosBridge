@@ -4,8 +4,10 @@ import io.github.twinklekhj.ros.op.RosTopic;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.std.Int32;
 import io.github.twinklekhj.ros.ws.ConnProps;
+import io.github.twinklekhj.ros.ws.RosApi;
 import io.github.twinklekhj.ros.ws.RosBridge;
 import io.github.twinklekhj.utils.PropertyUtil;
+import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
@@ -24,7 +26,7 @@ public class RosBridgeTest {
 
     private final Vertx vertx;
     private final ConnProps props;
-    private final RosBridge socket;
+    private final RosBridge bridge;
 
     public RosBridgeTest() {
         this.vertx = Vertx.vertx();
@@ -33,25 +35,21 @@ public class RosBridgeTest {
         int port = PropertyUtil.getPropertyInt("ros.port");
 
         this.props = ConnProps.builder(host, port).build();
-        this.socket = new RosBridge(vertx, props);
+        this.bridge = new RosBridge(vertx, props);
     }
 
     @Test
     @DisplayName("Ros Topic 테스트")
     public void testTopic() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
-        socket.start();
+        bridge.start();
 
         RosMessage message = new Int32(8);
         RosTopic topic = RosTopic.builder("/test", RosMessage.Type.Primitive.Int32, message).build();
-        socket.subscribe(topic, response -> {
+        bridge.subscribe(topic, response -> {
             logger.info("Subscribed topic: {}", response.body());
             context.completeNow();
-        });
-
-        socket.publish(topic).future().onComplete(ar -> {
-            Assertions.assertTrue(ar.succeeded(), ar.cause() != null ? ar.cause().getMessage(): "");
-        });
+        }).future().compose(subscription -> bridge.publish(topic).future()).onFailure(Assertions::fail);
 
         context.awaitCompletion(10, TimeUnit.SECONDS);
     }
@@ -65,14 +63,40 @@ public class RosBridgeTest {
         props.setPrintSendMsg(true);
         props.setPrintReceivedMsg(true);
 
-        socket.start();
-        socket.getTopics().future().onSuccess(topics -> {
+        bridge.start();
+
+        RosApi.getTopics(bridge).future().compose(topics -> {
             logger.info("topics: {}", topics);
+            return RosApi.getNodes(bridge).future();
+        }).compose(nodes -> {
+            logger.info("nodes: {}", nodes);
+            return Future.succeededFuture();
+        }).onSuccess(o -> {
+            Assertions.assertTrue(true);
             context.completeNow();
         }).onFailure(Assertions::fail);
 
-        socket.getNodes().future().onSuccess(nodes -> {
-            logger.info("nodes: {}", nodes);
+        context.awaitCompletion(10, TimeUnit.SECONDS);
+    }
+
+    @Test
+    @DisplayName("Service 기능 테스트")
+    public void testServiceFunction() throws InterruptedException {
+        VertxTestContext context = new VertxTestContext();
+        bridge.start();
+
+        String serviceName = "/TE2216001/setspeed_cmd";
+        RosApi.getServiceType(bridge, serviceName).future().compose(value -> {
+            logger.info("type: {}", value);
+            return RosApi.getServiceHost(bridge, serviceName).future();
+        }).compose(value -> {
+            logger.info("host: {}", value);
+            return RosApi.getServiceNode(bridge, serviceName).future();
+        }).compose(value -> {
+            logger.info("node: {}", value);
+            return Future.succeededFuture();
+        }).onSuccess(o -> {
+            Assertions.assertTrue(true);
             context.completeNow();
         }).onFailure(Assertions::fail);
 

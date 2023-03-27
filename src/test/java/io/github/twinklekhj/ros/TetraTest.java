@@ -4,6 +4,7 @@ import io.github.twinklekhj.ros.op.RosSubscription;
 import io.github.twinklekhj.ros.op.RosTopic;
 import io.github.twinklekhj.ros.type.navigation.OccupancyGrid;
 import io.github.twinklekhj.ros.ws.ConnProps;
+import io.github.twinklekhj.ros.ws.RosApi;
 import io.github.twinklekhj.ros.ws.RosBridge;
 import io.github.twinklekhj.utils.PropertyUtil;
 import io.vertx.core.Vertx;
@@ -48,7 +49,7 @@ public class TetraTest {
         props.setPrintReceivedMsg(true);
 
         bridge.start();
-        bridge.getNodeDetails("/TE2216001/tetraDS").future().onSuccess(response -> {
+        RosApi.getNodeDetails(bridge, "/TE2216001/tetraDS").future().onSuccess(response -> {
             Map<String, Object> values = response.getValues();
             logger.info("node details - {}", values);
             logger.info("services - {}", values.get("services"));

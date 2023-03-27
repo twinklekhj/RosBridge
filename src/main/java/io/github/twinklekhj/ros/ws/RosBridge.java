@@ -17,7 +17,10 @@ import io.vertx.core.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -556,67 +559,6 @@ public class RosBridge extends AbstractVerticle {
     }
 
     /**
-     * [RosBridge] ROS Topic 목록 조회
-     *
-     * @return 콜백함수
-     */
-    public Promise<List<String>> getTopics() {
-        return getRosApiSimpleList(RosApi.TOPICS);
-    }
-
-    /**
-     * [RosBridge] ROS Service 목록 조회
-     *
-     * @return 결과
-     */
-    public Promise<List<String>> getServices() {
-        return getRosApiSimpleList(RosApi.SERVICES);
-    }
-
-    /**
-     * [RosBridge] ROS Node 목록 조회
-     *
-     * @return 결과
-     */
-    public Promise<List<String>> getNodes() {
-        return getRosApiSimpleList(RosApi.NODES);
-    }
-
-    /**
-     * [RosBridge] ROS API 목록 조회
-     *
-     * @return 결과
-     */
-    private Promise<List<String>> getRosApiSimpleList(RosApi api) {
-        Promise<List<String>> promise = Promise.promise();
-
-        callService(api.serviceName, message -> {
-            RosResponse res = message.body();
-            List<String> result = (List<String>) res.getValues().get(api.propName);
-            if (result == null) {
-                result = Collections.emptyList();
-            }
-
-            if (!promise.future().isComplete()) {
-                promise.complete(result);
-            }
-        }).future().onFailure(promise::fail);
-
-        return promise;
-    }
-
-    /**
-     * [RosBridge] ROS Node 상세 정보 조회
-     *
-     * @param node 찾을 노드명
-     * @return 콜백함수
-     */
-    public Promise<RosResponse> getNodeDetails(String node) {
-        RosService service = RosService.builder("/rosapi/node_details").args(node).build();
-        return callService(service);
-    }
-
-    /**
      * Fragment 처리하기
      *
      * @param buffer - 조각
@@ -640,26 +582,7 @@ public class RosBridge extends AbstractVerticle {
         }
     }
 
-    public enum RosApi {
-        NODES("nodes", "/rosapi/nodes"), TOPICS("topics", "/rosapi/topics"), SERVICES("services", "/rosapi/services"),
-        ;
 
-        private final String propName;
-        private final String serviceName;
-
-        RosApi(String propName, String serviceName) {
-            this.propName = propName;
-            this.serviceName = serviceName;
-        }
-
-        public String getPropName() {
-            return propName;
-        }
-
-        public String getServiceName() {
-            return serviceName;
-        }
-    }
 
     /**
      * Fragments 관리자
