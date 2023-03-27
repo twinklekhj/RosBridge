@@ -34,6 +34,10 @@ public class RosAdvertise implements RosOperation {
         return builder().topic(topic).type(type);
     }
 
+    public static RosAdvertiseBuilder builder(RosCommand command) {
+        return builder().topic(command.getName()).type(command.getType());
+    }
+
     public String getId() {
         return id;
     }

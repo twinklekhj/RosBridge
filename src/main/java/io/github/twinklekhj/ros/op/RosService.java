@@ -45,6 +45,9 @@ public class RosService implements RosOperation {
         return builder().name(service).type(type).args(args);
     }
 
+    public static RosServiceBuilder builder(RosCommand command) {
+        return builder().name(command.getName()).type(command.getType());
+    }
 
     public String getId() {
         return id;

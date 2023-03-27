@@ -44,6 +44,10 @@ public class RosSubscription implements RosOperation {
         return builder().topic(topic).type(type);
     }
 
+    public static RosSubscriptionBuilder builder(RosCommand command) {
+        return builder().topic(command.getName()).type(command.getType());
+    }
+
     public static RosSubscriptionBuilder builder(String topic, RosMessage.Type type) {
         return builder().topic(topic).type(type.getName());
     }

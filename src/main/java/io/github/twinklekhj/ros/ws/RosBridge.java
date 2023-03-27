@@ -583,7 +583,6 @@ public class RosBridge extends AbstractVerticle {
     }
 
 
-
     /**
      * Fragments 관리자
      */

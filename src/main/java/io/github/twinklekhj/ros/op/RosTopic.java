@@ -39,6 +39,9 @@ public class RosTopic implements RosOperation {
         return builder(topic, type.getName());
     }
 
+    public static RosTopicBuilder builder(RosCommand command) {
+        return builder(command.getName(), command.getType());
+    }
     public static RosTopicBuilder builder(String topic, String type, RosMessage msg) {
         return builder(topic, type).msg(msg.getJsonObject());
     }

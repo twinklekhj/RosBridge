@@ -34,6 +34,10 @@ public class RosAdvertiseService implements RosOperation {
         return builder().service(service).type(type);
     }
 
+    public static RosAdvertiseServiceBuilder builder(RosCommand command) {
+        return builder().service(command.getName()).type(command.getType());
+    }
+
     public String getId() {
         return id;
     }

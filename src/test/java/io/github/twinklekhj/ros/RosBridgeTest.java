@@ -44,8 +44,19 @@ public class RosBridgeTest {
         VertxTestContext context = new VertxTestContext();
         bridge.start();
 
+        // 1. If you're a publisher, create a topic using the type in RosMessage
         RosMessage message = new Int32(8);
-        RosTopic topic = RosTopic.builder("/test", RosMessage.Type.Primitive.Int32, message).build();
+        RosTopic topic = RosTopic.builder("/test", message.getType()).msg(message).build();
+
+        // 2. If you're a subscriber, create a topic using the type in RosMessage.Type
+        RosTopic topic2 = RosTopic.builder("/test", RosMessage.Type.Primitive.Int32).build();
+
+        // 3. you also can create a topic using the type in Type static variable of object
+        RosTopic topic3 = RosTopic.builder("/test", Int32.TYPE).build();
+
+        // 4. you also can use the implementation of RosCommand interface
+        RosTopic topic4 = RosTopic.builder(Topics.TEST).build();
+
         bridge.subscribe(topic, response -> {
             logger.info("Subscribed topic: {}", response.body());
             context.completeNow();
