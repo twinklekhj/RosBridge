@@ -48,6 +48,9 @@ public class RosSubscription implements RosOperation {
         return builder().topic(topic).type(type.getName());
     }
 
+    public static RosSubscriptionBuilder builder(RosTopic topic) {
+        return builder().topic(topic.getName()).type(topic.getType());
+    }
 
     public String getId() {
         return id;
@@ -83,11 +86,7 @@ public class RosSubscription implements RosOperation {
 
     @Override
     public String toJson() {
-        JsonObject json = new JsonObject()
-                .put("op", this.op.code)
-                .put("topic", this.topic)
-                .put("id", this.id)
-                .put("type", this.type);
+        JsonObject json = new JsonObject().put("op", this.op.code).put("topic", this.topic).put("id", this.id).put("type", this.type);
 
         if (this.throttleRate != 0) {
             json.put("throttle_rate", this.throttleRate);
