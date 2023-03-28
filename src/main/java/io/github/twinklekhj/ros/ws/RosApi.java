@@ -2,6 +2,7 @@ package io.github.twinklekhj.ros.ws;
 
 import io.github.twinklekhj.ros.op.RosResponse;
 import io.github.twinklekhj.ros.op.RosService;
+import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -147,38 +148,30 @@ public class RosApi {
     private static Promise<List<String>> getSimpleList(RosBridge bridge, RosService service, String prop) {
         Promise<List<String>> promise = Promise.promise();
 
-        bridge.callService(service, message -> {
-            RosResponse res = message.body();
-            List<String> result = (List<String>) res.getValues().get(prop);
+        bridge.callService(service).future().compose(response -> {
+            List<String> result = (List<String>) response.getValues().get(prop);
             if (result == null) {
                 result = Collections.emptyList();
             }
-
-            if (!promise.future().isComplete()) {
-                promise.complete(result);
-            }
-        }).future().onFailure(promise::fail);
+            return Future.succeededFuture(result);
+        }).onSuccess(promise::complete).onFailure(promise::fail);
 
         return promise;
     }
 
     private static Promise<List<String>> getSimpleList(RosBridge bridge, Type api, Object... args) {
         RosService service = RosService.builder(api.getService()).args(args).build();
-        return getSimpleList(bridge, service, api.getProps()[0]);
+        return getSimpleList(bridge, service, api.getProp());
     }
 
     private static Promise<String> getSimpleValue(RosBridge bridge, Type api, Object... args) {
         Promise<String> promise = Promise.promise();
         RosService service = RosService.builder(api.getService()).args(args).build();
 
-        bridge.callService(service, message -> {
-            RosResponse res = message.body();
-            String result = res.getValues().get(api.getProps()[0]).toString();
-
-            if (!promise.future().isComplete()) {
-                promise.complete(result);
-            }
-        }).future().onFailure(promise::fail);
+        bridge.callService(service).future().compose(response -> {
+            String result = response.getValues().get(api.getProp()).toString();
+            return Future.succeededFuture(result);
+        }).onSuccess(promise::complete).onFailure(promise::fail);
 
         return promise;
     }
@@ -222,8 +215,8 @@ public class RosApi {
             return service;
         }
 
-        public String[] getProps() {
-            return props;
+        public String getProp() {
+            return props.length > 0 ? props[0] : "";
         }
     }
 }
