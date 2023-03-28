@@ -1,5 +1,7 @@
 package io.github.twinklekhj.ros.op;
 
+import io.vertx.core.json.JsonObject;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -13,7 +15,7 @@ public interface RosOperation {
     }
 
     Type getOperation();
-    String toJson();
+    JsonObject getJsonObject();
 
     /**
      * Operation 유형

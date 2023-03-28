@@ -76,7 +76,7 @@ public class TetraTest {
             return;
         }
 
-        logger.info("subscription: {}", subscription.toJson());
+        logger.info("subscription: {}", subscription);
 
         bridge.subscribe(subscription, message -> {
             JsonObject topics = message.body();

@@ -8,7 +8,7 @@ import io.vertx.core.json.JsonObject;
 public class RosResponseCodec implements MessageCodec<RosResponse, RosResponse> {
     @Override
     public void encodeToWire(Buffer buffer, RosResponse res) {
-        String json = res.toJson();
+        String json = res.getJsonObject().toString();
         int length = json.getBytes().length;
 
         buffer.appendInt(length);

@@ -42,17 +42,20 @@ public class RosBridgeTest {
     @DisplayName("Ros Topic 테스트")
     public void testTopic() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
+
+        props.setPrintStackTrace(true);
+        props.setPrintSendMsg(true);
+        props.setPrintReceivedMsg(true);
+
         bridge.start();
 
         /*
             If you're a publisher, create a topic
-            - using the getType() method in RosMessage if you use the jackson library.
-                but, you don't use jackson, it causes the EncodingException
-            - using the Type static variable of object
+            - using the Type class/member variable of object
          */
         Int32 message = new Int32(8);
-        // RosTopic topic = RosTopic.builder("/test", message.getType()).msg(message).build();
-        RosTopic topic = RosTopic.builder("/test", Int32.TYPE).msg(message).build();
+        RosTopic topic = RosTopic.builder("/test", message).build();
+        // RosTopic topic = RosTopic.builder("/test", Int32.TYPE).msg(message).build();
 
         /*
           2. If you're a subscriber, create a topic
@@ -66,7 +69,6 @@ public class RosBridgeTest {
 
         bridge.subscribe(topic, response -> {
             logger.info("Subscribed topic: {}", response.body());
-            context.completeNow();
         }).future().compose(subscription -> bridge.publish(topic).future()).onFailure(Assertions::fail);
 
         context.awaitCompletion(10, TimeUnit.SECONDS);

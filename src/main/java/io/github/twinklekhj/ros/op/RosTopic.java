@@ -42,12 +42,24 @@ public class RosTopic implements RosOperation {
     public static RosTopicBuilder builder(RosCommand command) {
         return builder(command.getName(), command.getType());
     }
-    public static RosTopicBuilder builder(String topic, String type, RosMessage msg) {
-        return builder(topic, type).msg(msg.getJsonObject());
+
+    public static RosTopicBuilder builder(String topic, RosMessage msg) {
+        return builder(topic, msg.getType()).msg(msg);
     }
 
-    public static RosTopicBuilder builder(String topic, RosMessage.Type type, RosMessage msg) {
-        return builder(topic, type.getName()).msg(msg.getJsonObject());
+    @Override
+    public JsonObject getJsonObject() {
+        JsonObject json = new JsonObject()
+                .put("op", this.op.code)
+                .put("topic", this.name)
+                .put("type", this.type)
+                .put("id", this.id);
+
+        if (this.msg != null) {
+            json.put("msg", this.msg);
+        }
+
+        return json;
     }
 
     public String getId() {
@@ -62,15 +74,15 @@ public class RosTopic implements RosOperation {
         this.msg = msg;
     }
 
-    @Override
-    public String toJson() {
-        JsonObject json = new JsonObject().put("op", this.op.code).put("topic", this.name).put("type", this.type).put("id", this.id);
-
-        if (this.msg != null) {
-            json.put("msg", this.msg);
+    public static class RosTopicBuilder {
+        public RosTopicBuilder msg(Object msg) {
+            if (msg instanceof RosMessage) {
+                this.msg = ((RosMessage) msg).getJsonObject();
+            } else {
+                this.msg = msg;
+            }
+            return this;
         }
-
-        return json.toString();
     }
 
     @Override

@@ -78,13 +78,13 @@ public class RosResponse implements RosOperation {
     }
 
     @Override
-    public String toJson() {
+    public JsonObject getJsonObject() {
         return new JsonObject()
                 .put("op", this.op.code)
                 .put("service", this.service)
                 .put("values", this.values)
                 .put("result", this.result)
-                .put("id", this.id).toString();
+                .put("id", this.id);
     }
 
     @Override

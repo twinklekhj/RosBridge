@@ -35,8 +35,11 @@ public class RosUnadvertiseService implements RosOperation {
     }
 
     @Override
-    public String toJson() {
-        return new JsonObject().put("op", this.op.code).put("service", this.service).put("id", this.id).toString();
+    public JsonObject getJsonObject() {
+        return new JsonObject()
+                .put("op", this.op.code)
+                .put("service", this.service)
+                .put("id", this.id);
     }
 
     @Override

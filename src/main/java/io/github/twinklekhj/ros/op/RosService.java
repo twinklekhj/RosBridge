@@ -91,7 +91,7 @@ public class RosService implements RosOperation {
     }
 
     @Override
-    public String toJson() {
+    public JsonObject getJsonObject() {
         JsonObject json = new JsonObject().put("op", this.op.code).put("service", this.name).put("id", id);
 
         if (this.args != null && !this.args.isEmpty()) {
@@ -104,7 +104,7 @@ public class RosService implements RosOperation {
             json.put("fragmentSize", this.fragmentSize);
         }
 
-        return json.toString();
+        return json;
     }
 
     @Override

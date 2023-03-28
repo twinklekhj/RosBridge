@@ -226,17 +226,17 @@ public class RosBridge extends AbstractVerticle {
     }
 
     private Future<Void> send(RosOperation support) {
-        String sendMsg = support.toJson();
-        return send(sendMsg);
+        JsonObject json = support.getJsonObject();
+        return send(json);
     }
 
     /**
      * [Ros] Ros 메세지 전송
      *
-     * @param message - 보낼 메세지
+     * @param json - 보낼 메세지
      * @return 메세지 전송 성공 여부
      */
-    private Future<Void> send(String message) {
+    private Future<Void> send(JsonObject json) {
         if (props.isPrintProcessMsg()) {
             logger.info("ros:send message");
         }
@@ -245,9 +245,9 @@ public class RosBridge extends AbstractVerticle {
             while (!this.connected || !this.connectedError) {
                 if (hasConnected()) {
                     if (this.props.isPrintSendMsg()) {
-                        logger.info("[REQUEST] msg: {}", message);
+                        logger.info("[REQUEST] msg: {}", json);
                     }
-                    return this.webSocket.writeTextMessage(message);
+                    return this.webSocket.write(json.toBuffer());
                 } else if (hasConnectedError()) {
                     return Future.failedFuture("WebSocket not connected!");
                 } else {

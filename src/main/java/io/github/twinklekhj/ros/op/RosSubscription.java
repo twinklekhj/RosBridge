@@ -89,7 +89,7 @@ public class RosSubscription implements RosOperation {
     }
 
     @Override
-    public String toJson() {
+    public JsonObject getJsonObject() {
         JsonObject json = new JsonObject().put("op", this.op.code).put("topic", this.topic).put("id", this.id).put("type", this.type);
 
         if (this.throttleRate != 0) {
@@ -105,7 +105,7 @@ public class RosSubscription implements RosOperation {
             json.put("compression", this.compression.code());
         }
 
-        return json.toString();
+        return json;
     }
 
     @Override
