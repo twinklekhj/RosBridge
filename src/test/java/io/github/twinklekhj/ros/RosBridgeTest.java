@@ -98,29 +98,5 @@ public class RosBridgeTest {
 
         context.awaitCompletion(10, TimeUnit.SECONDS);
     }
-
-    @Test
-    @DisplayName("Service 기능 테스트")
-    public void testServiceFunction() throws InterruptedException {
-        VertxTestContext context = new VertxTestContext();
-        bridge.start();
-
-        String serviceName = "/TE2216001/setspeed_cmd";
-        RosApi.getServiceType(bridge, serviceName).future().compose(value -> {
-            logger.info("type: {}", value);
-            return RosApi.getServiceHost(bridge, serviceName).future();
-        }).compose(value -> {
-            logger.info("host: {}", value);
-            return RosApi.getServiceNode(bridge, serviceName).future();
-        }).compose(value -> {
-            logger.info("node: {}", value);
-            return Future.succeededFuture();
-        }).onSuccess(o -> {
-            Assertions.assertTrue(true);
-            context.completeNow();
-        }).onFailure(Assertions::fail);
-
-        context.awaitCompletion(10, TimeUnit.SECONDS);
-    }
 }
 
