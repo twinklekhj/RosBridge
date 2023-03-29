@@ -95,8 +95,8 @@ public class TFClient {
 
     /**
      * Process response
-     * @param response
-     * @return
+     * @param response 응답
+     * @return future
      */
     public Future<RosSubscription> processResponse(RosResponse response){
         Map<String, Object> values = response.getValues();

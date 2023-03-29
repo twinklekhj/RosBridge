@@ -81,6 +81,7 @@ public class RosApi {
      * [RosApi] Service Provider 목록 조회
      *
      * @param bridge RosBridge
+     * @param service 서비스명
      * @return 결과
      */
     public static Promise<List<String>> getServiceProviders(RosBridge bridge, String service) {
@@ -179,6 +180,7 @@ public class RosApi {
     /**
      * [RosApi] Node 상세 정보 조회
      *
+     * @param bridge RosBridge
      * @param node 찾을 노드명
      * @return 콜백함수
      */

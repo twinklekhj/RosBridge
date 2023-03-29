@@ -9,7 +9,7 @@ import lombok.ToString;
 import java.util.Arrays;
 
 /**
- * @implNote http://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/Image.html
+ * 참고: http://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/Image.html
  */
 @ToString
 public class Image extends RosMessage {

@@ -507,6 +507,7 @@ public class RosBridge extends AbstractVerticle {
      * [Topic] 토픽 구독 해제
      *
      * @param topic 토픽명
+     * @param id subscribe_id
      * @return 콜백함수
      */
     public Promise<RosUnsubscription> unsubscribe(String topic, String id) {
