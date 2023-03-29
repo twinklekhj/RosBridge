@@ -4,8 +4,7 @@ package io.github.twinklekhj.ros.op;
 import io.vertx.core.json.JsonObject;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 @Builder
@@ -16,12 +15,11 @@ public class RosService implements RosOperation {
     private final Type op = Type.CALL_SERVICE;
     @NonNull
     private final String name;
+    private final String type;
     @Builder.Default
     private String id = String.format("call_service_%s", RosOperation.current());
     @Builder.Default
     private CompressionType compression = CompressionType.NONE;
-
-    private final String type;
     private List<?> args;
     private int fragmentSize;
 
@@ -86,8 +84,8 @@ public class RosService implements RosOperation {
         return args;
     }
 
-    public void setArgs(List<?> args) {
-        this.args = args;
+    public void setArgs(Object... args) {
+        this.args = Arrays.asList(args);
     }
 
     @Override
@@ -118,11 +116,8 @@ public class RosService implements RosOperation {
             return this;
         }
 
-        public RosServiceBuilder args(Object... arg) {
-            List<Object> args = new ArrayList<>();
-            Collections.addAll(args, arg);
-            this.args(args);
-
+        public RosServiceBuilder args(Object... args) {
+            this.args(Arrays.asList(args));
             return this;
         }
     }

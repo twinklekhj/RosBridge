@@ -79,7 +79,7 @@ public class RosBridge extends AbstractVerticle {
 
                     Set<String> listeners = this.topicListeners.get(topic);
                     listeners.forEach(listener -> {
-                        this.bus.publish(listener, json);
+                        this.bus.publish(listener, json.getJsonObject("msg"));
                     });
                     break;
                 case "service_response":
@@ -261,6 +261,24 @@ public class RosBridge extends AbstractVerticle {
         }
 
         return Future.failedFuture("unhandled error!");
+    }
+
+    public void waitForConnection(){
+        synchronized (this) {
+            while (!this.connected || !this.connectedError) {
+                if (hasConnected()) {
+                    return;
+                } else if (hasConnectedError()) {
+                    return;
+                } else {
+                    try {
+                        wait();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
     }
 
     /**

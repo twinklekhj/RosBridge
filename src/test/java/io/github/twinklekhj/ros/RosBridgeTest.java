@@ -2,6 +2,7 @@ package io.github.twinklekhj.ros;
 
 import io.github.twinklekhj.ros.op.RosTopic;
 import io.github.twinklekhj.ros.type.RosMessage;
+import io.github.twinklekhj.ros.type.sensor.Image;
 import io.github.twinklekhj.ros.type.std.Int32;
 import io.github.twinklekhj.ros.ws.ConnProps;
 import io.github.twinklekhj.ros.ws.RosApi;
@@ -86,7 +87,7 @@ public class RosBridgeTest {
         bridge.start();
 
         RosApi.getTopics(bridge).future().compose(topics -> {
-            logger.info("topics: {}", topics);
+            logger.info("all topics: {}", topics);
             return RosApi.getNodes(bridge).future();
         }).compose(nodes -> {
             logger.info("nodes: {}", nodes);
@@ -95,6 +96,11 @@ public class RosBridgeTest {
             Assertions.assertTrue(true);
             context.completeNow();
         }).onFailure(Assertions::fail);
+
+        RosApi.getTopicsForType(bridge, Image.TYPE).future().compose(topics -> {
+            logger.info("image topics: {}", topics);
+            return Future.succeededFuture();
+        });
 
         context.awaitCompletion(10, TimeUnit.SECONDS);
     }
