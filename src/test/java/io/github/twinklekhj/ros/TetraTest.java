@@ -4,13 +4,15 @@ import io.github.twinklekhj.ros.op.RosSubscription;
 import io.github.twinklekhj.ros.op.RosTopic;
 import io.github.twinklekhj.ros.type.artags.AlvarMarkers;
 import io.github.twinklekhj.ros.type.navigation.OccupancyGrid;
+import io.github.twinklekhj.ros.type.navigation.Path;
+import io.github.twinklekhj.ros.type.tf.TFMessage;
 import io.github.twinklekhj.ros.ws.ConnProps;
 import io.github.twinklekhj.ros.ws.RosApi;
 import io.github.twinklekhj.ros.ws.RosBridge;
+import io.github.twinklekhj.ros.ws.TFClient;
 import io.github.twinklekhj.utils.PropertyUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonObject;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import org.junit.jupiter.api.Assertions;
@@ -25,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 @ExtendWith(VertxExtension.class)
 public class TetraTest {
+    private static final String serial = "TE2216001";
     private static final Logger logger = LoggerFactory.getLogger(TetraTest.class);
 
     private final Vertx vertx;
@@ -81,8 +84,7 @@ public class TetraTest {
         logger.info("subscription: {}", subscription);
 
         bridge.subscribe(subscription, message -> {
-            JsonObject topics = message.body();
-            OccupancyGrid grid = OccupancyGrid.fromJsonObject(topics.getJsonObject("msg"));
+            OccupancyGrid grid = OccupancyGrid.fromJsonObject(message.body());
             int[] data = grid.getData();
 
             logger.info("info: {}", grid.getInfo());
@@ -98,7 +100,7 @@ public class TetraTest {
         VertxTestContext context = new VertxTestContext();
         bridge.start();
 
-        String serviceName = "/TE2216001/setspeed_cmd";
+        String serviceName = String.format("%s/setspeed_cmd", serial);
         RosApi.getServiceType(bridge, serviceName).future().compose(value -> {
             logger.info("type: {}", value);
             return RosApi.getServiceHost(bridge, serviceName).future();
@@ -122,9 +124,90 @@ public class TetraTest {
         VertxTestContext context = new VertxTestContext();
         bridge.start();
 
-        RosSubscription subscription = RosSubscription.builder("/TE2216001/ar_pose_marker", AlvarMarkers.TYPE).throttleRate(200).build();
+        RosSubscription subscription = RosSubscription.builder(String.format("%s/ar_pose_marker", serial), AlvarMarkers.TYPE).throttleRate(200).build();
         bridge.subscribe(subscription, message -> {
             logger.info("message: {}", message);
+        });
+
+        context.awaitCompletion(10, TimeUnit.SECONDS);
+    }
+
+    @Test
+    @DisplayName("path test")
+    public void testPath() throws InterruptedException {
+        VertxTestContext context = new VertxTestContext();
+
+        props.setPrintSendMsg(true);
+        props.setPrintReceivedMsg(true);
+        props.setMaxFrameSize(100000000);
+
+        bridge.start();
+
+        // 목적지 이동
+        RosSubscription gloabl = RosSubscription.builder(String.format("/%s/move_base/TebLocalPlannerROS/gloabl_plan", serial), Path.TYPE).throttleRate(200).build();
+        bridge.subscribe(gloabl, message -> {
+            logger.info("message: {}", message.body());
+        });
+
+        // 이동 중인 경로
+        RosSubscription local = RosSubscription.builder(String.format("/%s/move_base/TebLocalPlannerROS/local_plan", serial), Path.TYPE).throttleRate(200).build();
+        bridge.subscribe(local, message -> {
+            logger.info("message: {}", message.body());
+        });
+
+        context.awaitCompletion(10, TimeUnit.SECONDS);
+    }
+
+    @Test
+    @DisplayName("sensor test")
+    public void testSensor() throws InterruptedException {
+        VertxTestContext context = new VertxTestContext();
+
+        props.setPrintSendMsg(true);
+        props.setPrintReceivedMsg(true);
+        props.setMaxFrameSize(100000000);
+
+        bridge.start();
+
+        // 로봇의 좌측 하단에 장착된 초음파 센서 데이터
+        RosSubscription leftBottom = RosSubscription.builder(String.format("/%s/move_base/TebLocalPlannerROS/Ultrasonic_D_L", serial), "sensor_msgs/Range").throttleRate(200).build();
+        bridge.subscribe(leftBottom, message -> {
+            logger.info("message: {}", message.body());
+        });
+
+        // 로봇의 좌측 하단에 장착된 초음파 센서 데이터
+        RosSubscription rightBottom = RosSubscription.builder(String.format("/%s/move_base/TebLocalPlannerROS/Ultrasonic_D_R", serial), "sensor_msgs/Range").throttleRate(200).build();
+        bridge.subscribe(rightBottom, message -> {
+            logger.info("message: {}", message.body());
+        });
+
+
+        context.awaitCompletion(100, TimeUnit.SECONDS);
+    }
+
+    //@Test
+    @DisplayName("TFClient 테스트")
+    public void testTFClient() throws InterruptedException {
+        VertxTestContext context = new VertxTestContext();
+
+        props.setPrintSendMsg(true);
+        props.setPrintReceivedMsg(true);
+        props.setPrintProcessMsg(true);
+
+        bridge.start();
+        bridge.waitForConnection();
+
+        TFClient mapClient = TFClient.builder(bridge, serial).fixedFrame("map").angularThresh(0.1).transThresh(0.03).rate(500).build();
+        TFClient odomClient = TFClient.builder(bridge, serial).fixedFrame(String.format("/%s/odom", serial)).angularThresh(0.1).transThresh(0.03).rate(500).build();
+
+        mapClient.subscribe(String.format("/%s/base_footprint", serial), message -> {
+            TFMessage transform = message.body();
+            logger.info("transform: {}", transform);
+        });
+
+        odomClient.subscribe("map", message -> {
+            TFMessage transform = message.body();
+            logger.info("transform: {}", transform);
         });
 
         context.awaitCompletion(10, TimeUnit.SECONDS);
