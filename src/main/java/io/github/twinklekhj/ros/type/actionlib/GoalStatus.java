@@ -67,25 +67,27 @@ public class GoalStatus extends RosMessage {
         return new GoalStatus(this.goalID, this.status, this.text);
     }
 
-    private enum Status {
+    public enum Status {
         PENDING(0, "The goal has yet to be processed by the action server"),
         ACTIVE(1, "The goal is currently being processed by the action server"),
         PREEMPTED(2, "The goal received a cancel request after it started executing and has since completed its execution (Terminal State)"),
         SUCCEEDED(3, "The goal was achieved successfully by the action server (Terminal State)"),
         ABORTE(4, "The goal was aborted during execution by the action server due to some failure (Terminal State)"),
         REJECTED(5, "The goal was rejected by the action server without being processed, because the goal was unattainable or invalid (Terminal State)"),
-        PREEMPTING(6,"The goal received a cancel request after it started executing and has not yet completed execution"),
+        PREEMPTING(6, "The goal received a cancel request after it started executing and has not yet completed execution"),
         RECALLING(7, "The goal received a cancel request before it started executing, but the action server has not yet confirmed that the goal is canceled"),
         RECALLED(8, "The goal received a cancel request before it started executing and was successfully cancelled (Terminal State)"),
         LOST(9, "An action client can determine that a goal is LOST. This should not be sent over the wire by an action server");
 
         final int value;
         final String description;
-        Status(int value, String description){
+
+        Status(int value, String description) {
             this.value = value;
             this.description = description;
         }
-        private static Optional<Status> findByValue(int value){
+
+        private static Optional<Status> findByValue(int value) {
             return Arrays.stream(Status.values()).filter(status -> status.value == value).findFirst();
         }
     }

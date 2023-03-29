@@ -1,5 +1,6 @@
 package io.github.twinklekhj.ros.type.actionlib;
 
+import io.github.twinklekhj.ros.op.RosOperation;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.std.Header;
 import io.vertx.core.json.JsonObject;
@@ -16,7 +17,7 @@ public class GoalID extends RosMessage {
     private String id;
 
     public GoalID() {
-        this(new Header(), "");
+        this(new Header(), String.format("goal_%s", RosOperation.current()));
     }
 
     public GoalID(String id) {
