@@ -3,6 +3,8 @@ package io.github.twinklekhj.ros.type.primitives;
 import io.vertx.core.json.JsonObject;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -160,6 +162,10 @@ public class Time extends TimeBase<Time> {
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis((long) (this.toSec() * (double) TimeBase.SECS_TO_MILLI));
         return c.getTime();
+    }
+
+    public LocalDateTime toLocalDateTime(){
+        return this.toDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 
     /**
