@@ -54,11 +54,12 @@ public class TetraTest {
         props.setPrintReceivedMsg(true);
 
         bridge.start();
-        RosApi.getNodeDetails(bridge, "/TE2216001/tetraDS").future().onSuccess(response -> {
+        RosApi.getNodeDetails(bridge, String.format("/%s/tetraDS", serial)).future().onSuccess(response -> {
             Map<String, Object> values = response.getValues();
             logger.info("node details - {}", values);
             logger.info("services - {}", values.get("services"));
 
+            context.completeNow();
         }).onFailure(Assertions::fail);
 
         context.awaitCompletion(10, TimeUnit.SECONDS);
@@ -88,6 +89,7 @@ public class TetraTest {
             int[] data = grid.getData();
 
             logger.info("info: {}", grid.getInfo());
+            context.completeNow();
         }).future().onFailure(Assertions::fail);
 
         context.awaitCompletion(10, TimeUnit.SECONDS);
@@ -127,6 +129,7 @@ public class TetraTest {
         RosSubscription subscription = RosSubscription.builder(String.format("%s/ar_pose_marker", serial), AlvarMarkers.TYPE).throttleRate(200).build();
         bridge.subscribe(subscription, message -> {
             logger.info("message: {}", message);
+            context.completeNow();
         });
 
         context.awaitCompletion(10, TimeUnit.SECONDS);
@@ -153,6 +156,7 @@ public class TetraTest {
         RosSubscription local = RosSubscription.builder(String.format("/%s/move_base/TebLocalPlannerROS/local_plan", serial), Path.TYPE).throttleRate(200).build();
         bridge.subscribe(local, message -> {
             logger.info("message: {}", message.body());
+            context.completeNow();
         });
 
         context.awaitCompletion(10, TimeUnit.SECONDS);
@@ -179,10 +183,11 @@ public class TetraTest {
         RosSubscription rightBottom = RosSubscription.builder(String.format("/%s/move_base/TebLocalPlannerROS/Ultrasonic_D_R", serial), "sensor_msgs/Range").throttleRate(200).build();
         bridge.subscribe(rightBottom, message -> {
             logger.info("message: {}", message.body());
+            context.completeNow();
         });
 
 
-        context.awaitCompletion(100, TimeUnit.SECONDS);
+        context.awaitCompletion(10, TimeUnit.SECONDS);
     }
 
     //@Test
@@ -203,11 +208,13 @@ public class TetraTest {
         mapClient.subscribe(String.format("/%s/base_footprint", serial), message -> {
             TFMessage transform = message.body();
             logger.info("transform: {}", transform);
+            context.completeNow();
         });
 
         odomClient.subscribe("map", message -> {
             TFMessage transform = message.body();
             logger.info("transform: {}", transform);
+            context.completeNow();
         });
 
         context.awaitCompletion(10, TimeUnit.SECONDS);

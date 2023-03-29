@@ -70,6 +70,7 @@ public class RosBridgeTest {
 
         bridge.subscribe(topic, response -> {
             logger.info("Subscribed topic: {}", response.body());
+            context.completeNow();
         }).future().compose(subscription -> bridge.publish(topic).future()).onFailure(Assertions::fail);
 
         context.awaitCompletion(10, TimeUnit.SECONDS);
