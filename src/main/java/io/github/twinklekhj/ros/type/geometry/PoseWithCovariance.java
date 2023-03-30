@@ -78,7 +78,7 @@ public class PoseWithCovariance extends RosMessage {
         return this.covariance;
     }
 
-    public void setCovariance(double[] covariance) {
+    public void setCovariance(double... covariance) {
         this.covariance = new double[PoseWithCovariance.COVARIANCE_SIZE];
         this.covarianceMatrix = new double[PoseWithCovariance.COVARIANCE_ROWS][PoseWithCovariance.COVARIANCE_COLUMNS];
         if (covariance.length == PoseWithCovariance.COVARIANCE_SIZE) {
