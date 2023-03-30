@@ -161,6 +161,16 @@ public class RosBridge extends AbstractVerticle {
         return topicListeners.containsKey(topic.getName());
     }
 
+    /**
+     * [Topic] 토픽 구독 여부 확인
+     *
+     * @param subscription 구독정보
+     * @return 토픽 구독 여부
+     */
+    public boolean isSubscribed(RosSubscription subscription) {
+        return topicListeners.containsKey(subscription.getTopic());
+    }
+
     @Override
     public void start() {
         Future<WebSocket> future = connect();
@@ -512,6 +522,17 @@ public class RosBridge extends AbstractVerticle {
      */
     public Promise<RosUnsubscription> unsubscribe(String topic, String id) {
         RosUnsubscription op = RosUnsubscription.builder(topic).id(id).build();
+        return unsubscribe(op);
+    }
+
+    /**
+     * [Topic] 토픽 구독 해제
+     *
+     * @param subscription 구독정보
+     * @return 콜백함수
+     */
+    public Promise<RosUnsubscription> unsubscribe(RosSubscription subscription) {
+        RosUnsubscription op = RosUnsubscription.builder(subscription.getTopic()).id(subscription.getId()).build();
         return unsubscribe(op);
     }
 
