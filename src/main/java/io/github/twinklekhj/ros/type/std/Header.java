@@ -28,6 +28,16 @@ public class Header extends RosMessage {
 
 
     /**
+     * Create a new Header with frame id;
+     *
+     * @param frameID The frame ID.
+     */
+    public Header(String frameID) {
+        this(0, new Time(), frameID);
+    }
+
+
+    /**
      * Create a new Header with the given values.
      *
      * @param seq     The sequence number treated as an unsigned 32-bit integer.
