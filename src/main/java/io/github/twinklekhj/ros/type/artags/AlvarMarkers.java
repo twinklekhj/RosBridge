@@ -7,6 +7,7 @@ import io.vertx.core.json.JsonObject;
 import lombok.ToString;
 
 import java.util.Arrays;
+import java.util.List;
 
 @ToString
 public class AlvarMarkers extends RosMessage {
@@ -79,6 +80,15 @@ public class AlvarMarkers extends RosMessage {
         System.arraycopy(markers, 0, this.markers, 0, markers.length);
 
         this.jsonObject.put(FIELD_MARKERS, jsonBuilder(Arrays.deepToString(markers)));
+    }
+
+    public void setMarkers(List<AlvarMarker> markers) {
+        this.markers = new AlvarMarker[markers.size()];
+        for (int i = 0; i < markers.size(); i++) {
+            this.markers[i] = markers.get(0);
+        }
+
+        this.jsonObject.put(FIELD_MARKERS, jsonBuilder(Arrays.deepToString(this.markers)));
     }
 
     @Override

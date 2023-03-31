@@ -7,6 +7,7 @@ import io.vertx.core.json.JsonObject;
 import lombok.ToString;
 
 import java.util.Arrays;
+import java.util.List;
 
 @ToString
 public class ObstacleArrayMsg extends RosMessage {
@@ -77,6 +78,15 @@ public class ObstacleArrayMsg extends RosMessage {
         System.arraycopy(obstacles, 0, this.obstacles, 0, obstacles.length);
 
         this.jsonObject.put(FIELD_OBSTACLES, jsonBuilder(Arrays.deepToString(obstacles)));
+    }
+
+    public void setObstacles(List<ObstacleMsg> obstacles) {
+        this.obstacles = new ObstacleMsg[obstacles.size()];
+        for (int i = 0; i < obstacles.size(); i++) {
+            this.obstacles[i] = obstacles.get(0);
+        }
+
+        this.jsonObject.put(FIELD_OBSTACLES, jsonBuilder(Arrays.deepToString(this.obstacles)));
     }
 
     @Override

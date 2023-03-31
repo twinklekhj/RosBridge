@@ -20,7 +20,7 @@ public class Quaternion extends RosMessage {
     private double w;
 
     public Quaternion() {
-        this(0, 0, 0, 0);
+        this(0, 0, 0, 1.0);
     }
 
     public Quaternion(double x, double y, double z, double w) {

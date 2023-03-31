@@ -18,11 +18,11 @@ public class ObstacleMsg extends RosMessage {
     public static final String FIELD_VELOCITIES = "velocities";
 
     // Specify the radius for circular/point obstacles
-    private final double radius;
+    private double radius;
     // Obstacle ID - Specify IDs in order to provide (temporal) relationships between obstacles among multiple messages.
-    private final long id;
+    private long id;
     // Individual velocities (centroid)
-    private final TwistWithCovariance velocities;
+    private TwistWithCovariance velocities;
     private Header header;
     // Obstacle footprint (polygon descriptions)
     private Polygon polygon;
@@ -95,6 +95,33 @@ public class ObstacleMsg extends RosMessage {
     public void setOrientation(Quaternion orientation) {
         this.orientation = orientation;
         this.jsonObject.put(FIELD_ORIENTATION, orientation.getJsonObject());
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+        this.jsonObject.put(FIELD_ID, id);
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
+        this.jsonObject.put(FIELD_RADIUS, radius);
+    }
+
+    public TwistWithCovariance getVelocities() {
+        return velocities;
+    }
+
+    public void setVelocities(TwistWithCovariance velocities) {
+        this.velocities = velocities;
+        this.jsonObject.put(FIELD_VELOCITIES, velocities.getJsonObject());
     }
 
     @Override

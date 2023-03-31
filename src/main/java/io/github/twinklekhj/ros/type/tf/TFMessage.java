@@ -7,6 +7,7 @@ import io.vertx.core.json.JsonObject;
 import lombok.ToString;
 
 import java.util.Arrays;
+import java.util.List;
 
 @ToString
 public class TFMessage extends RosMessage {
@@ -24,8 +25,7 @@ public class TFMessage extends RosMessage {
         this.transforms = new TransformStamped[transforms.length];
         System.arraycopy(transforms, 0, this.transforms, 0, transforms.length);
 
-        JsonObject json = jsonBuilder()
-                .put(FIELD_TRANSFORMS, jsonBuilder(Arrays.deepToString(transforms)));
+        JsonObject json = jsonBuilder().put(FIELD_TRANSFORMS, jsonBuilder(Arrays.deepToString(transforms)));
 
         super.setJsonObject(json);
         super.setType(TYPE);
@@ -61,6 +61,15 @@ public class TFMessage extends RosMessage {
         System.arraycopy(transforms, 0, this.transforms, 0, transforms.length);
 
         this.jsonObject.put(FIELD_TRANSFORMS, jsonBuilder(Arrays.deepToString(transforms)));
+    }
+
+    public void setTransforms(List<TransformStamped> transforms) {
+        this.transforms = new TransformStamped[transforms.size()];
+        for (int i = 0; i < transforms.size(); i++) {
+            this.transforms[i] = transforms.get(0);
+        }
+
+        this.jsonObject.put(FIELD_TRANSFORMS, jsonBuilder(Arrays.deepToString(this.transforms)));
     }
 
     @Override

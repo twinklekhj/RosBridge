@@ -8,6 +8,7 @@ import io.vertx.core.json.JsonObject;
 import lombok.ToString;
 
 import java.util.Arrays;
+import java.util.List;
 
 @ToString
 public class GridCells extends RosMessage {
@@ -103,6 +104,15 @@ public class GridCells extends RosMessage {
         System.arraycopy(cells, 0, this.cells, 0, cells.length);
 
         this.jsonObject.put(FIELD_CELLS, jsonBuilder(Arrays.deepToString(cells)));
+    }
+
+    public void setCells(List<Point32> cells) {
+        this.cells = new Point32[cells.size()];
+        for (int i = 0; i < cells.size(); i++) {
+            this.cells[i] = cells.get(0);
+        }
+
+        this.jsonObject.put(FIELD_CELLS, jsonBuilder(Arrays.deepToString(this.cells)));
     }
 
     @Override

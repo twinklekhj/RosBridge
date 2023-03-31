@@ -7,6 +7,7 @@ import io.vertx.core.json.JsonObject;
 import lombok.ToString;
 
 import java.util.Arrays;
+import java.util.List;
 
 @ToString
 public class GoalStatusArray extends RosMessage {
@@ -79,6 +80,15 @@ public class GoalStatusArray extends RosMessage {
         System.arraycopy(status_list, 0, this.status_list, 0, status_list.length);
 
         this.jsonObject.put(FIELD_STATUS_LIST, jsonBuilder(Arrays.deepToString(status_list)));
+    }
+
+    public void setGoalStatus(List<GoalStatus> status_list) {
+        this.status_list = new GoalStatus[status_list.size()];
+        for (int i = 0; i < status_list.size(); i++) {
+            this.status_list[i] = status_list.get(0);
+        }
+
+        this.jsonObject.put(FIELD_STATUS_LIST, jsonBuilder(Arrays.deepToString(this.status_list)));
     }
 
     @Override

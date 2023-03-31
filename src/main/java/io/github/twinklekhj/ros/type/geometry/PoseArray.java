@@ -8,6 +8,7 @@ import io.vertx.core.json.JsonObject;
 import lombok.ToString;
 
 import java.util.Arrays;
+import java.util.List;
 
 @ToString
 public class PoseArray extends RosMessage {
@@ -73,6 +74,15 @@ public class PoseArray extends RosMessage {
         System.arraycopy(poses, 0, this.poses, 0, poses.length);
 
         this.jsonObject.put(FIELD_POSES, jsonBuilder(Arrays.deepToString(poses)));
+    }
+
+    public void setPoses(List<Pose> poses) {
+        this.poses = new Pose[poses.size()];
+        for (int i = 0; i < poses.size(); i++) {
+            this.poses[i] = poses.get(0);
+        }
+
+        this.jsonObject.put(FIELD_POSES, jsonBuilder(Arrays.deepToString(this.poses)));
     }
 
     public Header getHeader() {

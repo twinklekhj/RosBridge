@@ -7,6 +7,7 @@ import io.vertx.core.json.JsonObject;
 import lombok.ToString;
 
 import java.util.Arrays;
+import java.util.List;
 
 @ToString
 public class Polygon extends RosMessage {
@@ -66,7 +67,16 @@ public class Polygon extends RosMessage {
         this.points = new Point32[points.length];
         System.arraycopy(points, 0, this.points, 0, points.length);
 
-        this.jsonObject.put(FIELD_POINTS, jsonBuilder(Arrays.deepToString(points)));
+        this.jsonObject.put(FIELD_POINTS, jsonBuilder(Arrays.deepToString(this.points)));
+    }
+
+    public void setPoints(List<Point32> points) {
+        this.points = new Point32[points.size()];
+        for(int i=0; i< points.size(); i++){
+            this.points[i] = points.get(0);
+        }
+
+        this.jsonObject.put(FIELD_POINTS, jsonBuilder(Arrays.deepToString(this.points)));
     }
 
     @Override
