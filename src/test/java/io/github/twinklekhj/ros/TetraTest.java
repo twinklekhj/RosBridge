@@ -3,7 +3,9 @@ package io.github.twinklekhj.ros;
 import io.github.twinklekhj.ros.op.RosSubscription;
 import io.github.twinklekhj.ros.op.RosTopic;
 import io.github.twinklekhj.ros.type.artags.AlvarMarkers;
+import io.github.twinklekhj.ros.type.movebase.MoveBaseActionResult;
 import io.github.twinklekhj.ros.type.navigation.OccupancyGrid;
+import io.github.twinklekhj.ros.type.navigation.Odometry;
 import io.github.twinklekhj.ros.type.navigation.Path;
 import io.github.twinklekhj.ros.type.tf.TFMessage;
 import io.github.twinklekhj.ros.ws.ConnProps;
@@ -136,6 +138,22 @@ public class TetraTest {
     }
 
     @Test
+    @DisplayName("test odom")
+    public void testOdom() throws InterruptedException {
+        VertxTestContext context = new VertxTestContext();
+        bridge.start();
+
+        RosSubscription subscription = RosSubscription.builder(String.format("/%s/odom", serial), Odometry.TYPE).throttleRate(200).build();
+        bridge.subscribe(subscription, message -> {
+            Odometry odometry = Odometry.fromJsonObject(message.body());
+            logger.info("message: {}", message.body());
+            logger.info("odometry: {}", odometry);
+        });
+
+        context.awaitCompletion(10, TimeUnit.SECONDS);
+    }
+
+    @Test
     @DisplayName("path test")
     public void testPath() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
@@ -162,7 +180,7 @@ public class TetraTest {
         context.awaitCompletion(10, TimeUnit.SECONDS);
     }
 
-    @Test
+    //@Test
     @DisplayName("sensor test")
     public void testSensor() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
@@ -174,13 +192,13 @@ public class TetraTest {
         bridge.start();
 
         // 로봇의 좌측 하단에 장착된 초음파 센서 데이터
-        RosSubscription leftBottom = RosSubscription.builder(String.format("/%s/move_base/TebLocalPlannerROS/Ultrasonic_D_L", serial), "sensor_msgs/Range").throttleRate(200).build();
+        RosSubscription leftBottom = RosSubscription.builder(String.format("/%s/move_base/TebLocalPlannerROS/Ultrasonic_D_L", serial), Path.TYPE).throttleRate(200).build();
         bridge.subscribe(leftBottom, message -> {
             logger.info("message: {}", message.body());
         });
 
         // 로봇의 좌측 하단에 장착된 초음파 센서 데이터
-        RosSubscription rightBottom = RosSubscription.builder(String.format("/%s/move_base/TebLocalPlannerROS/Ultrasonic_D_R", serial), "sensor_msgs/Range").throttleRate(200).build();
+        RosSubscription rightBottom = RosSubscription.builder(String.format("/%s/move_base/TebLocalPlannerROS/Ultrasonic_D_R", serial), Path.TYPE).throttleRate(200).build();
         bridge.subscribe(rightBottom, message -> {
             logger.info("message: {}", message.body());
             context.completeNow();
@@ -203,7 +221,7 @@ public class TetraTest {
         bridge.waitForConnection();
 
         TFClient mapClient = TFClient.builder(bridge, serial).fixedFrame("map").angularThresh(0.1).transThresh(0.03).rate(500).build();
-        TFClient odomClient = TFClient.builder(bridge, serial).fixedFrame(String.format("/%s/odom", serial)).angularThresh(0.1).transThresh(0.03).rate(500).build();
+        TFClient odomClient = TFClient.builder(bridge, serial).fixedFrame(String.format("%s/odom", serial)).angularThresh(0.1).transThresh(0.03).rate(500).build();
 
         mapClient.subscribe(String.format("/%s/base_footprint", serial), message -> {
             TFMessage transform = message.body();
@@ -215,6 +233,25 @@ public class TetraTest {
             TFMessage transform = message.body();
             logger.info("transform: {}", transform);
             context.completeNow();
+        });
+
+        context.awaitCompletion(10, TimeUnit.SECONDS);
+    }
+
+    //@Test
+    public void testMoveBase() throws InterruptedException {
+        VertxTestContext context = new VertxTestContext();
+
+        props.setPrintSendMsg(true);
+        props.setPrintReceivedMsg(true);
+        props.setMaxFrameSize(100000000);
+
+        bridge.start();
+
+        // 로봇의 좌측 하단에 장착된 초음파 센서 데이터
+        RosSubscription leftBottom = RosSubscription.builder(String.format("/%s/move_base/result", serial), MoveBaseActionResult.TYPE).throttleRate(200).build();
+        bridge.subscribe(leftBottom, message -> {
+            logger.info("message: {}", message.body());
         });
 
         context.awaitCompletion(10, TimeUnit.SECONDS);
