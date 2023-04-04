@@ -39,7 +39,7 @@ public class GridCells extends RosMessage {
         this.cells = new Point32[cells.length];
         System.arraycopy(cells, 0, this.cells, 0, cells.length);
 
-        super.setJsonObject(jsonBuilder().put(FIELD_CELLS, jsonBuilder(Arrays.deepToString(cells))));
+        super.setJsonObject(jsonBuilder().put(FIELD_CELLS, Arrays.deepToString(cells)));
         super.setType(TYPE);
     }
 
@@ -103,7 +103,7 @@ public class GridCells extends RosMessage {
         this.cells = new Point32[cells.length];
         System.arraycopy(cells, 0, this.cells, 0, cells.length);
 
-        this.jsonObject.put(FIELD_CELLS, jsonBuilder(Arrays.deepToString(cells)));
+        this.jsonObject.put(FIELD_CELLS, Arrays.deepToString(cells));
     }
 
     public void setCells(List<Point32> cells) {
@@ -112,7 +112,7 @@ public class GridCells extends RosMessage {
             this.cells[i] = cells.get(0);
         }
 
-        this.jsonObject.put(FIELD_CELLS, jsonBuilder(Arrays.deepToString(this.cells)));
+        this.jsonObject.put(FIELD_CELLS, Arrays.deepToString(this.cells));
     }
 
     @Override

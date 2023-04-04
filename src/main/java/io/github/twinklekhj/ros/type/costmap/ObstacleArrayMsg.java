@@ -32,7 +32,9 @@ public class ObstacleArrayMsg extends RosMessage {
         this.obstacles = new ObstacleMsg[obstacles.length];
         System.arraycopy(obstacles, 0, this.obstacles, 0, obstacles.length);
 
-        JsonObject json = jsonBuilder().put(FIELD_HEADER, header.getJsonObject()).put(FIELD_OBSTACLES, jsonBuilder(Arrays.deepToString(obstacles)));
+        JsonObject json = jsonBuilder()
+                .put(FIELD_HEADER, header.getJsonObject())
+                .put(FIELD_OBSTACLES, Arrays.deepToString(obstacles));
 
         super.setJsonObject(json);
         super.setType(TYPE);
@@ -77,7 +79,7 @@ public class ObstacleArrayMsg extends RosMessage {
         this.obstacles = new ObstacleMsg[obstacles.length];
         System.arraycopy(obstacles, 0, this.obstacles, 0, obstacles.length);
 
-        this.jsonObject.put(FIELD_OBSTACLES, jsonBuilder(Arrays.deepToString(obstacles)));
+        this.jsonObject.put(FIELD_OBSTACLES, Arrays.deepToString(obstacles));
     }
 
     public void setObstacles(List<ObstacleMsg> obstacles) {
@@ -86,7 +88,7 @@ public class ObstacleArrayMsg extends RosMessage {
             this.obstacles[i] = obstacles.get(0);
         }
 
-        this.jsonObject.put(FIELD_OBSTACLES, jsonBuilder(Arrays.deepToString(this.obstacles)));
+        this.jsonObject.put(FIELD_OBSTACLES, Arrays.deepToString(this.obstacles));
     }
 
     @Override

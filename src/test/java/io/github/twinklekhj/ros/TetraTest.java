@@ -238,7 +238,7 @@ public class TetraTest {
         context.awaitCompletion(10, TimeUnit.SECONDS);
     }
 
-    //@Test
+    @Test
     public void testMoveBase() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
 
@@ -254,7 +254,7 @@ public class TetraTest {
             logger.info("message: {}", message.body());
         });
 
-        context.awaitCompletion(10, TimeUnit.SECONDS);
+        context.awaitCompletion(100, TimeUnit.SECONDS);
     }
 }
 

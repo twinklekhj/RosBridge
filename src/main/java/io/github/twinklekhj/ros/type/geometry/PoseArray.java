@@ -29,7 +29,7 @@ public class PoseArray extends RosMessage {
         this.poses = new Pose[poses.length];
         System.arraycopy(poses, 0, this.poses, 0, poses.length);
 
-        super.setJsonObject(jsonBuilder().put(FIELD_HEADER, header.getJsonObject()).put(FIELD_POSES, jsonBuilder(Arrays.deepToString(poses))));
+        super.setJsonObject(jsonBuilder().put(FIELD_HEADER, header.getJsonObject()).put(FIELD_POSES, Arrays.deepToString(poses)));
         super.setType(TYPE);
     }
 
@@ -73,7 +73,7 @@ public class PoseArray extends RosMessage {
         this.poses = new Pose[poses.length];
         System.arraycopy(poses, 0, this.poses, 0, poses.length);
 
-        this.jsonObject.put(FIELD_POSES, jsonBuilder(Arrays.deepToString(poses)));
+        this.jsonObject.put(FIELD_POSES, Arrays.deepToString(poses));
     }
 
     public void setPoses(List<Pose> poses) {
@@ -82,7 +82,7 @@ public class PoseArray extends RosMessage {
             this.poses[i] = poses.get(0);
         }
 
-        this.jsonObject.put(FIELD_POSES, jsonBuilder(Arrays.deepToString(this.poses)));
+        this.jsonObject.put(FIELD_POSES, Arrays.deepToString(this.poses));
     }
 
     public Header getHeader() {
