@@ -21,7 +21,8 @@ public class RosUnsubscription implements RosOperation {
     @NonNull
     private final String topic;
 
-    private String id;
+    @Builder.Default
+    private String id = "";
 
     private static RosUnsubscriptionBuilder builder() {
         return new RosUnsubscriptionBuilder();

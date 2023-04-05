@@ -78,9 +78,11 @@ public class RosBridge extends AbstractVerticle {
                     String topic = json.getString("topic");
 
                     Set<String> listeners = this.topicListeners.get(topic);
-                    listeners.forEach(listener -> {
-                        this.bus.publish(listener, json.getJsonObject("msg"));
-                    });
+                    if(this.topicListeners.containsKey(topic)){
+                        listeners.forEach(listener -> {
+                            this.bus.publish(listener, json.getJsonObject("msg"));
+                        });
+                    }
                     break;
                 case "service_response":
                     RosResponse res = RosResponse.fromJsonObject(json);
@@ -177,7 +179,7 @@ public class RosBridge extends AbstractVerticle {
     }
 
     /**
-     * [Ros] WebSocket 연결
+     * [RosBridge] WebSocket 연결
      *
      * @return callback 함수
      */
@@ -241,7 +243,7 @@ public class RosBridge extends AbstractVerticle {
     }
 
     /**
-     * [Ros] Ros 메세지 전송
+     * [RosBridge] 메세지 전송
      *
      * @param json - 보낼 메세지
      * @return 메세지 전송 성공 여부
@@ -273,6 +275,9 @@ public class RosBridge extends AbstractVerticle {
         return Future.failedFuture("unhandled error!");
     }
 
+    /**
+     * [RosBridge] 연결될 때까지 기다린다
+     */
     public void waitForConnection(){
         synchronized (this) {
             while (!this.connected || !this.connectedError) {
@@ -473,8 +478,8 @@ public class RosBridge extends AbstractVerticle {
 
                 // 선택 구독 해제
                 if (!op.getId().equals("")) {
-                    topics.remove(op.getId());
                     this.bus.consumer(op.getId()).unregister();
+                    topics.remove(op.getId());
                 }
                 // 전체 구독 해제
                 else if (topics != null && !topics.isEmpty()) {

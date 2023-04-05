@@ -128,7 +128,7 @@ public class TetraTest {
         VertxTestContext context = new VertxTestContext();
         bridge.start();
 
-        RosSubscription subscription = RosSubscription.builder(String.format("%s/ar_pose_marker", serial), AlvarMarkers.TYPE).throttleRate(200).build();
+        RosSubscription subscription = RosSubscription.builder(String.format("/%s/ar_pose_marker", serial), AlvarMarkers.TYPE).throttleRate(200).build();
         bridge.subscribe(subscription, message -> {
             logger.info("message: {}", message);
             context.completeNow();
