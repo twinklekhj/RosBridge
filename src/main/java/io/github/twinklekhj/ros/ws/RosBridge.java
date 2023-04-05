@@ -17,10 +17,7 @@ import io.vertx.core.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -78,7 +75,11 @@ public class RosBridge extends AbstractVerticle {
                     String topic = json.getString("topic");
 
                     Set<String> listeners = this.topicListeners.get(topic);
-                    if(this.topicListeners.containsKey(topic)){
+                    if (this.topicListeners.containsKey(topic)) {
+                        if (this.props.isPrintProcessMsg()) {
+                            logger.info("topicListeners: {}", this.topicListeners);
+                            logger.info("listeners to receive topic ({}) - {}", topic, Arrays.toString(listeners.toArray()));
+                        }
                         listeners.forEach(listener -> {
                             this.bus.publish(listener, json.getJsonObject("msg"));
                         });
@@ -278,7 +279,7 @@ public class RosBridge extends AbstractVerticle {
     /**
      * [RosBridge] 연결될 때까지 기다린다
      */
-    public void waitForConnection(){
+    public void waitForConnection() {
         synchronized (this) {
             while (!this.connected || !this.connectedError) {
                 if (hasConnected()) {
@@ -522,7 +523,7 @@ public class RosBridge extends AbstractVerticle {
      * [Topic] 토픽 구독 해제
      *
      * @param topic 토픽명
-     * @param id subscribe_id
+     * @param id    subscribe_id
      * @return 콜백함수
      */
     public Promise<RosUnsubscription> unsubscribe(String topic, String id) {

@@ -7,6 +7,8 @@ import io.github.twinklekhj.ros.type.movebase.MoveBaseActionResult;
 import io.github.twinklekhj.ros.type.navigation.OccupancyGrid;
 import io.github.twinklekhj.ros.type.navigation.Odometry;
 import io.github.twinklekhj.ros.type.navigation.Path;
+import io.github.twinklekhj.ros.type.std.Float64;
+import io.github.twinklekhj.ros.type.std.Int32;
 import io.github.twinklekhj.ros.type.tf.TFMessage;
 import io.github.twinklekhj.ros.ws.ConnProps;
 import io.github.twinklekhj.ros.ws.RosApi;
@@ -252,6 +254,45 @@ public class TetraTest {
         RosSubscription leftBottom = RosSubscription.builder(String.format("/%s/move_base/result", serial), MoveBaseActionResult.TYPE).throttleRate(200).build();
         bridge.subscribe(leftBottom, message -> {
             logger.info("message: {}", message.body());
+        });
+
+        context.awaitCompletion(100, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void subscribeTest() throws InterruptedException {
+        VertxTestContext context = new VertxTestContext();
+
+        props.setPrintSendMsg(true);
+        props.setPrintReceivedMsg(true);
+        props.setPrintProcessMsg(true);
+
+        props.setMaxFrameSize(100000000);
+
+        bridge.start();
+
+        // 배터리
+        RosSubscription battery = RosSubscription.builder(String.format("/%s/tetra_battery", serial), Int32.TYPE).throttleRate(1000).build();
+        logger.info("subscribe battery: {}", battery);
+        bridge.subscribe(battery, message -> {
+            Int32 data = Int32.fromJsonObject(message.body());
+            logger.info("battery - {}", data.getData());
+        });
+
+        // 배터리
+        RosSubscription batteryVoltage = RosSubscription.builder(String.format("/%s/battery_voltage", serial), Float64.TYPE).throttleRate(1000).build();
+        logger.info("subscribe battery voltage: {}", batteryVoltage);
+        bridge.subscribe(batteryVoltage, message -> {
+            Float64 data = Float64.fromJsonObject(message.body());
+            logger.info("battery voltage- {}", data.getData());
+        });
+
+        // 배터리
+        RosSubscription batteryCurrent = RosSubscription.builder(String.format("/%s/battery_current", serial), Float64.TYPE).throttleRate(1000).build();
+        logger.info("subscribe battery current: {}", batteryCurrent);
+        bridge.subscribe(batteryCurrent, message -> {
+            Float64 data = Float64.fromJsonObject(message.body());
+            logger.info("battery current- {}", data.getData());
         });
 
         context.awaitCompletion(100, TimeUnit.SECONDS);
