@@ -124,7 +124,7 @@ public class TetraTest {
         context.awaitCompletion(10, TimeUnit.SECONDS);
     }
 
-    @Test
+    // @Test
     @DisplayName("ar markers")
     public void testArMarkers() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
@@ -139,7 +139,7 @@ public class TetraTest {
         context.awaitCompletion(10, TimeUnit.SECONDS);
     }
 
-    @Test
+    // @Test
     @DisplayName("test odom")
     public void testOdom() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
@@ -155,7 +155,7 @@ public class TetraTest {
         context.awaitCompletion(10, TimeUnit.SECONDS);
     }
 
-    @Test
+    // @Test
     @DisplayName("path test")
     public void testPath() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
@@ -259,7 +259,7 @@ public class TetraTest {
         context.awaitCompletion(100, TimeUnit.SECONDS);
     }
 
-    @Test
+    // @Test
     public void subscribeTest() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
 

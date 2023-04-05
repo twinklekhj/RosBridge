@@ -41,19 +41,19 @@ public class RosSubscription implements RosOperation {
     }
 
     public static RosSubscriptionBuilder builder(String topic, String type) {
-        return builder().topic(topic).type(type);
+        return builder().topic(topic).type(type).id(String.format("%s_%s", topic, RosOperation.current()));
     }
 
     public static RosSubscriptionBuilder builder(RosCommand command) {
-        return builder().topic(command.getName()).type(command.getType());
+        return builder().topic(command.getName()).type(command.getType()).id(String.format("%s_%s", command.getName(), RosOperation.current()));
     }
 
     public static RosSubscriptionBuilder builder(String topic, RosMessage.Type type) {
-        return builder().topic(topic).type(type.getName());
+        return builder().topic(topic).type(type.getName()).id(String.format("%s_%s", topic, RosOperation.current()));
     }
 
     public static RosSubscriptionBuilder builder(RosTopic topic) {
-        return builder().topic(topic.getName()).type(topic.getType());
+        return builder().topic(topic.getName()).type(topic.getType()).id(String.format("%s_%s", topic.getName(), RosOperation.current()));
     }
 
     public String getId() {
