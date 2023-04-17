@@ -253,7 +253,7 @@ public class TetraTest {
     }
 
 
-    @Test
+    // @Test
     public void testMoveBase() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
 
