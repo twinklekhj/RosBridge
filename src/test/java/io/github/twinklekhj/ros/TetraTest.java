@@ -48,7 +48,7 @@ public class TetraTest {
         this.bridge = new RosBridge(vertx, props);
     }
 
-    //@Test
+    @Test
     @DisplayName("Node Details 테스트")
     public void testNodeDetails() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
@@ -58,22 +58,21 @@ public class TetraTest {
         props.setPrintReceivedMsg(true);
 
         bridge.start();
-        RosApi.getNodeDetails(bridge, String.format("/%s/tetraDS2", serial)).future().onSuccess(response -> {
+        RosApi.getNodeDetails(bridge, String.format("/%s/tetraDS", serial)).future().onSuccess(response -> {
             Map<String, Object> values = response.getValues();
             logger.info("node details - {}", values);
 
             List<?> subscribe = (List) values.get("subscribing");
             if (subscribe.size() > 0) {
-
+                logger.info("It's Real");
+                context.completeNow();
             }
-
-            context.completeNow();
         }).onFailure(Assertions::fail);
 
-        context.awaitCompletion(10, TimeUnit.SECONDS);
+        context.awaitCompletion(1, TimeUnit.SECONDS);
     }
 
-    // @Test
+    @Test
     @DisplayName("Map Topic 테스트")
     public void subscribeMapTopic() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
@@ -94,17 +93,17 @@ public class TetraTest {
 
         bridge.subscribe(subscription, message -> {
             OccupancyGrid grid = OccupancyGrid.fromJsonObject(message.body());
-            int[] data = grid.getData();
 
-            logger.info("info: {}", grid.getInfo());
+            logger.info("map info: {}", grid.getInfo());
+
             context.completeNow();
         }).future().onFailure(Assertions::fail);
 
-        context.awaitCompletion(10, TimeUnit.SECONDS);
+        context.awaitCompletion(1, TimeUnit.SECONDS);
     }
 
 
-    // @Test
+    @Test
     @DisplayName("Service 기능 테스트")
     public void testServiceFunction() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
@@ -125,10 +124,10 @@ public class TetraTest {
             context.completeNow();
         }).onFailure(Assertions::fail);
 
-        context.awaitCompletion(10, TimeUnit.SECONDS);
+        context.awaitCompletion(1, TimeUnit.SECONDS);
     }
 
-    // @Test
+    @Test
     @DisplayName("ar markers")
     public void testArMarkers() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
@@ -140,10 +139,10 @@ public class TetraTest {
             context.completeNow();
         });
 
-        context.awaitCompletion(10, TimeUnit.SECONDS);
+        context.awaitCompletion(1, TimeUnit.SECONDS);
     }
 
-    // @Test
+    @Test
     @DisplayName("test odom")
     public void testOdom() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
@@ -156,10 +155,10 @@ public class TetraTest {
             logger.info("odometry: {}", odometry);
         });
 
-        context.awaitCompletion(10, TimeUnit.SECONDS);
+        context.awaitCompletion(1, TimeUnit.SECONDS);
     }
 
-    // @Test
+    @Test
     @DisplayName("path test")
     public void testPath() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
@@ -171,8 +170,8 @@ public class TetraTest {
         bridge.start();
 
         // 목적지 이동
-        RosSubscription gloabl = RosSubscription.builder(String.format("/%s/move_base/TebLocalPlannerROS/gloabl_plan", serial), Path.TYPE).throttleRate(200).build();
-        bridge.subscribe(gloabl, message -> {
+        RosSubscription global = RosSubscription.builder(String.format("/%s/move_base/TebLocalPlannerROS/gloabl_plan", serial), Path.TYPE).throttleRate(200).build();
+        bridge.subscribe(global, message -> {
             logger.info("message: {}", message.body());
         });
 
@@ -183,10 +182,10 @@ public class TetraTest {
             context.completeNow();
         });
 
-        context.awaitCompletion(10, TimeUnit.SECONDS);
+        context.awaitCompletion(1, TimeUnit.SECONDS);
     }
 
-    //@Test
+    @Test
     @DisplayName("sensor test")
     public void testSensor() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
@@ -211,10 +210,10 @@ public class TetraTest {
         });
 
 
-        context.awaitCompletion(10, TimeUnit.SECONDS);
+        context.awaitCompletion(1, TimeUnit.SECONDS);
     }
 
-    // @Test
+    @Test
     @DisplayName("TFClient 테스트")
     public void testTFClient() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
@@ -243,17 +242,16 @@ public class TetraTest {
             context.completeNow();
         });
 
-//        odomClient.subscribe("map", message -> {
-//            TFMessage transform = message.body();
-//            logger.info("transform: {}", transform);
-//            context.completeNow();
-//        });
+        odomClient.subscribe("map", tf -> {
+            logger.info("tf: {}", tf);
+            context.completeNow();
+        });
 
-        context.awaitCompletion(1000, TimeUnit.SECONDS);
+        context.awaitCompletion(1, TimeUnit.SECONDS);
     }
 
 
-    // @Test
+    @Test
     public void testMoveBase() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
 
@@ -269,10 +267,10 @@ public class TetraTest {
             logger.info("message: {}", message.body());
         });
 
-        context.awaitCompletion(100, TimeUnit.SECONDS);
+        context.awaitCompletion(1, TimeUnit.SECONDS);
     }
 
-    // @Test
+    @Test
     public void subscribeTest() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
 
@@ -308,7 +306,7 @@ public class TetraTest {
             logger.info("battery current- {}", data.getData());
         });
 
-        context.awaitCompletion(100, TimeUnit.SECONDS);
+        context.awaitCompletion(1, TimeUnit.SECONDS);
     }
 }
 
