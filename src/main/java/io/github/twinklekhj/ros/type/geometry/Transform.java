@@ -12,8 +12,8 @@ public class Transform extends RosMessage {
     public static final String FIELD_TRANSLATION = "translation";
     public static final String FIELD_ROTATION = "rotation";
 
-    private Vector3 translation;
-    private Quaternion rotation;
+    Vector3 translation;
+    Quaternion rotation;
 
     public Transform() {
         this(new Vector3(), new Quaternion());

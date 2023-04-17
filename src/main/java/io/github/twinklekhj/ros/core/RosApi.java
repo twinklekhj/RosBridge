@@ -1,4 +1,4 @@
-package io.github.twinklekhj.ros.ws;
+package io.github.twinklekhj.ros.core;
 
 import io.github.twinklekhj.ros.op.RosResponse;
 import io.github.twinklekhj.ros.op.RosService;

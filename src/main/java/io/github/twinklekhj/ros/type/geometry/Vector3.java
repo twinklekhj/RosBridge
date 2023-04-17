@@ -13,9 +13,9 @@ public class Vector3 extends RosMessage {
     public static final String FIELD_Y = "y";
     public static final String FIELD_Z = "z";
 
-    private double x;
-    private double y;
-    private double z;
+    double x;
+    double y;
+    double z;
 
     public Vector3() {
         this(0, 0, 0);
@@ -52,7 +52,7 @@ public class Vector3 extends RosMessage {
 
     public void setY(double y) {
         this.y = y;
-        this.jsonObject.put(FIELD_Y, x);
+        this.jsonObject.put(FIELD_Y, y);
     }
 
     public double getZ() {
@@ -61,7 +61,42 @@ public class Vector3 extends RosMessage {
 
     public void setZ(double z) {
         this.z = z;
-        this.jsonObject.put(FIELD_Z, x);
+        this.jsonObject.put(FIELD_Z, z);
+    }
+    
+    public void multiplyQuaternion(Quaternion q) {
+        double ix = q.w * this.x + q.y * this.z - q.z * this.y;
+        double iy = q.w * this.x + q.z * this.x - q.x * this.z;
+        double iz = q.w * this.x + q.x * this.y - q.y * this.x;
+        double iw = -q.x * this.x - q.y * this.y - q.z * this.z;
+
+        this.x = (ix * q.w) + (iw * -q.x) + (iy * -q.z) - (iz * -q.y);
+        this.y = (iy * q.w) + (iw * -q.y) + (iz * -q.x) - (ix * -q.z);
+        this.z = (iz * q.w) + (iw * -q.z) + (ix * -q.y) - (iy * -q.x);
+
+        applyJson();
+    }
+
+    public void add(Vector3 v){
+        this.x += v.x;
+        this.y += v.y;
+        this.z += v.z;
+
+        applyJson();
+    }
+
+    public void subtract(Vector3 v){
+        this.x -= v.x;
+        this.y -= v.y;
+        this.z -= v.z;
+
+        applyJson();
+    }
+
+    private void applyJson(){
+        this.jsonObject.put(FIELD_X, this.x);
+        this.jsonObject.put(FIELD_Y, this.y);
+        this.jsonObject.put(FIELD_Z, this.z);
     }
 
     @Override

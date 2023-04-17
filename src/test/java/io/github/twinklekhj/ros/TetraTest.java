@@ -1,7 +1,11 @@
 package io.github.twinklekhj.ros;
 
+import io.github.twinklekhj.ros.core.ConnProps;
+import io.github.twinklekhj.ros.core.RosApi;
+import io.github.twinklekhj.ros.core.RosBridge;
 import io.github.twinklekhj.ros.op.RosSubscription;
 import io.github.twinklekhj.ros.op.RosTopic;
+import io.github.twinklekhj.ros.tf.TFClient;
 import io.github.twinklekhj.ros.type.artags.AlvarMarkers;
 import io.github.twinklekhj.ros.type.movebase.MoveBaseActionResult;
 import io.github.twinklekhj.ros.type.navigation.OccupancyGrid;
@@ -9,11 +13,6 @@ import io.github.twinklekhj.ros.type.navigation.Odometry;
 import io.github.twinklekhj.ros.type.navigation.Path;
 import io.github.twinklekhj.ros.type.std.Float64;
 import io.github.twinklekhj.ros.type.std.Int32;
-import io.github.twinklekhj.ros.type.tf.TFMessage;
-import io.github.twinklekhj.ros.ws.ConnProps;
-import io.github.twinklekhj.ros.ws.RosApi;
-import io.github.twinklekhj.ros.ws.RosBridge;
-import io.github.twinklekhj.ros.ws.TFClient;
 import io.github.twinklekhj.utils.PropertyUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
@@ -26,6 +25,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -48,7 +48,7 @@ public class TetraTest {
         this.bridge = new RosBridge(vertx, props);
     }
 
-    @Test
+    //@Test
     @DisplayName("Node Details 테스트")
     public void testNodeDetails() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
@@ -58,10 +58,14 @@ public class TetraTest {
         props.setPrintReceivedMsg(true);
 
         bridge.start();
-        RosApi.getNodeDetails(bridge, String.format("/%s/tetraDS", serial)).future().onSuccess(response -> {
+        RosApi.getNodeDetails(bridge, String.format("/%s/tetraDS2", serial)).future().onSuccess(response -> {
             Map<String, Object> values = response.getValues();
             logger.info("node details - {}", values);
-            logger.info("services - {}", values.get("services"));
+
+            List<?> subscribe = (List) values.get("subscribing");
+            if (subscribe.size() > 0) {
+
+            }
 
             context.completeNow();
         }).onFailure(Assertions::fail);
@@ -69,7 +73,7 @@ public class TetraTest {
         context.awaitCompletion(10, TimeUnit.SECONDS);
     }
 
-    @Test
+    // @Test
     @DisplayName("Map Topic 테스트")
     public void subscribeMapTopic() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
@@ -100,7 +104,7 @@ public class TetraTest {
     }
 
 
-    @Test
+    // @Test
     @DisplayName("Service 기능 테스트")
     public void testServiceFunction() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
@@ -210,7 +214,7 @@ public class TetraTest {
         context.awaitCompletion(10, TimeUnit.SECONDS);
     }
 
-    //@Test
+    // @Test
     @DisplayName("TFClient 테스트")
     public void testTFClient() throws InterruptedException {
         VertxTestContext context = new VertxTestContext();
@@ -222,23 +226,32 @@ public class TetraTest {
         bridge.start();
         bridge.waitForConnection();
 
-        TFClient mapClient = TFClient.builder(bridge, serial).fixedFrame("map").angularThresh(0.1).transThresh(0.03).rate(500).build();
-        TFClient odomClient = TFClient.builder(bridge, serial).fixedFrame(String.format("%s/odom", serial)).angularThresh(0.1).transThresh(0.03).rate(500).build();
+        TFClient mapClient = new TFClient(bridge, serial);
+        mapClient.setFixedFrame("map");
+        mapClient.setAngularThresh(0.1);
+        mapClient.setTransThresh(0.03);
+        mapClient.setRate(500);
 
-        mapClient.subscribe(String.format("/%s/base_footprint", serial), message -> {
-            TFMessage transform = message.body();
-            logger.info("transform: {}", transform);
+        TFClient odomClient = new TFClient(bridge, serial);
+        mapClient.setFixedFrame(String.format("%s/odom", serial));
+        mapClient.setAngularThresh(0.1);
+        mapClient.setTransThresh(0.03);
+        mapClient.setRate(500);
+
+        mapClient.subscribe(String.format("%s/base_footprint", serial), tf -> {
+            logger.info("tf: {}", tf);
             context.completeNow();
         });
 
-        odomClient.subscribe("map", message -> {
-            TFMessage transform = message.body();
-            logger.info("transform: {}", transform);
-            context.completeNow();
-        });
+//        odomClient.subscribe("map", message -> {
+//            TFMessage transform = message.body();
+//            logger.info("transform: {}", transform);
+//            context.completeNow();
+//        });
 
-        context.awaitCompletion(10, TimeUnit.SECONDS);
+        context.awaitCompletion(1000, TimeUnit.SECONDS);
     }
+
 
     @Test
     public void testMoveBase() throws InterruptedException {

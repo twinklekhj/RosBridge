@@ -1,4 +1,4 @@
-package io.github.twinklekhj.ros.ws.codec;
+package io.github.twinklekhj.ros.codec;
 
 import io.github.twinklekhj.ros.op.RosResponse;
 import io.vertx.core.buffer.Buffer;

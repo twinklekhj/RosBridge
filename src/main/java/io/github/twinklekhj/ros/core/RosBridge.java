@@ -1,8 +1,8 @@
-package io.github.twinklekhj.ros.ws;
+package io.github.twinklekhj.ros.core;
 
 import io.github.twinklekhj.ros.op.*;
 import io.github.twinklekhj.ros.type.RosMessage;
-import io.github.twinklekhj.ros.ws.codec.RosResponseCodec;
+import io.github.twinklekhj.ros.codec.RosResponseCodec;
 import io.vertx.core.*;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.DeliveryOptions;
@@ -58,6 +58,11 @@ public class RosBridge extends AbstractVerticle {
 
     public boolean hasConnectedError() {
         return connectedError;
+    }
+
+    @Override
+    public Vertx getVertx() {
+        return this.vertx;
     }
 
     public void onMessage(Buffer buffer) {

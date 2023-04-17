@@ -10,18 +10,18 @@ import java.util.Arrays;
 import java.util.List;
 
 @ToString
-public class TFMessage extends RosMessage {
-    public static final String TYPE = "tf2_msgs/TFMessage";
+public class TFArray extends RosMessage {
+    public static final String TYPE = "tf2_msgs/TFArray";
 
     public static final String FIELD_TRANSFORMS = "transforms";
 
     private TransformStamped[] transforms;
 
-    public TFMessage() {
+    public TFArray() {
         this(new TransformStamped[]{});
     }
 
-    public TFMessage(TransformStamped... transforms) {
+    public TFArray(TransformStamped... transforms) {
         this.transforms = new TransformStamped[transforms.length];
         System.arraycopy(transforms, 0, this.transforms, 0, transforms.length);
 
@@ -31,15 +31,15 @@ public class TFMessage extends RosMessage {
         super.setType(TYPE);
     }
 
-    public static TFMessage fromJsonString(String jsonString) {
-        return TFMessage.fromMessage(new RosMessage(jsonString, TYPE));
+    public static TFArray fromJsonString(String jsonString) {
+        return TFArray.fromMessage(new RosMessage(jsonString, TYPE));
     }
 
-    public static TFMessage fromMessage(RosMessage m) {
-        return TFMessage.fromJsonObject(m.getJsonObject());
+    public static TFArray fromMessage(RosMessage m) {
+        return TFArray.fromJsonObject(m.getJsonObject());
     }
 
-    public static TFMessage fromJsonObject(JsonObject jsonObject) {
+    public static TFArray fromJsonObject(JsonObject jsonObject) {
         JsonArray jsonCells = jsonObject.getJsonArray(FIELD_TRANSFORMS);
         TransformStamped[] transforms = {};
         if (jsonCells != null) {
@@ -49,7 +49,7 @@ public class TFMessage extends RosMessage {
             }
         }
 
-        return new TFMessage(transforms);
+        return new TFArray(transforms);
     }
 
     public TransformStamped[] getTransforms() {
@@ -73,7 +73,7 @@ public class TFMessage extends RosMessage {
     }
 
     @Override
-    public TFMessage clone() {
-        return new TFMessage(this.transforms);
+    public TFArray clone() {
+        return new TFArray(this.transforms);
     }
 }

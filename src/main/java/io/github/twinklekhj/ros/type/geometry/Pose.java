@@ -12,14 +12,14 @@ public class Pose extends RosMessage {
     public static final String FIELD_POSITION = "position";
     public static final String FIELD_ORIENTATION = "orientation";
 
-    private Point position;
+    private Vector3 position;
     private Quaternion orientation;
 
     public Pose() {
-        this(new Point(), new Quaternion());
+        this(new Vector3(), new Quaternion());
     }
 
-    public Pose(Point position, Quaternion orientation) {
+    public Pose(Vector3 position, Quaternion orientation) {
         this.position = position;
         this.orientation = orientation;
 
@@ -39,16 +39,16 @@ public class Pose extends RosMessage {
     }
 
     public static Pose fromJsonObject(JsonObject jsonObject) {
-        Point position = jsonObject.containsKey(FIELD_POSITION) ? Point.fromJsonObject(jsonObject.getJsonObject(FIELD_POSITION)) : new Point();
+        Vector3 position = jsonObject.containsKey(FIELD_POSITION) ? Vector3.fromJsonObject(jsonObject.getJsonObject(FIELD_POSITION)) : new Vector3();
         Quaternion orientation = jsonObject.containsKey(FIELD_ORIENTATION) ? Quaternion.fromJsonObject(jsonObject.getJsonObject(FIELD_ORIENTATION)) : new Quaternion();
         return new Pose(position, orientation);
     }
 
-    public Point getPosition() {
+    public Vector3 getPosition() {
         return this.position;
     }
 
-    public void setPosition(Point position) {
+    public void setPosition(Vector3 position) {
         this.position = position;
         this.jsonObject.put(FIELD_POSITION, position.getJsonObject());
     }
@@ -59,6 +59,64 @@ public class Pose extends RosMessage {
 
     public void setOrientation(Quaternion orientation) {
         this.orientation = orientation;
+        this.jsonObject.put(FIELD_ORIENTATION, orientation.getJsonObject());
+    }
+
+    /**
+     * Apply a transform against this pose.
+     * @param tf The transform to be applied.
+     */
+    public void applyTransform(Transform tf){
+        this.position.multiplyQuaternion(tf.rotation);
+        this.position.add(tf.translation);
+
+        Quaternion tmp = tf.rotation.clone();
+        tmp.multiply(this.orientation);
+        this.orientation = tmp;
+
+        applyJson();
+    }
+
+    public void applyTransform(Pose tf){
+        this.position.multiplyQuaternion(tf.orientation);
+        this.position.add(tf.position);
+
+        Quaternion tmp = tf.orientation.clone();
+        tmp.multiply(this.orientation);
+        this.orientation = tmp;
+
+        applyJson();
+    }
+
+    /**
+     * Multiply this pose with another pose without altering this pose.
+     * @param pose The other pose
+     * @return Pose
+     */
+    public Pose multiply (Pose pose){
+        Pose copy = pose.clone();
+        copy.applyTransform(pose);
+
+        return copy;
+    }
+
+    /**
+     * Compute the inverse of this pose.
+     * @return pose
+     */
+    public Pose getInverse (){
+        Pose inverse = this.clone();
+        inverse.orientation.invert();
+        inverse.position.multiplyQuaternion(inverse.orientation);
+        inverse.position.x *= -1;
+        inverse.position.y *= -1;
+        inverse.position.z *= -1;
+
+        return inverse;
+    }
+
+    private void applyJson(){
+        this.jsonObject.put(FIELD_POSITION, position.getJsonObject());
         this.jsonObject.put(FIELD_ORIENTATION, orientation.getJsonObject());
     }
 

@@ -14,10 +14,10 @@ public class Quaternion extends RosMessage {
     public static final String FIELD_Z = "z";
     public static final String FIELD_W = "w";
 
-    private double x;
-    private double y;
-    private double z;
-    private double w;
+    double x;
+    double y;
+    double z;
+    double w;
 
     public Quaternion() {
         this(0, 0, 0, 1.0);
@@ -83,6 +83,62 @@ public class Quaternion extends RosMessage {
     public void setW(double w) {
         this.w = w;
         this.jsonObject.put(FIELD_W, w);
+    }
+
+    public void conjugate(){
+        this.x *= -1;
+        this.y *= -1;
+        this.z *= -1;
+
+        applyJson();
+    }
+
+    public double norm(){
+        return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w + this.w);
+    }
+
+    public void normalize(){
+        double norm = norm();
+        if(norm == 0.0){
+            this.x = 0;
+            this.y = 0;
+            this.z = 0;
+            this.w = 1;
+        } else {
+            norm = 1 / norm;
+            this.x = this.x * norm;
+            this.y = this.y * norm;
+            this.z = this.z * norm;
+            this.w = this.w * norm;
+        }
+
+        applyJson();
+    }
+
+    public void invert(){
+        this.conjugate();
+        this.normalize();
+    }
+
+    public void multiply(Quaternion q){
+        double newX = this.x * q.w + this.y * q.z - this.z * q.y + this.w * q.x;
+        double newY = -this.x * q.z + this.y * q.w + this.z * q.x + this.w * q.y;
+        double newZ = this.x * q.y - this.y * q.x + this.z * q.w + this.w * q.z;
+        double newW = -this.x * q.x - this.y * q.y - this.z * q.z + this.w * q.w;
+
+        this.x = newX;
+        this.y = newY;
+        this.z = newZ;
+        this.w = newW;
+
+        applyJson();
+    }
+
+    private void applyJson(){
+        this.jsonObject.put(FIELD_X, this.x);
+        this.jsonObject.put(FIELD_Y, this.y);
+        this.jsonObject.put(FIELD_Z, this.z);
+        this.jsonObject.put(FIELD_W, this.w);
     }
 
     @Override
