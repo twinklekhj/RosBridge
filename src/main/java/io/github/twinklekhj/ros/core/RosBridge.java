@@ -1,5 +1,6 @@
 package io.github.twinklekhj.ros.core;
 
+import io.github.twinklekhj.ros.exception.BridgeCloseException;
 import io.github.twinklekhj.ros.op.*;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.codec.RosResponseCodec;
@@ -28,7 +29,7 @@ import java.util.*;
  */
 public class RosBridge extends AbstractVerticle {
     private static final Logger logger = LoggerFactory.getLogger(RosBridge.class);
-    private static final MessageCodec rosResponseCodec = new RosResponseCodec();
+    private static final MessageCodec<RosResponse, RosResponse> rosResponseCodec = new RosResponseCodec();
     private static final DeliveryOptions rosResponseDelivery = new DeliveryOptions().setCodecName(rosResponseCodec.name());
 
     protected final Vertx vertx;
@@ -223,6 +224,10 @@ public class RosBridge extends AbstractVerticle {
                 }
                 this.connected = true;
                 webSocket.handler(this::onMessage);
+                webSocket.closeHandler(unused -> {
+                    throw new BridgeCloseException();
+                });
+
                 notifyAll();
             }
         }).onFailure(throwable -> {
