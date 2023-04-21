@@ -5,8 +5,6 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import lombok.ToString;
 
-import java.util.Arrays;
-
 @ToString
 public class Float32MultiArray extends RosMessage {
     public static final String TYPE = "std_msgs/Float32MultiArray";
@@ -22,7 +20,7 @@ public class Float32MultiArray extends RosMessage {
     }
 
     public Float32MultiArray(MultiArrayLayout layout, float[] data) {
-        super.setJsonObject(jsonBuilder().put(FIELD_LAYOUT, layout.getJsonObject()).put(FIELD_DATA, Arrays.toString(data)));
+        super.setJsonObject(jsonBuilder().put(FIELD_LAYOUT, layout.getJsonObject()).put(FIELD_DATA, data));
         super.setType(TYPE);
 
         this.layout = layout;
@@ -57,6 +55,11 @@ public class Float32MultiArray extends RosMessage {
         return this.layout;
     }
 
+    public void setLayout(MultiArrayLayout layout) {
+        this.layout = layout;
+        this.jsonObject.put(FIELD_LAYOUT, layout.getJsonObject());
+    }
+
     public int size() {
         return this.data.length;
     }
@@ -69,16 +72,12 @@ public class Float32MultiArray extends RosMessage {
         return this.data;
     }
 
-
-    public void setLayout(MultiArrayLayout layout) {
-        this.layout = layout;
-        this.jsonObject.put(FIELD_LAYOUT, layout.getJsonObject());
-    }
-    public void setData(float ...data) {
+    public void setData(float... data) {
         this.data = data;
         System.arraycopy(data, 0, this.data, 0, data.length);
-        this.jsonObject.put(FIELD_DATA, Arrays.toString(data));
+        this.jsonObject.put(FIELD_DATA, data);
     }
+
     @Override
     public Float32MultiArray clone() {
         return new Float32MultiArray(this.layout, this.data);

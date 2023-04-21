@@ -34,7 +34,7 @@ public class AlvarMarkers extends RosMessage {
 
         JsonObject json = jsonBuilder()
                 .put(FIELD_HEADER, header.getJsonObject())
-                .put(FIELD_MARKERS, Arrays.deepToString(markers));
+                .put(FIELD_MARKERS, getArray(markers));
 
         super.setJsonObject(json);
         super.setType(TYPE);
@@ -79,7 +79,7 @@ public class AlvarMarkers extends RosMessage {
         this.markers = new AlvarMarker[markers.length];
         System.arraycopy(markers, 0, this.markers, 0, markers.length);
 
-        this.jsonObject.put(FIELD_MARKERS, Arrays.deepToString(markers));
+        this.jsonObject.put(FIELD_MARKERS, getArray(markers));
     }
 
     public void setMarkers(List<AlvarMarker> markers) {
@@ -88,7 +88,7 @@ public class AlvarMarkers extends RosMessage {
             this.markers[i] = markers.get(0);
         }
 
-        this.jsonObject.put(FIELD_MARKERS, Arrays.deepToString(this.markers));
+        this.jsonObject.put(FIELD_MARKERS, getArray(this.markers));
     }
 
     @Override

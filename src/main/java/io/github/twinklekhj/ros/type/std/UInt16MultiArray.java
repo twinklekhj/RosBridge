@@ -27,7 +27,7 @@ public class UInt16MultiArray extends RosMessage {
         this.data = new short[data.length];
         System.arraycopy(data, 0, this.data, 0, data.length);
 
-        super.setJsonObject(jsonBuilder().put(FIELD_LAYOUT, layout.getJsonObject()).put(FIELD_DATA, Arrays.toString(Primitive.fromUInt16(data))));
+        super.setJsonObject(jsonBuilder().put(FIELD_LAYOUT, layout.getJsonObject()).put(FIELD_DATA, Primitive.fromUInt16(data)));
         super.setType(TYPE);
     }
 
@@ -77,7 +77,7 @@ public class UInt16MultiArray extends RosMessage {
     public void setData(short... data) {
         this.data = data;
         System.arraycopy(data, 0, this.data, 0, data.length);
-        this.jsonObject.put(FIELD_DATA, Arrays.toString(data));
+        this.jsonObject.put(FIELD_DATA, data);
     }
 
     @Override

@@ -34,7 +34,7 @@ public class OccupancyGrid extends RosMessage {
         System.arraycopy(data, 0, this.data, 0, data.length);
 
         JsonObject obj = jsonBuilder().put(FIELD_HEADER, header.getJsonObject())
-                .put(FIELD_DATA, Arrays.toString(data))
+                .put(FIELD_DATA, data)
                 .put(FIELD_INFO, info.getJsonObject());
 
         super.setJsonObject(obj);
@@ -81,7 +81,7 @@ public class OccupancyGrid extends RosMessage {
     public void setData(int ...data) {
         this.data = data;
         System.arraycopy(data, 0, this.data, 0, data.length);
-        this.jsonObject.put(FIELD_DATA, Arrays.toString(data));
+        this.jsonObject.put(FIELD_DATA, data);
     }
 
     public MapMetaData getInfo() {

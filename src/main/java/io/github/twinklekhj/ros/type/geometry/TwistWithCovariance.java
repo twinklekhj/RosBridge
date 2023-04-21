@@ -42,7 +42,11 @@ public class TwistWithCovariance extends RosMessage {
             }
         }
 
-        super.setJsonObject(jsonBuilder().put(FIELD_TWIST, twist.getJsonObject()).put(FIELD_COVARIANCE, covariance.length == TwistWithCovariance.COVARIANCE_SIZE ? Arrays.toString(covariance) : Arrays.toString(new double[TwistWithCovariance.COVARIANCE_SIZE])));
+        JsonObject json = jsonBuilder()
+                .put(FIELD_TWIST, twist.getJsonObject())
+                .put(FIELD_COVARIANCE, covariance.length == TwistWithCovariance.COVARIANCE_SIZE ? covariance : new double[TwistWithCovariance.COVARIANCE_SIZE]);
+
+        super.setJsonObject(json);
         super.setType(TYPE);
     }
 
@@ -84,7 +88,7 @@ public class TwistWithCovariance extends RosMessage {
 
     public void setCovariance(double... covariance) {
         this.covariance = covariance;
-        this.jsonObject.put(FIELD_COVARIANCE, jsonBuilder(covariance.length == TwistWithCovariance.COVARIANCE_SIZE ? Arrays.toString(covariance) : Arrays.toString(new double[TwistWithCovariance.COVARIANCE_SIZE])));
+        this.jsonObject.put(FIELD_COVARIANCE, covariance.length == TwistWithCovariance.COVARIANCE_SIZE ? covariance : new double[TwistWithCovariance.COVARIANCE_SIZE]);
     }
 
     public double[][] getCovarianceMatrix() {

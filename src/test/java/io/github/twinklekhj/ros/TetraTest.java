@@ -7,6 +7,10 @@ import io.github.twinklekhj.ros.op.RosSubscription;
 import io.github.twinklekhj.ros.op.RosTopic;
 import io.github.twinklekhj.ros.tf.TFClient;
 import io.github.twinklekhj.ros.type.artags.AlvarMarkers;
+import io.github.twinklekhj.ros.type.costmap.ObstacleArrayMsg;
+import io.github.twinklekhj.ros.type.costmap.ObstacleMsg;
+import io.github.twinklekhj.ros.type.geometry.Point32;
+import io.github.twinklekhj.ros.type.geometry.Polygon;
 import io.github.twinklekhj.ros.type.movebase.MoveBaseActionResult;
 import io.github.twinklekhj.ros.type.navigation.OccupancyGrid;
 import io.github.twinklekhj.ros.type.navigation.Odometry;
@@ -279,7 +283,6 @@ public class TetraTest {
         props.setPrintProcessMsg(true);
 
         props.setMaxFrameSize(100000000);
-
         bridge.start();
 
         // 배터리
@@ -307,6 +310,36 @@ public class TetraTest {
         });
 
         context.awaitCompletion(1, TimeUnit.SECONDS);
+    }
+
+    @Test
+    @DisplayName("obstacle publish 테스트")
+    public void publishObstacle() throws InterruptedException {
+        VertxTestContext context = new VertxTestContext();
+
+        props.setPrintSendMsg(true);
+        props.setPrintReceivedMsg(true);
+        props.setPrintProcessMsg(true);
+
+        props.setMaxFrameSize(100000000);
+        bridge.start();
+
+        ObstacleArrayMsg msg = new ObstacleArrayMsg();
+
+        ObstacleMsg obstacle = new ObstacleMsg();
+        Polygon polygon = new Polygon(new Point32(-1.28345F, -8.11423F, 0.0F), new Point32(-1.28345F, -8.11423F, 0.0F), new Point32(-1.28345F, -8.11423F, 0.0F), new Point32(-1.28345F, -8.11423F, 0.0F));
+        obstacle.setPolygon(polygon);
+
+        msg.setObstacles(obstacle);
+
+        RosTopic topic = RosTopic.builder(String.format("/%s/move_base/TebLocalPlannerROS/obstacles", serial), ObstacleArrayMsg.TYPE).msg(msg).build();
+        bridge.publish(topic).future().onSuccess(rosTopic -> {
+            logger.info("topic: {}", rosTopic);
+        }).onFailure(throwable -> {
+            logger.info("error: {}", throwable.getMessage());
+            throwable.printStackTrace();
+        });
+        context.awaitCompletion(10, TimeUnit.SECONDS);
     }
 }
 

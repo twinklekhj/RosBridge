@@ -29,7 +29,7 @@ public class UInt8MultiArray extends RosMessage {
         this.data = new byte[data.length];
         System.arraycopy(data, 0, this.data, 0, data.length);
 
-        super.setJsonObject(jsonBuilder().put(FIELD_LAYOUT, layout.getJsonObject()).put(FIELD_DATA, Arrays.toString(Primitive.fromUInt8(data))));
+        super.setJsonObject(jsonBuilder().put(FIELD_LAYOUT, layout.getJsonObject()).put(FIELD_DATA, Primitive.fromUInt8(data)));
         super.setType(TYPE);
     }
 
@@ -82,7 +82,7 @@ public class UInt8MultiArray extends RosMessage {
     public void setData(byte... data) {
         this.data = data;
         System.arraycopy(data, 0, this.data, 0, data.length);
-        this.jsonObject.put(FIELD_DATA, Arrays.toString(data));
+        this.jsonObject.put(FIELD_DATA, data);
     }
 
     @Override

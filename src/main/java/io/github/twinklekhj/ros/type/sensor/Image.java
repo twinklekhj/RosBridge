@@ -51,7 +51,7 @@ public class Image extends RosMessage {
         JsonObject json = jsonBuilder()
                 .put(FIELD_HEADER, header.getJsonObject())
                 .put(FIELD_ENCODING, encoding)
-                .put(FIELD_DATA, Arrays.toString(data));
+                .put(FIELD_DATA, data);
 
         super.setJsonObject(json);
         super.setType(TYPE);

@@ -1,5 +1,7 @@
 package io.github.twinklekhj.ros;
 
+import io.github.twinklekhj.ros.type.costmap.ObstacleArrayMsg;
+import io.github.twinklekhj.ros.type.costmap.ObstacleMsg;
 import io.github.twinklekhj.ros.type.geometry.Point;
 import io.github.twinklekhj.ros.type.geometry.Point32;
 import io.github.twinklekhj.ros.type.geometry.Polygon;
@@ -24,5 +26,19 @@ public class MessageTest {
         Polygon polygon = new Polygon();
         polygon.setPoints(new Point32(0.0F, 0.0F, 0.0F), new Point32(1.0F, 1.0F, 1.0F));
         logger.info("polygon: {}", polygon);
+    }
+
+    @Test
+    @DisplayName("obstacle 생성")
+    public void createObstacle(){
+        ObstacleArrayMsg arr = new ObstacleArrayMsg();
+
+        ObstacleMsg obstacle = new ObstacleMsg();
+        Polygon polygon = new Polygon(new Point32(-1.28345F, -8.11423F, 0.0F), new Point32(-1.28345F, -8.11423F, 0.0F), new Point32(-1.28345F, -8.11423F, 0.0F), new Point32(-1.28345F, -8.11423F, 0.0F));
+        obstacle.setPolygon(polygon);
+
+        arr.setObstacles(obstacle);
+
+        logger.info("arr: {}", arr);
     }
 }

@@ -26,7 +26,7 @@ public class MultiArrayLayout extends RosMessage {
 
         System.arraycopy(dim, 0, this.dim, 0, dim.length);
 
-        super.setJsonObject(jsonBuilder().put(FIELD_DIM, Arrays.deepToString(dim)).put(FIELD_DATA_OFFSET, Primitive.fromUInt32(dataOffset)));
+        super.setJsonObject(jsonBuilder().put(FIELD_DIM, getArray(dim)).put(FIELD_DATA_OFFSET, Primitive.fromUInt32(dataOffset)));
         super.setType(TYPE);
     }
 

@@ -38,8 +38,8 @@ public class Joy extends RosMessage {
 
         JsonObject json = jsonBuilder()
                 .put(FIELD_HEADER, header.getJsonObject())
-                .put(FIELD_AXES, Arrays.toString(axes))
-                .put(FIELD_BUTTONS, Arrays.toString(buttons));
+                .put(FIELD_AXES, axes)
+                .put(FIELD_BUTTONS, buttons);
 
         super.setJsonObject(json);
         super.setType(TYPE);

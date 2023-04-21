@@ -78,7 +78,7 @@ public class UInt64MultiArray extends RosMessage {
     public void setData(long ...data) {
         this.data = data;
         System.arraycopy(data, 0, this.data, 0, data.length);
-        this.jsonObject.put(FIELD_DATA, Arrays.toString(data));
+        this.jsonObject.put(FIELD_DATA, data);
     }
 
     @Override

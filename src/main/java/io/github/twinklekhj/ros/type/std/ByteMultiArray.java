@@ -26,7 +26,7 @@ public class ByteMultiArray extends RosMessage {
         this.data = new byte[data.length];
         System.arraycopy(data, 0, this.data, 0, data.length);
 
-        super.setJsonObject(jsonBuilder().put(FIELD_LAYOUT, layout.getJsonObject()).put(FIELD_DATA, Arrays.toString(data)));
+        super.setJsonObject(jsonBuilder().put(FIELD_LAYOUT, layout.getJsonObject()).put(FIELD_DATA, data));
         super.setType(TYPE);
     }
 
@@ -76,7 +76,7 @@ public class ByteMultiArray extends RosMessage {
     public void setData(byte ...data) {
         this.data = data;
         System.arraycopy(data, 0, this.data, 0, data.length);
-        this.jsonObject.put(FIELD_DATA, Arrays.toString(data));
+        this.jsonObject.put(FIELD_DATA, data);
     }
 
     @Override

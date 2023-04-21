@@ -34,7 +34,7 @@ public class GoalStatusArray extends RosMessage {
 
         JsonObject json = jsonBuilder()
                 .put(FIELD_HEADER, header.getJsonObject())
-                .put(FIELD_STATUS_LIST, Arrays.deepToString(status_list));
+                .put(FIELD_STATUS_LIST, getArray(status_list));
 
         super.setJsonObject(json);
         super.setType(TYPE);
@@ -79,7 +79,7 @@ public class GoalStatusArray extends RosMessage {
         this.status_list = new GoalStatus[status_list.length];
         System.arraycopy(status_list, 0, this.status_list, 0, status_list.length);
 
-        this.jsonObject.put(FIELD_STATUS_LIST, Arrays.deepToString(status_list));
+        this.jsonObject.put(FIELD_STATUS_LIST, getArray(status_list));
     }
 
     public void setGoalStatus(List<GoalStatus> status_list) {
@@ -88,7 +88,7 @@ public class GoalStatusArray extends RosMessage {
             this.status_list[i] = status_list.get(0);
         }
 
-        this.jsonObject.put(FIELD_STATUS_LIST, Arrays.deepToString(this.status_list));
+        this.jsonObject.put(FIELD_STATUS_LIST, getArray(this.status_list));
     }
 
     @Override

@@ -35,7 +35,7 @@ public class Path extends RosMessage {
 
         JsonObject json = jsonBuilder()
                 .put(FIELD_HEADER, header.getJsonObject())
-                .put(FIELD_POSES, Arrays.deepToString(poses));
+                .put(FIELD_POSES, getArray(poses));
 
         super.setJsonObject(json);
         super.setType(TYPE);
@@ -80,7 +80,7 @@ public class Path extends RosMessage {
         this.poses = new PoseStamped[poses.length];
         System.arraycopy(poses, 0, this.poses, 0, poses.length);
 
-        this.jsonObject.put(FIELD_POSES, Arrays.deepToString(poses));
+        this.jsonObject.put(FIELD_POSES, getArray(poses));
     }
 
     public void setPoses(List<PoseStamped> poses) {
@@ -89,7 +89,7 @@ public class Path extends RosMessage {
             this.poses[i] = poses.get(0);
         }
 
-        this.jsonObject.put(FIELD_POSES, Arrays.deepToString(this.poses));
+        this.jsonObject.put(FIELD_POSES, getArray(this.poses));
     }
 
     @Override

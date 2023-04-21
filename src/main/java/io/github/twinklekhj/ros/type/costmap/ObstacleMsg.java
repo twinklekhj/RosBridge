@@ -6,7 +6,9 @@ import io.github.twinklekhj.ros.type.geometry.Quaternion;
 import io.github.twinklekhj.ros.type.geometry.TwistWithCovariance;
 import io.github.twinklekhj.ros.type.std.Header;
 import io.vertx.core.json.JsonObject;
+import lombok.ToString;
 
+@ToString
 public class ObstacleMsg extends RosMessage {
     public static final String TYPE = "costmap_converter/ObstacleMsg";
 
@@ -45,7 +47,12 @@ public class ObstacleMsg extends RosMessage {
         this.orientation = orientation;
         this.velocities = velocities;
 
-        JsonObject json = jsonBuilder().put(FIELD_HEADER, header.getJsonObject()).put(FIELD_POLYGON, polygon.getJsonObject()).put(FIELD_ORIENTATION, orientation.getJsonObject()).put(FIELD_ID, id).put(FIELD_RADIUS, radius).put(FIELD_VELOCITIES, velocities);
+        JsonObject json = jsonBuilder()
+                .put(FIELD_HEADER, header.getJsonObject())
+                .put(FIELD_POLYGON, polygon.getJsonObject())
+                .put(FIELD_ORIENTATION, orientation.getJsonObject())
+                .put(FIELD_ID, id).put(FIELD_RADIUS, radius)
+                .put(FIELD_VELOCITIES, velocities.getJsonObject());
 
         super.setJsonObject(json);
         super.setType(TYPE);

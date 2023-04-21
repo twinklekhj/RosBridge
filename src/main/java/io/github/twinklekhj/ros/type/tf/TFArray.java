@@ -25,7 +25,7 @@ public class TFArray extends RosMessage {
         this.transforms = new TransformStamped[transforms.length];
         System.arraycopy(transforms, 0, this.transforms, 0, transforms.length);
 
-        JsonObject json = jsonBuilder().put(FIELD_TRANSFORMS, Arrays.deepToString(transforms));
+        JsonObject json = jsonBuilder().put(FIELD_TRANSFORMS, getArray(transforms));
 
         super.setJsonObject(json);
         super.setType(TYPE);
@@ -60,7 +60,7 @@ public class TFArray extends RosMessage {
         this.transforms = new TransformStamped[transforms.length];
         System.arraycopy(transforms, 0, this.transforms, 0, transforms.length);
 
-        this.jsonObject.put(FIELD_TRANSFORMS, Arrays.deepToString(transforms));
+        this.jsonObject.put(FIELD_TRANSFORMS, getArray(transforms));
     }
 
     public void setTransforms(List<TransformStamped> transforms) {
@@ -69,7 +69,7 @@ public class TFArray extends RosMessage {
             this.transforms[i] = transforms.get(0);
         }
 
-        this.jsonObject.put(FIELD_TRANSFORMS, Arrays.deepToString(this.transforms));
+        this.jsonObject.put(FIELD_TRANSFORMS, getArray(this.transforms));
     }
 
     @Override

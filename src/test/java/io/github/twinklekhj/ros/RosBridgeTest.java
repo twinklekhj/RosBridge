@@ -1,5 +1,6 @@
 package io.github.twinklekhj.ros;
 
+import io.github.twinklekhj.ros.exception.BridgeCloseException;
 import io.github.twinklekhj.ros.op.RosTopic;
 import io.github.twinklekhj.ros.type.RosMessage;
 import io.github.twinklekhj.ros.type.sensor.Image;

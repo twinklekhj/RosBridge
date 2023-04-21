@@ -3,6 +3,7 @@ package io.github.twinklekhj.ros.type;
 import io.vertx.core.json.JsonObject;
 import lombok.Builder;
 
+import java.util.Arrays;
 import java.util.Map;
 
 @Builder
@@ -36,6 +37,9 @@ public class RosMessage {
         return new JsonObject();
     }
 
+    public static Object[] getArray(RosMessage... arr){
+        return Arrays.stream(arr).map(RosMessage::getJsonObject).toArray();
+    }
     public static JsonObject jsonBuilder(String jsonString) {
         return new JsonObject(jsonString);
     }

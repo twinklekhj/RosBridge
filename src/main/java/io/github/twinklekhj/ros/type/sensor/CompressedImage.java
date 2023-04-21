@@ -37,7 +37,7 @@ public class CompressedImage extends RosMessage {
         JsonObject json = jsonBuilder()
                 .put(FIELD_HEADER, header.getJsonObject())
                 .put(FIELD_FORMAT, format)
-                .put(FIELD_DATA, Arrays.toString(data));
+                .put(FIELD_DATA, data);
 
         super.setJsonObject(json);
         super.setType(TYPE);
@@ -91,7 +91,7 @@ public class CompressedImage extends RosMessage {
     public void setData(int... data) {
         this.data = data;
         System.arraycopy(data, 0, this.data, 0, data.length);
-        this.jsonObject.put(FIELD_DATA, Arrays.toString(data));
+        this.jsonObject.put(FIELD_DATA, data);
     }
 
     @Override
