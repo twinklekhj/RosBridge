@@ -15,6 +15,8 @@ import io.github.twinklekhj.ros.type.movebase.MoveBaseActionResult;
 import io.github.twinklekhj.ros.type.navigation.OccupancyGrid;
 import io.github.twinklekhj.ros.type.navigation.Odometry;
 import io.github.twinklekhj.ros.type.navigation.Path;
+import io.github.twinklekhj.ros.type.sensor.Imu;
+import io.github.twinklekhj.ros.type.sensor.LaserScan;
 import io.github.twinklekhj.ros.type.std.Float64;
 import io.github.twinklekhj.ros.type.std.Int32;
 import io.github.twinklekhj.utils.PropertyUtil;
@@ -186,7 +188,7 @@ public class TetraTest {
             context.completeNow();
         });
 
-        context.awaitCompletion(1, TimeUnit.SECONDS);
+        context.awaitCompletion(100, TimeUnit.SECONDS);
     }
 
     @Test
@@ -200,21 +202,21 @@ public class TetraTest {
 
         bridge.start();
 
-        // 로봇의 좌측 하단에 장착된 초음파 센서 데이터
+        // TETRA에 장착된 IMU 센서 데이터
         RosSubscription leftBottom = RosSubscription.builder(String.format("/%s/move_base/TebLocalPlannerROS/Ultrasonic_D_L", serial), Path.TYPE).throttleRate(200).build();
         bridge.subscribe(leftBottom, message -> {
             logger.info("message: {}", message.body());
         });
 
         // 로봇의 좌측 하단에 장착된 초음파 센서 데이터
-        RosSubscription rightBottom = RosSubscription.builder(String.format("/%s/move_base/TebLocalPlannerROS/Ultrasonic_D_R", serial), Path.TYPE).throttleRate(200).build();
+        RosSubscription rightBottom = RosSubscription.builder(String.format("/%s/imu/data", serial), Imu.TYPE).throttleRate(200).build();
         bridge.subscribe(rightBottom, message -> {
-            logger.info("message: {}", message.body());
-            context.completeNow();
+            Imu imu = Imu.fromJsonObject(message.body());
+            logger.info("imu - {}", imu);
         });
 
 
-        context.awaitCompletion(1, TimeUnit.SECONDS);
+        context.awaitCompletion(10, TimeUnit.SECONDS);
     }
 
     @Test
@@ -339,6 +341,28 @@ public class TetraTest {
             logger.info("error: {}", throwable.getMessage());
             throwable.printStackTrace();
         });
+        context.awaitCompletion(10, TimeUnit.SECONDS);
+    }
+
+    @Test
+    @DisplayName("scan 테스트")
+    public void testLaser() throws InterruptedException {
+        VertxTestContext context = new VertxTestContext();
+
+        props.setPrintSendMsg(true);
+        props.setPrintReceivedMsg(true);
+        props.setPrintProcessMsg(true);
+
+        props.setMaxFrameSize(100000000);
+        bridge.start();
+
+        // 배터리
+        RosSubscription scan = RosSubscription.builder(String.format("/%s/scan", serial), LaserScan.TYPE).throttleRate(1000).build();
+        bridge.subscribe(scan, message -> {
+            LaserScan data = LaserScan.fromJsonObject(message.body());
+            logger.info("laser- {}", data);
+        });
+
         context.awaitCompletion(10, TimeUnit.SECONDS);
     }
 }

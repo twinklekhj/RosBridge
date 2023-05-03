@@ -14,7 +14,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Getter
 public class Imu extends RosMessage {
-    public static final String TYPE = "sensor_msgs/CompressedImage";
+    public static final String TYPE = "sensor_msgs/Imu";
 
     public static final String FIELD_HEADER = "header";
     public static final String FIELD_ORIENTATION = "orientation";
@@ -50,7 +50,7 @@ public class Imu extends RosMessage {
         Vector3 angular_velocity = jsonObject.containsKey(FIELD_ANGULAR) ? Vector3.fromJsonObject(jsonObject.getJsonObject(FIELD_ANGULAR)) : new Vector3();
         Vector3 linear_acceleration = jsonObject.containsKey(FIELD_LINEAR) ? Vector3.fromJsonObject(jsonObject.getJsonObject(FIELD_LINEAR)) : new Vector3();
 
-        JsonArray jsonData = null;
+        JsonArray jsonData;
         float[] orientation_covariance = {};
         jsonData = jsonObject.getJsonArray(FIELD_ORIENTATION_COVARIANCE);
         if (jsonData != null) {

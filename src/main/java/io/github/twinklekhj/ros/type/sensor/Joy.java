@@ -6,11 +6,9 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import lombok.ToString;
 
-import java.util.Arrays;
-
 @ToString
 public class Joy extends RosMessage {
-    public static final String TYPE = "sensor_msgs/CompressedImage";
+    public static final String TYPE = "sensor_msgs/Joy";
 
     public static final String FIELD_HEADER = "header";
     public static final String FIELD_AXES = "axes";
